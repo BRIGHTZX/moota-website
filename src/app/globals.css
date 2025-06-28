@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@400;700&family=Playfair+Display:wght@400;500;600;700&display=swap");
 /*
 color palette:
 #4A2C2A
@@ -133,6 +134,16 @@ color palette:
         @apply border-border outline-ring/50;
     }
     body {
+        font-family: "Inter", sans-serif;
         @apply bg-background text-foreground;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: "Playfair Display", serif;
     }
 }
