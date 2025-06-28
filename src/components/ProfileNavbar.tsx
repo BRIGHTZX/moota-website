@@ -14,10 +14,10 @@ import { USER_IMG } from "@/constant";
 type ProfileType = {
     currentUser: {
         id: string;
-        firstName: string;
-        lastName: string;
-        email: string;
-        picture: string;
+        firstName: string | null;
+        lastName: string | null;
+        email: string | null;
+        picture: string | null;
     };
     isAdmin: boolean;
 };
@@ -29,7 +29,11 @@ export function ProfileNavbar({ currentUser, isAdmin }: ProfileType) {
                     <Image
                         width={40}
                         height={40}
-                        src={currentUser?.picture || USER_IMG}
+                        src={
+                            currentUser?.picture !== null
+                                ? currentUser.picture!
+                                : USER_IMG
+                        }
                         alt="User-Image"
                         className="h-full w-full object-cover"
                     />
