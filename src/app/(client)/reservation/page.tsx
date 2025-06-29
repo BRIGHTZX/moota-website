@@ -35,13 +35,10 @@ function ReservationPage() {
             email: "",
             adultNumber: 0,
             childNumber: 0,
-            paymentStatus: "pending",
             reservationDate: new Date().toISOString(),
             reservationTime: "16:00",
         },
     });
-
-    console.log(form.formState.errors);
 
     const handleSubmit = (data: insertPreOrderSchemaType) => {
         const finalValue = {
@@ -49,7 +46,9 @@ function ReservationPage() {
             tableId: arrayTable,
         };
 
-        createReservation({ form: finalValue });
+        createReservation({
+            json: finalValue,
+        });
     };
 
     return (

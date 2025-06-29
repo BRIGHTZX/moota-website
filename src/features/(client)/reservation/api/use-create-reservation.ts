@@ -1,21 +1,21 @@
 import { client } from "@/lib/rpc";
 import { useMutation } from "@tanstack/react-query";
-import { insertPreOrderSchemaType } from "../schema";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { InferRequestType, InferResponseType } from "hono";
 
 const api = client.api.reservation["$post"];
+type ResponseType = InferResponseType<typeof api, 200>;
+type RequestType = InferRequestType<typeof api>;
 
 export const useCreateReservation = () => {
     const router = useRouter();
-    return useMutation({
-        mutationFn: async ({ form }: { form: insertPreOrderSchemaType }) => {
+    return useMutation<ResponseType, Error, RequestType>({
+        mutationFn: async ({ json }) => {
             const response = await api({
-                form: {
-                    ...form,
-                    email: form.email ?? "",
-                    adultNumber: form.adultNumber.toString(),
-                    childNumber: form.childNumber.toString(),
+                json: {
+                    ...json,
+                    email: json.email ?? "",
                 },
             });
 

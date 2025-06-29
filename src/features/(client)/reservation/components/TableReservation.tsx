@@ -1,3 +1,5 @@
+import { useGetTables } from "@/features/(admin)/tables/api/use-get-tables";
+import { selectTablesSchemaType } from "@/features/(admin)/tables/schema";
 import { cn } from "@/lib/utils";
 import React from "react";
 
@@ -8,18 +10,28 @@ function TableReservation({
     arrayTable: string[];
     setArrayTable: (arrayTable: string[]) => void;
 }) {
-    const handleSelectTable = (tableNumber: string) => {
-        if (arrayTable.includes(tableNumber)) {
-            // เอาออกถ้าเลือกอยู่
-            setArrayTable(arrayTable.filter((t) => t !== tableNumber));
+    const { data: tables, isLoading } = useGetTables();
+    const tablesData = tables?.tables;
+    console.log(tablesData);
+    console.log(arrayTable);
+
+    const insideTables = tablesData?.filter(
+        (table: selectTablesSchemaType) => table.tableType === "inside"
+    );
+
+    const outsideTables = tablesData?.filter(
+        (table: selectTablesSchemaType) => table.tableType === "outside"
+    );
+
+    const handleSelectTable = (tableId: string) => {
+        if (arrayTable.includes(tableId)) {
+            setArrayTable(arrayTable.filter((t) => t !== tableId));
         } else {
-            // เพิ่มถ้ายังไม่ถูกเลือก
-            setArrayTable([...arrayTable, tableNumber]);
+            setArrayTable([...arrayTable, tableId]);
         }
     };
 
-    const insideTables = Array.from({ length: 20 }, (_, i) => `${i + 1}`);
-    const outsideTables = Array.from({ length: 30 }, (_, i) => `${i + 21}`);
+    if (isLoading) return <div>Loading...</div>;
 
     return (
         <div className="mt-10 flex flex-col sm:flex-row">
@@ -34,36 +46,42 @@ function TableReservation({
                             <p>ด้านในหลังคา</p>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                            {insideTables.slice(0, 15).map((tableNumber) => (
-                                <TableCard
-                                    key={tableNumber}
-                                    tableNumber={tableNumber}
-                                    tableType="inside"
-                                    isAvailable={true}
-                                    isSelected={arrayTable.includes(
-                                        tableNumber
-                                    )}
-                                    onSelect={handleSelectTable}
-                                />
-                            ))}
+                            {insideTables?.length &&
+                                insideTables
+                                    .slice(0, 15)
+                                    .map((table: selectTablesSchemaType) => (
+                                        <TableCard
+                                            key={table.id}
+                                            tableNumber={table.tableNumber}
+                                            isAvailable={table.isAvailable}
+                                            isSelected={arrayTable.includes(
+                                                table.id
+                                            )}
+                                            onSelect={() =>
+                                                handleSelectTable(table.id)
+                                            }
+                                        />
+                                    ))}
                         </div>
 
                         <div>
                             <p>ด้านนอกหลังคา</p>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                            {insideTables.slice(15).map((tableNumber) => (
-                                <TableCard
-                                    key={tableNumber}
-                                    tableNumber={tableNumber}
-                                    tableType="inside"
-                                    isAvailable={true}
-                                    isSelected={arrayTable.includes(
-                                        tableNumber
-                                    )}
-                                    onSelect={handleSelectTable}
-                                />
-                            ))}
+                            {insideTables?.length &&
+                                insideTables
+                                    .slice(15)
+                                    .map((table: selectTablesSchemaType) => (
+                                        <TableCard
+                                            key={table.id}
+                                            tableNumber={table.tableNumber}
+                                            isAvailable={true}
+                                            isSelected={arrayTable.includes(
+                                                table.id
+                                            )}
+                                            onSelect={handleSelectTable}
+                                        />
+                                    ))}
                         </div>
                     </div>
                 </div>
@@ -78,16 +96,20 @@ function TableReservation({
                         </p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        {outsideTables.map((tableNumber) => (
-                            <TableCard
-                                key={tableNumber}
-                                tableNumber={tableNumber}
-                                tableType="outside"
-                                isAvailable={true}
-                                isSelected={arrayTable.includes(tableNumber)}
-                                onSelect={handleSelectTable}
-                            />
-                        ))}
+                        {outsideTables?.length &&
+                            outsideTables.map(
+                                (table: selectTablesSchemaType) => (
+                                    <TableCard
+                                        key={table.id}
+                                        tableNumber={table.tableNumber}
+                                        isAvailable={true}
+                                        isSelected={arrayTable.includes(
+                                            table.id
+                                        )}
+                                        onSelect={handleSelectTable}
+                                    />
+                                )
+                            )}
                     </div>
                 </div>
             </div>
@@ -99,7 +121,6 @@ export default TableReservation;
 
 type TableCardProps = {
     tableNumber: string;
-    tableType: string;
     isAvailable: boolean;
     isSelected: boolean;
     onSelect: (tableNumber: string) => void;
@@ -107,7 +128,6 @@ type TableCardProps = {
 
 const TableCard = ({
     tableNumber,
-    tableType,
     isAvailable,
     isSelected,
     onSelect,
