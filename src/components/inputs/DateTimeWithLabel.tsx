@@ -117,26 +117,26 @@ type TimeDropdownProps = {
 };
 
 export function TimeDropdown({ value, onChange }: TimeDropdownProps) {
-    const [hour, setHour] = useState("00");
+    const [hour, setHour] = useState("16");
     const [minute, setMinute] = useState("00");
     const normalizeValue = (val?: string) => {
-        if (!val) return "00:00";
-        if (!val.includes(":")) return "00:00";
+        if (!val) return "16:00";
+        if (!val.includes(":")) return "16:00";
         const [h, m] = val.split(":");
-        const hh = h.padStart(2, "0") || "00";
+        const hh = h.padStart(2, "0") || "16";
         const mm = m.padStart(2, "0") || "00";
         return `${hh}:${mm}`;
     };
     useEffect(() => {
-        console.log(value);
         const normalized = normalizeValue(value);
         const [h, m] = normalized.split(":");
         setHour(h);
         setMinute(m);
     }, [value]);
-    const hours = Array.from({ length: 24 }, (_, i) =>
-        String(i).padStart(2, "0")
-    );
+    const hours = Array.from({ length: 7 }, (_, i) => {
+        const hour = i + 16;
+        return String(hour).padStart(2, "0");
+    });
     const minutes = Array.from({ length: 60 }, (_, i) =>
         String(i).padStart(2, "0")
     );

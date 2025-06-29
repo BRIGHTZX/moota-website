@@ -1,45 +1,44 @@
 import { z } from "zod";
 
-export const insertPreOrderSchema = z.object({
-    customerName: z.string().min(1, "กรุณากรอกชื่อผู้จอง"),
-    phoneNumber: z
-        .string()
-        .min(1, "กรุณากรอกเบอร์โทรศัพท์")
-        .max(10, "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง 10 หลัก"),
-    email: z
-        .string()
-        .trim()
-        .transform((val) => (val === "" ? null : val))
-        .nullable()
-        .optional()
-        .refine(
-            (val) =>
-                val === null || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val ?? ""),
-            {
+export const insertPreOrderSchema = z
+    .object({
+        customerName: z.string().min(1, "กรุณากรอกชื่อผู้จอง"),
+        phoneNumber: z
+            .string()
+            .length(10, "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง 10 หลัก"),
+        email: z
+            .string()
+            .trim()
+            .optional()
+            .refine((val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
                 message: "กรุณากรอกอีเมลให้ถูกต้อง",
-            }
-        ),
-    tableNumber: z.string().min(1, "กรุณากรอกโต๊ะที่"),
-    tableType: z.enum(["inside", "outside"]),
-    adultNumber: z.number().min(0),
-    childNumber: z.number().min(0),
-    totalPrice: z.number().min(1),
-    status: z.enum(["pending", "confirmed", "cancelled"]),
-    reservationDate: z.date().refine(
-        (date) => {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            }),
+        adultNumber: z.coerce
+            .number({
+                required_error: "กรุณากรอกจำนวนผู้ใหญ่",
+                invalid_type_error: "กรุณากรอกจำนวนผู้ใหญ่เป็นตัวเลข",
+            })
+            .min(0, "จำนวนผู้ใหญ่ต้องไม่น้อยกว่า 0"),
 
-            const selected = new Date(date);
-            selected.setHours(0, 0, 0, 0);
-
-            return selected >= today;
-        },
-        {
-            message: "วันที่จองต้องเป็นวันที่ในอนาคต",
+        childNumber: z.coerce
+            .number({
+                invalid_type_error: "กรุณากรอกจำนวนเด็กเป็นตัวเลข",
+            })
+            .min(0, "จำนวนเด็กต้องไม่น้อยกว่า 0"),
+        paymentStatus: z.enum(["pending", "paid", "failed"]),
+        reservationDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
+            message: "กรุณากรอกวันที่ให้ถูกต้อง",
+        }),
+        reservationTime: z.string().min(1, "กรุณากรอกเวลาจอง"),
+    })
+    .superRefine((data, ctx) => {
+        if ((data.adultNumber ?? 0) === 0 && (data.childNumber ?? 0) === 0) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "กรุณากรอกจำนวน",
+                path: ["adultNumber"],
+            });
         }
-    ),
-    reservationTime: z.string().min(1, "กรุณากรอกเวลาจอง"),
-});
+    });
 
 export type insertPreOrderSchemaType = z.infer<typeof insertPreOrderSchema>;

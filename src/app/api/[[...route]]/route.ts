@@ -2,12 +2,15 @@ import { Hono } from "hono";
 import { handle } from "hono/vercel";
 import { logger } from "hono/logger";
 import authRoute from "@/features/auth/server/route";
+import reservationRoute from "@/features/(client)/reservation/server/route";
 
 const app = new Hono().basePath("/api");
 app.use(logger());
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const routes = app.route("/authentication", authRoute);
+const routes = app
+    .route("/authentication", authRoute)
+    .route("/reservation", reservationRoute);
 
 // Handle all HTTP methods
 export const GET = handle(app);

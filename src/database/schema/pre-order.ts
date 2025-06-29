@@ -1,4 +1,5 @@
 import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { table as TableSchema } from "./table";
 
 export const preOrder = pgTable("pre_order", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -7,8 +8,6 @@ export const preOrder = pgTable("pre_order", {
     phoneNumber: text("phone_number").notNull(),
     email: text("email"),
 
-    tableNumber: text("table_number").notNull(),
-    tableType: text("table_type").notNull(),
     adultNumber: integer("adult_number").notNull().default(0),
     childNumber: integer("child_number").notNull().default(0),
     totalPrice: integer("total_price").notNull(),
@@ -20,6 +19,17 @@ export const preOrder = pgTable("pre_order", {
     reservationTime: text("reservation_time").notNull(),
 
     deletedAt: timestamp("deleted_at"),
+
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at")
+        .defaultNow()
+        .$onUpdate(() => new Date()),
+});
+
+export const preOrderInfo = pgTable("pre_order_info", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    preOrderId: uuid("pre_order_id").references(() => preOrder.id),
+    tableId: uuid("table_id").references(() => TableSchema.id),
 
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at")

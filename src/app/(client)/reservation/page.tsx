@@ -1,7 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import {
@@ -11,58 +10,60 @@ import {
 
 import { DateTimeWithLabel } from "@/components/inputs/DateTimeWithLabel";
 import InputWithLabel from "@/components/inputs/InputWithLabel";
-import SelectWithLabel from "@/components/inputs/SelectWithLabel";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { useCreateReservation } from "@/features/(client)/reservation/api/use-create-reservation";
+import TableReservation from "@/features/(client)/reservation/components/TableReservation";
+import { useState } from "react";
+import { toast } from "sonner";
+import AlertDialogCustom from "@/components/AlertDialogCustom";
 
 function ReservationPage() {
-    const [selected, setSelected] = useState<"inside" | "outside">("outside");
+    const [openAlertDialog, setOpenAlertDialog] = useState(false);
+    const [arrayTable, setArrayTable] = useState<string[]>([]);
+    const {
+        mutate: createReservation,
+        // isPending: isCreateReservationPending,
+        // isError: isCreateReservationError,
+    } = useCreateReservation();
     const form = useForm<insertPreOrderSchemaType>({
+        mode: "onChange",
         resolver: zodResolver(insertPreOrderSchema),
         defaultValues: {
             customerName: "",
             phoneNumber: "",
             email: "",
-            tableNumber: "",
-            tableType: "outside",
             adultNumber: 0,
             childNumber: 0,
-            totalPrice: 50,
-            status: "pending",
-            reservationDate: new Date(),
-            reservationTime: "00:00",
+            paymentStatus: "pending",
+            reservationDate: new Date().toISOString(),
+            reservationTime: "16:00",
         },
     });
-
-    const handleSelectTableType = (type: "inside" | "outside") => {
-        setSelected(type);
-        form.setValue("tableType", type);
-        form.setValue("tableNumber", "");
-    };
 
     console.log(form.formState.errors);
 
     const handleSubmit = (data: insertPreOrderSchemaType) => {
-        if (data.reservationTime === "00:00") {
-            form.setError("reservationTime", {
-                message: "กรุณากรอกเวลาจอง",
-            });
-            return;
-        }
+        const finalValue = {
+            ...data,
+            tableId: arrayTable,
+        };
 
-        if (data.adultNumber === 0 && data.childNumber === 0) {
-            form.setError("adultNumber", {
-                message: "กรุณากรอกจำนวน",
-            });
-            form.setError("childNumber", {
-                message: "กรุณากรอกจำนวน",
-            });
-            return;
-        }
+        createReservation({ form: finalValue });
     };
 
     return (
         <div className="min-h-screen w-screen">
+            <AlertDialogCustom
+                open={openAlertDialog}
+                setOpen={setOpenAlertDialog}
+                action={() => {
+                    handleSubmit(form.getValues());
+                }}
+                title="ยืนยันการจอง"
+                description="คุณต้องการจองหรือไม่ ข้อมูลที่คุณกรอกจะถูกบันทึกไว้"
+                buttonActionText="ตกลง"
+            />
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)}>
                     <div className="container mx-auto pt-30">
@@ -72,40 +73,43 @@ function ReservationPage() {
                                 <Button
                                     variant="coffeePrimary"
                                     className="w-full"
-                                    type="submit"
+                                    type="button"
+                                    onClick={async () => {
+                                        const result = await form.trigger();
+
+                                        if (!result) {
+                                            toast.error(
+                                                "กรุณากรอกข้อมูลให้ครบถ้วน",
+                                                {
+                                                    style: {
+                                                        background: "red",
+                                                        color: "white",
+                                                    },
+                                                }
+                                            );
+                                            return;
+                                        } else {
+                                            if (arrayTable.length === 0) {
+                                                toast.error(
+                                                    "กรุณาเลือกโต๊ะที่ต้องการจอง",
+                                                    {
+                                                        style: {
+                                                            background: "red",
+                                                            color: "white",
+                                                        },
+                                                    }
+                                                );
+                                                return;
+                                            }
+                                            setOpenAlertDialog(true);
+                                        }
+                                    }}
                                 >
                                     <h1 className="text-lg font-bold">
                                         SUBMIT
                                     </h1>
                                 </Button>
                             </div>
-                        </div>
-
-                        <div className="mt-10 flex items-center">
-                            <Button
-                                onClick={() => handleSelectTableType("outside")}
-                                variant={
-                                    selected === "outside"
-                                        ? "coffeePrimary"
-                                        : "coffeeOutline"
-                                }
-                                className="w-40 rounded rounded-l-full"
-                                type="button"
-                            >
-                                <h1 className="text-2xl font-bold">Outside</h1>
-                            </Button>
-                            <Button
-                                onClick={() => handleSelectTableType("inside")}
-                                variant={
-                                    selected === "inside"
-                                        ? "coffeePrimary"
-                                        : "coffeeOutline"
-                                }
-                                className="w-40 rounded rounded-r-full"
-                                type="button"
-                            >
-                                <h1 className="text-2xl font-bold">Inside</h1>
-                            </Button>
                         </div>
 
                         <div className="mt-10 rounded-lg border-2 border-gray-300 px-4 py-6">
@@ -126,14 +130,12 @@ function ReservationPage() {
                                     </div>
                                 </div>
                                 <div className="col-span-1 flex flex-col gap-4">
-                                    <SelectWithLabel<insertPreOrderSchemaType>
-                                        fieldTitle="โต๊ะที่"
-                                        nameInSchema="tableNumber"
-                                        placeholder="กรุณาเลือกโต๊ะที่"
-                                        inputClassName="w-full"
-                                        tableType={selected}
+                                    <InputWithLabel
+                                        fieldTitle="ผู้ใหญ่"
+                                        nameInSchema="adultNumber"
+                                        placeholder="กรุณากรอกจำนวนผู้ใหญ่"
+                                        type="number"
                                     />
-
                                     <div className="mt-4">
                                         <InputWithLabel
                                             fieldTitle="เบอร์โทรศัพท์"
@@ -144,21 +146,12 @@ function ReservationPage() {
                                     </div>
                                 </div>
                                 <div className="col-span-1 flex flex-col gap-4">
-                                    <div className="flex items-center gap-2">
-                                        <InputWithLabel
-                                            fieldTitle="ผู้ใหญ่"
-                                            nameInSchema="adultNumber"
-                                            placeholder="กรุณากรอกจำนวนผู้ใหญ่"
-                                            type="number"
-                                        />
-
-                                        <InputWithLabel
-                                            fieldTitle="เด็ก"
-                                            nameInSchema="childNumber"
-                                            placeholder="กรุณากรอกจำนวนเด็ก"
-                                            type="number"
-                                        />
-                                    </div>
+                                    <InputWithLabel
+                                        fieldTitle="เด็ก"
+                                        nameInSchema="childNumber"
+                                        placeholder="กรุณากรอกจำนวนเด็ก"
+                                        type="number"
+                                    />
 
                                     <div className="mt-4">
                                         <InputWithLabel
@@ -172,6 +165,12 @@ function ReservationPage() {
                             </div>
                         </div>
 
+                        <div className="mt-10 border-t border-gray-300" />
+
+                        <TableReservation
+                            arrayTable={arrayTable}
+                            setArrayTable={setArrayTable}
+                        />
                         <div className="mt-10 border-t border-gray-300" />
 
                         <div className="mt-10">

@@ -131,10 +131,11 @@ color palette:
 
 @layer base {
     * {
+        scroll-behavior: smooth;
         @apply border-border outline-ring/50;
     }
     body {
-        font-family: "Inter", sans-serif;
+        font-family: "Kanit", sans-serif;
         @apply bg-background text-foreground;
     }
 
