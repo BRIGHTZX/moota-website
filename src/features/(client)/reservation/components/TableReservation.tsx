@@ -23,7 +23,8 @@ function TableReservation({
         (table: selectTablesSchemaType) => table.tableType === "outside"
     );
 
-    const handleSelectTable = (tableId: string) => {
+    const handleSelectTable = (tableId: string, isAvailable: boolean) => {
+        if (!isAvailable) return;
         if (arrayTable.includes(tableId)) {
             setArrayTable(arrayTable.filter((t) => t !== tableId));
         } else {
@@ -52,14 +53,13 @@ function TableReservation({
                                     .map((table: selectTablesSchemaType) => (
                                         <TableCard
                                             key={table.id}
+                                            tableId={table.id}
                                             tableNumber={table.tableNumber}
                                             isAvailable={table.isAvailable}
                                             isSelected={arrayTable.includes(
                                                 table.id
                                             )}
-                                            onSelect={() =>
-                                                handleSelectTable(table.id)
-                                            }
+                                            onSelect={handleSelectTable}
                                         />
                                     ))}
                         </div>
@@ -74,8 +74,9 @@ function TableReservation({
                                     .map((table: selectTablesSchemaType) => (
                                         <TableCard
                                             key={table.id}
+                                            tableId={table.id}
                                             tableNumber={table.tableNumber}
-                                            isAvailable={true}
+                                            isAvailable={table.isAvailable}
                                             isSelected={arrayTable.includes(
                                                 table.id
                                             )}
@@ -101,8 +102,9 @@ function TableReservation({
                                 (table: selectTablesSchemaType) => (
                                     <TableCard
                                         key={table.id}
+                                        tableId={table.id}
                                         tableNumber={table.tableNumber}
-                                        isAvailable={true}
+                                        isAvailable={table.isAvailable}
                                         isSelected={arrayTable.includes(
                                             table.id
                                         )}
@@ -120,13 +122,15 @@ function TableReservation({
 export default TableReservation;
 
 type TableCardProps = {
+    tableId: string;
     tableNumber: string;
     isAvailable: boolean;
     isSelected: boolean;
-    onSelect: (tableNumber: string) => void;
+    onSelect: (tableId: string, isAvailable: boolean) => void;
 };
 
 const TableCard = ({
+    tableId,
     tableNumber,
     isAvailable,
     isSelected,
@@ -134,10 +138,10 @@ const TableCard = ({
 }: TableCardProps) => {
     return (
         <div
-            onClick={() => onSelect(tableNumber)}
+            onClick={() => onSelect(tableId, isAvailable)}
             className={cn(
                 "flex w-[50px] h-[40px] flex-col items-center justify-center border border-gray-300 rounded-lg cursor-pointer transition",
-                !isAvailable && "bg-red-300",
+                !isAvailable && "bg-red-400 opacity-50 cursor-not-allowed",
                 isAvailable &&
                     (isSelected ? "bg-coffee-dark text-white" : "bg-white")
             )}

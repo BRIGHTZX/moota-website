@@ -3,6 +3,7 @@ import { table as TableSchema } from "./table";
 
 export const preOrder = pgTable("pre_order", {
     id: uuid("id").primaryKey().defaultRandom(),
+    preOrderNumber: text("pre_order_number").notNull(),
     userKindeId: text("user_kinde_id").notNull(),
     customerName: text("customer_name").notNull(),
     phoneNumber: text("phone_number").notNull(),
