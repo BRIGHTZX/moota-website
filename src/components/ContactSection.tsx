@@ -5,18 +5,18 @@ import { Button } from "./ui/button";
 
 function ContactSection() {
     return (
-        <div className="bg-gradient-to-t from-[#E7DED0] to-[#ffffff] py-20 shadow-lg">
+        <div className="bg-gradient-to-t from-[#E7DED0] to-[#ffffff] py-10 md:py-20 shadow-lg">
             <HeaderSection
                 id="contact"
                 icon={<PhoneIcon className="size-6" />}
                 title="Contact Us"
                 header="Get in Touch"
-                description="We're here to help you with any questions or reservations. Contact us today!"
+                description="เราพร้อมช่วยเหลือคุณในทุกคำถามหรือการจอง ติดต่อเราได้เลยวันนี้!"
             />
 
             <div className="container mx-auto">
-                <div className="flex gap-10">
-                    <div className="flex-1">
+                <div className="flex flex-col md:flex-row gap-10">
+                    <div className="flex-1 px-4 md:px-0">
                         <div className="relative min-h-[400px] w-full rounded-lg border bg-gradient-to-t from-[#E7DED0] to-[#ffffff] shadow-lg">
                             <MapPinIcon className="text-orange-primary absolute top-1/2 left-1/2 size-20 -translate-x-1/2 -translate-y-1/2" />
                             <div className="absolute right-0 bottom-4 w-full">
@@ -37,7 +37,7 @@ function ContactSection() {
                         </div>
                     </div>
                     <div className="flex-1">
-                        <div className="flex h-full w-full flex-col justify-between gap-4">
+                        <div className="flex h-full w-full flex-col px-4 md:px-0 justify-between gap-4">
                             <ContactCard
                                 icon={
                                     <PhoneIcon className="size-6 text-white" />
@@ -63,7 +63,7 @@ function ContactSection() {
                                     className="w-full rounded-full py-6"
                                     variant="coffeePrimary"
                                 >
-                                    <h1 className="text-2xl font-bold">
+                                    <h1 className="text-lg md:text-2xl font-bold">
                                         Reservation Now
                                     </h1>
                                 </Button>
@@ -71,7 +71,7 @@ function ContactSection() {
                                     className="w-full rounded-full py-6"
                                     variant="coffeeOutline"
                                 >
-                                    <h1 className="text-2xl font-bold">
+                                    <h1 className="text-lg md:text-2xl font-bold">
                                         Contact Us
                                     </h1>
                                 </Button>
@@ -99,7 +99,7 @@ const ContactCard = ({ icon, title, description }: ContactCardProps) => {
                 {icon}
             </div>
             <div className="flex flex-col gap-2">
-                <h3 className="text-2xl font-bold">{title}</h3>
+                <h3 className="text-lg md:text-2xl font-bold">{title}</h3>
                 <p className="text-sm text-gray-500">{description}</p>
             </div>
         </div>

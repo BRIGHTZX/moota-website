@@ -52,7 +52,7 @@ function ReservationPage() {
     };
 
     return (
-        <div className="min-h-screen w-screen">
+        <div className="min-h-screen w-full px-4 md:px-0">
             <AlertDialogCustom
                 open={openAlertDialog}
                 setOpen={setOpenAlertDialog}
@@ -104,62 +104,61 @@ function ReservationPage() {
                                         }
                                     }}
                                 >
-                                    <h1 className="text-lg font-bold">
-                                        SUBMIT
-                                    </h1>
+                                    <p className="text-lg font-bold">
+                                        จองตาราง
+                                    </p>
                                 </Button>
                             </div>
                         </div>
 
                         <div className="mt-10 rounded-lg border-2 border-gray-300 px-4 py-6">
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="col-span-1 flex flex-col gap-4">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                                <div className="col-span-1">
                                     <DateTimeWithLabel<insertPreOrderSchemaType>
                                         timeNameInSchema="reservationTime"
                                         dateNameInSchema="reservationDate"
                                     />
-                                    <div className="mt-4">
-                                        <InputWithLabel
-                                            fieldTitle="ชื่อผู้จอง"
-                                            nameInSchema="customerName"
-                                            placeholder="กรุณากรอกชื่อผู้จอง"
-                                            type="text"
-                                            inputClassName="w-full"
-                                        />
-                                    </div>
                                 </div>
-                                <div className="col-span-1 flex flex-col gap-4">
+                                <div className="col-span-1">
                                     <InputWithLabel
                                         fieldTitle="ผู้ใหญ่"
                                         nameInSchema="adultNumber"
                                         placeholder="กรุณากรอกจำนวนผู้ใหญ่"
                                         type="number"
                                     />
-                                    <div className="mt-4">
-                                        <InputWithLabel
-                                            fieldTitle="เบอร์โทรศัพท์"
-                                            nameInSchema="phoneNumber"
-                                            placeholder="กรุณากรอกเบอร์โทรศัพท์"
-                                            type="number"
-                                        />
-                                    </div>
                                 </div>
-                                <div className="col-span-1 flex flex-col gap-4">
+                                <div className="col-span-1">
                                     <InputWithLabel
                                         fieldTitle="เด็ก"
                                         nameInSchema="childNumber"
                                         placeholder="กรุณากรอกจำนวนเด็ก"
                                         type="number"
                                     />
-
-                                    <div className="mt-4">
-                                        <InputWithLabel
-                                            fieldTitle="อีเมล"
-                                            nameInSchema="email"
-                                            placeholder="กรุณากรอกอีเมล (ถ้ามี)"
-                                            type="email"
-                                        />
-                                    </div>
+                                </div>
+                                <div className="col-span-1">
+                                    <InputWithLabel
+                                        fieldTitle="ชื่อผู้จอง"
+                                        nameInSchema="customerName"
+                                        placeholder="กรุณากรอกชื่อผู้จอง"
+                                        type="text"
+                                        inputClassName="w-full"
+                                    />
+                                </div>
+                                <div className="col-span-1">
+                                    <InputWithLabel
+                                        fieldTitle="เบอร์โทรศัพท์"
+                                        nameInSchema="phoneNumber"
+                                        placeholder="กรุณากรอกเบอร์โทรศัพท์"
+                                        type="number"
+                                    />
+                                </div>
+                                <div className="col-span-1">
+                                    <InputWithLabel
+                                        fieldTitle="อีเมล"
+                                        nameInSchema="email"
+                                        placeholder="กรุณากรอกอีเมล (ถ้ามี)"
+                                        type="email"
+                                    />
                                 </div>
                             </div>
                         </div>

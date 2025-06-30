@@ -23,8 +23,8 @@ type ReservationDetailProps = {
 
 function ReservationDetail({ reservation }: ReservationDetailProps) {
     return (
-        <div className="flex h-fit justify-end rounded-xl">
-            <div className="w-8/10 overflow-hidden rounded-xl border border-gray-300">
+        <div className="flex h-fit rounded-xl w-full">
+            <div className="w-full overflow-hidden rounded-xl border border-gray-300">
                 <div className="flex items-center justify-center bg-gray-300 p-4">
                     <p className="text-2xl font-bold">
                         ข้อมูลรายละเอียดการจอง{" "}

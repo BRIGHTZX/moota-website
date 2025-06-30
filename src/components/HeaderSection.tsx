@@ -26,10 +26,10 @@ function HeaderSection({
                 </div>
             </div>
 
-            <h2 className="text-center text-6xl font-bold text-coffee-dark">
+            <h1 className="text-center text-5xl md:text-7xl font-bold text-black">
                 {header}
-            </h2>
-            <p className="mx-auto mt-4 w-[80%] text-center text-2xl text-coffee-brown">
+            </h1>
+            <p className="mt-8 lg:w-3/4 mx-auto w-3/4 text-center text-sm md:text-xl lg:text-2xl text-coffee-brown">
                 {description}
             </p>
         </div>

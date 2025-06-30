@@ -21,7 +21,7 @@ function CommentCard({ comment }: CommentCardProps) {
                     <StarIcon className="size-4 fill-yellow-500" />
                 </div>
 
-                <div className="w-2/3 text-center text-2xl">
+                <div className="w-2/3 text-center text-md md:text-2xl">
                     <p className="text-coffee-dark">{comment}</p>
                 </div>
             </div>

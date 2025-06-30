@@ -24,7 +24,7 @@ type ProfileType = {
 export function ProfileNavbar({ currentUser, isAdmin }: ProfileType) {
     return (
         <DropdownMenu modal={false}>
-            <DropdownMenuTrigger className="rounded-full border border-gray-200 focus-visible:ring-0">
+            <DropdownMenuTrigger className="rounded-full border border-gray-200 focus-visible:ring-0 max-sm:hidden">
                 <div className="size-10 cursor-pointer overflow-hidden rounded-full">
                     <Image
                         width={40}
@@ -40,21 +40,16 @@ export function ProfileNavbar({ currentUser, isAdmin }: ProfileType) {
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent sideOffset={8} className="z-[60]">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
                 {isAdmin && (
                     <>
                         <DropdownMenuItem asChild>
                             <Link href={"/admin/products"}>Only Admin</Link>
                         </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                     </>
                 )}
                 <DropdownMenuItem asChild>
                     <Link href={"/orders"}>My Orders</Link>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem asChild>
-                    <Link href={"/profile"}>Profile</Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>

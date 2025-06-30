@@ -7,7 +7,7 @@ type BadgeCustomProps = {
 
 function BadgeCustom({ icon, text }: BadgeCustomProps) {
     return (
-        <div className="flex items-center gap-2 rounded-full border bg-coffee-beige px-4 py-2">
+        <div className="hidden  md:flex items-center gap-2 rounded-full border bg-coffee-beige px-4 py-2">
             <div className="text-coffee-dark rounded-full p-1 bg-coffee-light">
                 {icon}
             </div>

@@ -75,13 +75,13 @@ function ReservationInfoPage() {
         });
     };
     return (
-        <div className="w-full overflow-x-hidden">
-            <div className="container mx-auto pt-20 pb-20">
+        <div className="w-full overflow-x-hidden px-4 md:px-0">
+            <div className="container mx-auto py-30">
                 <div className="flex items-center justify-between gap-10">
                     <Button
                         asChild
                         variant="outline"
-                        className="flex items-center gap-2 py-6 text-lg"
+                        className="flex items-center gap-2 py-6 text-sm md:text-lg"
                         disabled={isLoading}
                     >
                         <Link href="/reservation">
@@ -90,7 +90,7 @@ function ReservationInfoPage() {
                         </Link>
                     </Button>
                     {/* {!isPaid && ( */}
-                    {paymentImage && (
+                    {paymentImage && reservationData?.paymentImage === null && (
                         <div>
                             <Button
                                 variant="coffeePrimary"
@@ -109,8 +109,8 @@ function ReservationInfoPage() {
                 </div>
                 <div className="mt-4 flex items-center gap-10">
                     <div className="flex items-center gap-2">
-                        <h1 className="text-5xl">Order : </h1>
-                        <p className="text-5xl">
+                        <h1 className="text-2xl md:text-5xl">Order : </h1>
+                        <p className="text-2xl md:text-5xl">
                             {reservationData?.preOrderNumber}
                         </p>
                     </div>
@@ -129,7 +129,7 @@ function ReservationInfoPage() {
                 </div>
 
                 <div className="mt-4 flex items-center gap-4">
-                    <p className="text-lg">สั่งจองวันที่ : </p>
+                    <p className="text-sm md:text-lg">สั่งจองวันที่ : </p>
                     <p>
                         {reservationData?.createdAt
                             ? new Date(
@@ -139,7 +139,7 @@ function ReservationInfoPage() {
                     </p>
                 </div>
 
-                <div className="mt-10 flex gap-10">
+                <div className="mt-10 flex flex-col md:flex-row gap-10">
                     <div className="flex-1">
                         <ReservationDetail
                             reservation={{
@@ -164,7 +164,7 @@ function ReservationInfoPage() {
                         />
                     </div>
                     <div className="flex-1">
-                        <div className="flex size-full h-full w-[80%] flex-col justify-start overflow-hidden rounded-xl border border-gray-300">
+                        <div className="flex size-full h-full  flex-col  overflow-hidden rounded-xl border border-gray-300">
                             <div className="bg-gray-300 p-4">
                                 <h1 className="text-center text-2xl font-bold">
                                     ยอดการชำระ

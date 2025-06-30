@@ -43,15 +43,15 @@ function SignupPage() {
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-coffee-light">
             <div className="flex size-full flex-col items-center justify-center">
-                <div className="relative w-1/2 rounded-xl border-2 border-coffee-dark bg-coffee-brown p-10">
+                <div className="relative w-[90%] sm:w-2/3 md:w-1/2 rounded-xl border-2 border-coffee-dark bg-coffee-brown p-10">
                     <div className="absolute -top-20 left-1/2 -translate-x-1/2 rounded-full bg-coffee-dark p-4">
                         <UserIcon className="size-20 text-coffee-light" />
                     </div>
                     <div className="text-center">
-                        <h1 className="mt-10 text-5xl font-bold text-coffee-light">
+                        <h1 className="mt-10 text-3xl sm:text-5xl font-bold text-coffee-light">
                             LOG IN 🎉
                         </h1>
-                        <p className="mt-4 text-sm text-coffee-light">
+                        <p className="mt-4 text-xs sm:text-sm text-coffee-light">
                             Please enter your email and password to sign in.
                         </p>
                     </div>

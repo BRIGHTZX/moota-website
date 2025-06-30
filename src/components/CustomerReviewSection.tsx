@@ -14,19 +14,19 @@ function CustomerReviewSection() {
                 icon={<Star className="size-6" />}
                 title="Customer Reviews"
                 header="What Our Guests Say"
-                description="Our guests love our authentic Thai cuisine and warm hospitality. See what they have to say about their experience at Moo Krata."
+                description="ลูกค้าของเราประทับใจในรสชาติอาหารไทยแท้ และการบริการที่อบอุ่น มาดูกันว่าพวกเขาพูดถึงประสบการณ์ที่ Moo Krata ว่าอย่างไรบ้าง"
             />
 
-            <div className="container mx-auto">
+            <div className="container mx-auto px-4 md:px-0">
                 <div>
                     {comments === 1 && (
-                        <CommentCard comment="The most authentic Thai BBQ experience I've had outside of Thailand! The meat quality is exceptional and the traditional setup creates such a wonderful atmosphere." />
+                        <CommentCard comment="ประสบการณ์หมูกระทะที่แท้จริงที่สุดเท่าที่เคยเจอมา นอกประเทศไทย! เนื้อคุณภาพเยี่ยม และบรรยากาศการกินแบบดั้งเดิมทำให้รู้สึกอบอุ่นมาก" />
                     )}
                     {comments === 2 && (
-                        <CommentCard comment="Moo Krata Palace has become our family's go-to spot for special occasions. The staff is incredibly friendly and the flavors are absolutely incredible!" />
+                        <CommentCard comment="Moo Krata Palace กลายเป็นร้านประจำของครอบครัวเราในทุกโอกาสพิเศษ พนักงานเป็นกันเองมาก และรสชาติอาหารอร่อยแบบสุดๆ!" />
                     )}
                     {comments === 3 && (
-                        <CommentCard comment="I've been coming here for months and it never disappoints. The fresh ingredients, authentic seasonings, and cozy atmosphere make every visit special." />
+                        <CommentCard comment="มาร้านนี้หลายเดือนแล้ว ไม่เคยผิดหวังเลย วัตถุดิบสดใหม่ เครื่องปรุงต้นตำรับ และบรรยากาศที่อบอุ่น ทำให้ทุกครั้งที่มากินรู้สึกพิเศษ" />
                     )}
                 </div>
                 <div className="mt-4 flex items-center justify-between gap-4">
@@ -34,7 +34,7 @@ function CustomerReviewSection() {
                         onClick={() => setComments(comments - 1)}
                         disabled={comments === 1}
                         variant="coffeeOutline"
-                        className="rounded-full px-10"
+                        className="rounded-full px-10 text-sm md:text-base"
                     >
                         Prev
                     </Button>
@@ -42,7 +42,7 @@ function CustomerReviewSection() {
                         onClick={() => setComments(comments + 1)}
                         disabled={comments === 3}
                         variant="coffeeOutline"
-                        className="rounded-full px-10"
+                        className="rounded-full px-10 text-sm md:text-base"
                     >
                         Next
                     </Button>

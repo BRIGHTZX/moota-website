@@ -11,22 +11,22 @@ function HeroSection() {
             id="home"
             className="h-full w-screen overflow-x-hidden bg-coffee-light"
         >
-            <div className="container mx-auto flex h-screen w-screen">
+            <div className="container mx-auto pt-20 lg:pt-0 flex flex-col lg:flex-row h-full lg:h-screen w-screen">
                 <div className="flex flex-1 items-center">
-                    <div className="flex flex-col items-start justify-center">
-                        <h1 className="text-left text-8xl font-bold text-black">
+                    <div className="flex flex-col lg:items-start justify-center">
+                        <h1 className="text-center lg:text-left text-5xl md:text-8xl font-bold text-black">
                             Authentic <br />
                             <span className="text-coffee-dark">Thai BBQ</span>
                             <br /> Experience
                         </h1>
 
-                        <p className="mt-4 text-left text-2xl text-coffee-brown">
-                            Savor the traditional flavors of Moo Krata - premium
-                            meats and fresh vegetables to perfection at your
-                            table
+                        <p className="mt-4 lg:w-full mx-auto md:w-2/3 w-1/2 text-center lg:text-left text-sm md:text-xl lg:text-2xl text-coffee-brown">
+                            ลิ้มลองรสชาติหมูกระทะแท้ๆ กับเนื้อชั้นดี ผักสด
+                            และน้ำจิ้มสูตรพิเศษ ย่างเองบนเตาร้อน
+                            เสิร์ฟความฟินถึงโต๊ะคุณ
                         </p>
 
-                        <div className="mt-4 flex items-center gap-2">
+                        <div className="mt-4 flex items-center justify-center lg:justify-start gap-2">
                             <BadgeCustom
                                 icon={<StarIcon />}
                                 text="4.9/5 Rating"
@@ -41,14 +41,14 @@ function HeroSection() {
                             />
                         </div>
 
-                        <div className="mt-10">
+                        <div className="mt-10 flex justify-center lg:justify-start">
                             <Button
                                 asChild
                                 variant="coffeePrimary"
                                 className="rounded-full px-10 py-6"
                             >
                                 <Link href="/reservation">
-                                    <h1 className="text-2xl font-bold">
+                                    <h1 className="text-lg md:text-2xl font-bold">
                                         Reserve Your Table
                                     </h1>
                                 </Link>
@@ -56,8 +56,8 @@ function HeroSection() {
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-1 items-center justify-center">
-                    <div className="h-[600px] w-[500px] rounded-lg">
+                <div className="flex lg:flex-1 items-center my-10 lg:my-0 justify-center">
+                    <div className="h-[300px] lg:h-[600px] w-3/4 lg:w-[500px] rounded-lg">
                         <Image
                             src="/moota-1.webp"
                             alt="moota"

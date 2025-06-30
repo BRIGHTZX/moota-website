@@ -5,7 +5,7 @@ import HeroSection from "@/components/HeroSection";
 
 function HomePage() {
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen overflow-x-hidden bg-white">
             <HeroSection />
             <AboutSection />
             <CustomerReviewSection />
