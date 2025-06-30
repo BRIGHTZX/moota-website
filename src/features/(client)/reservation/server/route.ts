@@ -12,6 +12,7 @@ import { table as TalbesTable } from "@/database/schema/table";
 import { z } from "zod";
 import { generateOrderNumber } from "@/lib/generateOrderNumber";
 import { and, eq } from "drizzle-orm";
+import { connectCloudinary } from "@/lib/cloudinary";
 
 const reservationRoute = new Hono()
     .get("/:preOrderId", getCurrentUser, async (c) => {
@@ -39,6 +40,7 @@ const reservationRoute = new Hono()
                         reservationTime: PreOrderTable.reservationTime,
                         status: PreOrderTable.status,
                         paymentStatus: PreOrderTable.paymentStatus,
+                        paymentImage: PreOrderTable.paymentImage,
                         createdAt: PreOrderTable.createdAt,
                     },
                     table: {
@@ -124,7 +126,7 @@ const reservationRoute = new Hono()
                             userKindeId: user.id.toString(),
                             customerName,
                             phoneNumber,
-                            email,
+                            email: email === "" ? null : email,
                             adultNumber: adultNumber,
                             childNumber: childNumber,
                             status: "pending",
@@ -149,6 +151,79 @@ const reservationRoute = new Hono()
                     {
                         message: "Reservation created successfully",
                         result: preOrderReturn,
+                    },
+                    200
+                );
+            } catch (error) {
+                console.log(error);
+                return c.json({ message: "Internal server error", error }, 500);
+            }
+        }
+    )
+    .patch(
+        "/:preOrderId",
+        getCurrentUser,
+        zValidator(
+            "form",
+            z.object({
+                paymentImage: z.any(),
+            })
+        ),
+        async (c) => {
+            const user = c.get("user");
+
+            if (!user) {
+                return c.json({ message: "Unauthorized" }, 401);
+            }
+
+            try {
+                const preOrderId = c.req.param("preOrderId");
+                const { paymentImage } = c.req.valid("form");
+
+                const cloundinaryInstance = await connectCloudinary();
+
+                const imageUrl = await (async (): Promise<string> => {
+                    if (paymentImage instanceof File) {
+                        const arrayBuffer = await paymentImage.arrayBuffer();
+                        const buffer = Buffer.from(arrayBuffer);
+                        const result =
+                            await cloundinaryInstance.uploader.upload(
+                                "data:" +
+                                    paymentImage.type +
+                                    ";base64," +
+                                    buffer.toString("base64"),
+                                {
+                                    resource_type: "image",
+                                }
+                            );
+                        return result.secure_url;
+                    } else if (paymentImage && paymentImage.path) {
+                        const result =
+                            await cloundinaryInstance.uploader.upload(
+                                paymentImage.path,
+                                {
+                                    resource_type: "image",
+                                }
+                            );
+                        return result.secure_url;
+                    }
+
+                    throw new Error("รูปภาพหลักฐานการชำระเงินไม่ถูกต้อง");
+                })();
+
+                await db
+                    .update(PreOrderTable)
+                    .set({ paymentStatus: "paid", paymentImage: imageUrl })
+                    .where(
+                        and(
+                            eq(PreOrderTable.id, preOrderId),
+                            eq(PreOrderTable.userKindeId, user.id.toString())
+                        )
+                    );
+
+                return c.json(
+                    {
+                        message: "Reservation updated successfully",
                     },
                     200
                 );

@@ -15,6 +15,7 @@ export const preOrder = pgTable("pre_order", {
 
     status: text("status").notNull(),
     paymentStatus: text("payment_status").notNull(),
+    paymentImage: text("payment_image"),
 
     reservationDate: timestamp("reservation_date").notNull(),
     reservationTime: text("reservation_time").notNull(),

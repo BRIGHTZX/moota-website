@@ -1,32 +1,88 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useGetReservation } from "@/features/(client)/reservation/api/use-get-reservation";
+import { useUpdatePaymentImage } from "@/features/(client)/reservation/api/use-update-paymentImage";
+import ReservationDetail from "@/features/(client)/reservation/components/ReservationDetail";
+import ReservationStatus from "@/features/(client)/reservation/components/ReservationStatus";
+import TextInfo from "@/features/(client)/reservation/components/TextInfo";
 import { useGetPreOrderId } from "@/features/(client)/reservation/hooks/get-preOrderId";
-import { ArrowLeftIcon, CheckIcon, PaperclipIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ArrowLeftIcon, CheckIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 
 function ReservationInfoPage() {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [paymentImage, setPaymentImage] = useState<File | null>(null);
+    console.log(paymentImage);
     const preOrderId = useGetPreOrderId();
     const {
         data: reservation,
-        isLoading,
-        isError,
+        isLoading: isLoadingReservation,
+        isError: isErrorReservation,
     } = useGetReservation(preOrderId);
 
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error</div>;
+    const {
+        mutate: updatePaymentImage,
+        isPending: isUpdatingPaymentImage,
+        isError: isUpdatePaymentImageError,
+    } = useUpdatePaymentImage(preOrderId);
+
+    if (isLoadingReservation) return <div>Loading...</div>;
+    if (isErrorReservation || isUpdatePaymentImageError)
+        return <div>Error</div>;
+
+    const isLoading = isLoadingReservation || isUpdatingPaymentImage;
 
     const reservationData = reservation?.result;
 
+    const handleUploadPaymentImage = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setPaymentImage(file);
+        }
+    };
+
+    const handleDeletePaymentImage = () => {
+        setPaymentImage(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
+    const handleConfirmPayment = () => {
+        if (!paymentImage) {
+            toast.error("กรุณาอัพโหลกฐานการชำระเงิน");
+            return;
+        }
+
+        updatePaymentImage({
+            form: {
+                paymentImage: paymentImage,
+            },
+            param: {
+                preOrderId,
+            },
+        });
+    };
     return (
-        <div className="min-h-screen w-screen">
-            <div className="container mx-auto pt-30 pb-20">
+        <div className="w-full overflow-x-hidden">
+            <div className="container mx-auto pt-20 pb-20">
                 <div className="flex items-center justify-between gap-10">
                     <Button
                         asChild
                         variant="outline"
                         className="flex items-center gap-2 py-6 text-lg"
+                        disabled={isLoading}
                     >
                         <Link href="/reservation">
                             <ArrowLeftIcon className="size-4" />
@@ -34,12 +90,21 @@ function ReservationInfoPage() {
                         </Link>
                     </Button>
                     {/* {!isPaid && ( */}
-                    <div>
-                        <Button variant="coffeePrimary" className="py-6">
-                            <CheckIcon className="size-4" />
-                            <span className="text-xl">ยืนยันการจ่ายเงิน</span>
-                        </Button>
-                    </div>
+                    {paymentImage && (
+                        <div>
+                            <Button
+                                variant="coffeePrimary"
+                                className="py-6"
+                                disabled={isLoading}
+                                onClick={handleConfirmPayment}
+                            >
+                                <CheckIcon className="size-4" />
+                                <span className="text-xl">
+                                    ยืนยันการจ่ายเงิน
+                                </span>
+                            </Button>
+                        </div>
+                    )}
                     {/* )} */}
                 </div>
                 <div className="mt-4 flex items-center gap-10">
@@ -49,6 +114,18 @@ function ReservationInfoPage() {
                             {reservationData?.preOrderNumber}
                         </p>
                     </div>
+
+                    <ReservationStatus
+                        status={
+                            reservationData?.status as
+                                | "pending"
+                                | "confirmed"
+                                | "cancelled"
+                        }
+                        paymentStatus={
+                            reservationData?.paymentStatus as "pending" | "paid"
+                        }
+                    />
                 </div>
 
                 <div className="mt-4 flex items-center gap-4">
@@ -64,102 +141,27 @@ function ReservationInfoPage() {
 
                 <div className="mt-10 flex gap-10">
                     <div className="flex-1">
-                        <div className="flex size-full justify-end rounded-xl">
-                            <div className="w-8/10 overflow-hidden rounded-xl border border-gray-300">
-                                <div className="flex items-center justify-center bg-gray-300 p-4">
-                                    <p className="text-2xl font-bold">
-                                        ข้อมูลรายละเอียดการจอง{" "}
-                                    </p>
-                                    <span className="ml-2">
-                                        <PaperclipIcon className="size-6" />
-                                    </span>
-                                </div>
-
-                                <div className="mt-10 flex flex-col gap-4 px-4 pb-10">
-                                    <TextInfo
-                                        label="วันที่ทำการจอง :"
-                                        value={
-                                            reservationData?.reservationDate
-                                                ? new Date(
-                                                      reservationData.reservationDate
-                                                  ).toLocaleDateString()
-                                                : "วันที่ไม่ระบุ"
-                                        }
-                                    />
-
-                                    <TextInfo
-                                        label="เวลาที่ทำการจอง :"
-                                        value={
-                                            reservationData?.reservationTime
-                                                ? reservationData.reservationTime
-                                                : "เวลาไม่ระบุ"
-                                        }
-                                    />
-
-                                    <TextInfo
-                                        label="จำนวนผู้ใหญ่ :"
-                                        value={
-                                            reservationData?.adultNumber
-                                                ? String(
-                                                      reservationData.adultNumber
-                                                  )
-                                                : "จำนวนไม่ระบุ"
-                                        }
-                                    />
-
-                                    <TextInfo
-                                        label="จำนวนผู้เด็ก :"
-                                        value={
-                                            reservationData?.childNumber
-                                                ? String(
-                                                      reservationData.childNumber
-                                                  )
-                                                : "จำนวนไม่ระบุ"
-                                        }
-                                    />
-
-                                    <TextInfo
-                                        label="หมายเลขโต๊ะที่ทำการจอง :"
-                                        value={
-                                            reservationData?.table
-                                                ? reservationData.table
-                                                      .map(
-                                                          (table) =>
-                                                              table.tableNumber
-                                                      )
-                                                      .join(", ")
-                                                : "โต๊ะไม่ระบุ"
-                                        }
-                                    />
-
-                                    <TextInfo
-                                        label="ชื่อผู้จอง :"
-                                        value={
-                                            reservationData?.customerName
-                                                ? reservationData.customerName
-                                                : "ชื่อไม่ระบุ"
-                                        }
-                                    />
-
-                                    <TextInfo
-                                        label="เบอร์โทรศัพท์ :"
-                                        value={
-                                            reservationData?.phoneNumber
-                                                ? reservationData.phoneNumber
-                                                : "เบอร์โทรศัพท์ไม่ระบุ"
-                                        }
-                                    />
-
-                                    <TextInfo
-                                        label="อีเมล :"
-                                        value={
-                                            reservationData?.email ??
-                                            "อีเมลไม่ระบุ"
-                                        }
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        <ReservationDetail
+                            reservation={{
+                                id: reservationData?.id ?? "-",
+                                preOrderNumber:
+                                    reservationData?.preOrderNumber ?? "-",
+                                customerName:
+                                    reservationData?.customerName ?? "-",
+                                phoneNumber:
+                                    reservationData?.phoneNumber ?? "-",
+                                email: reservationData?.email ?? "-",
+                                adultNumber: reservationData?.adultNumber ?? 0,
+                                childNumber: reservationData?.childNumber ?? 0,
+                                reservationDate:
+                                    reservationData?.reservationDate ?? "-",
+                                reservationTime:
+                                    reservationData?.reservationTime ?? "-",
+                                table: reservationData?.table ?? [],
+                                paymentImage:
+                                    reservationData?.paymentImage ?? "-",
+                            }}
+                        />
                     </div>
                     <div className="flex-1">
                         <div className="flex size-full h-full w-[80%] flex-col justify-start overflow-hidden rounded-xl border border-gray-300">
@@ -188,6 +190,72 @@ function ReservationInfoPage() {
                                             : "ค่าจองไม่ระบุ"
                                     }
                                 />
+
+                                {!paymentImage &&
+                                    !reservationData?.paymentImage && (
+                                        <Button
+                                            variant="coffeePrimary"
+                                            className="w-full"
+                                            onClick={handleUploadPaymentImage}
+                                            disabled={isLoading}
+                                        >
+                                            Upload หลักฐานการชำระเงิน
+                                        </Button>
+                                    )}
+
+                                <Input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    hidden
+                                    onChange={handleFileChange}
+                                />
+
+                                {/* Section show payment image */}
+                                {paymentImage &&
+                                    !reservationData?.paymentImage && (
+                                        <div className="flex flex-col gap-4">
+                                            <p className="text-lg font-bold">
+                                                หลักฐานการชำระเงิน
+                                            </p>
+                                            <div className="relative border overflow-hidden rounded-lg h-[300px] w-full flex flex-col gap-2">
+                                                <Image
+                                                    fill
+                                                    className={cn(
+                                                        "object-cover"
+                                                    )}
+                                                    src={URL.createObjectURL(
+                                                        paymentImage
+                                                    )}
+                                                    alt="payment-image"
+                                                />
+
+                                                <Button
+                                                    disabled={isLoading}
+                                                    onClick={
+                                                        handleDeletePaymentImage
+                                                    }
+                                                    className="absolute top-4 hover:bg-gray-100 right-4 border w-fit rounded-lg bg-white"
+                                                >
+                                                    <XIcon className="size-6 text-red-500" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                {reservationData?.paymentImage && (
+                                    <div className="flex flex-col gap-4">
+                                        <p className="text-lg font-bold">
+                                            หลักฐานการชำระเงิน
+                                        </p>
+                                        <Image
+                                            src={reservationData.paymentImage}
+                                            alt="payment-image"
+                                            width={1000}
+                                            height={1000}
+                                            className="h-full w-full object-contain"
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -198,12 +266,3 @@ function ReservationInfoPage() {
 }
 
 export default ReservationInfoPage;
-
-const TextInfo = ({ label, value }: { label: string; value: string }) => {
-    return (
-        <div className="flex items-center">
-            <p className="text-lg font-bold">{label}</p>
-            <p className="ml-4">{value}</p>
-        </div>
-    );
-};
