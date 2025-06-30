@@ -23,8 +23,8 @@ function ReservationPage() {
     const [arrayTable, setArrayTable] = useState<string[]>([]);
     const {
         mutate: createReservation,
-        // isPending: isCreateReservationPending,
-        // isError: isCreateReservationError,
+        isPending: isCreateReservationPending,
+        isError: isCreateReservationError,
     } = useCreateReservation();
     const form = useForm<insertPreOrderSchemaType>({
         mode: "onChange",
@@ -51,6 +51,16 @@ function ReservationPage() {
         });
     };
 
+    if (isCreateReservationError) {
+        toast.error("กรุณากรอกข้อมูลให้ครบถ้วน", {
+            style: {
+                background: "red",
+                color: "white",
+            },
+        });
+        return <p className="text-red-500 pt-30">error</p>;
+    }
+
     return (
         <div className="min-h-screen w-full px-4 md:px-0">
             <AlertDialogCustom
@@ -73,6 +83,7 @@ function ReservationPage() {
                                     variant="coffeePrimary"
                                     className="w-full"
                                     type="button"
+                                    disabled={isCreateReservationPending}
                                     onClick={async () => {
                                         const result = await form.trigger();
 

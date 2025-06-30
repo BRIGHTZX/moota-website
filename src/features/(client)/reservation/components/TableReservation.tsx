@@ -1,3 +1,4 @@
+import PageLoader from "@/components/PageLoader";
 import { useGetTables } from "@/features/(admin)/tables/api/use-get-tables";
 import { selectTablesSchemaType } from "@/features/(admin)/tables/schema";
 import { cn } from "@/lib/utils";
@@ -12,8 +13,6 @@ function TableReservation({
 }) {
     const { data: tables, isLoading } = useGetTables();
     const tablesData = tables?.tables;
-    console.log(tablesData);
-    console.log(arrayTable);
 
     const insideTables = tablesData?.filter(
         (table: selectTablesSchemaType) => table.tableType === "inside"
@@ -32,7 +31,7 @@ function TableReservation({
         }
     };
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <PageLoader className="h-[200px]" />;
 
     return (
         <div className="mt-10 flex flex-col sm:flex-row">
