@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import AlertDialogCustom from "@/components/AlertDialogCustom";
+import { useCreateActiveFromOrder } from "../api/use-create-active-from-order";
 
 type ConfirmOrderProps = {
     orderId: string;
@@ -8,6 +9,11 @@ type ConfirmOrderProps = {
 
 function ConfirmOrder({ orderId }: ConfirmOrderProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const { mutate: createActive } = useCreateActiveFromOrder();
+
+    const handleCreateActive = () => {
+        createActive({ json: { preOrderId: orderId } });
+    };
 
     return (
         <div>
@@ -19,7 +25,7 @@ function ConfirmOrder({ orderId }: ConfirmOrderProps) {
                 cancelAction={() => {
                     setIsOpen(false);
                 }}
-                action={() => {}}
+                action={handleCreateActive}
                 buttonActionText="ยืนยันการจอง"
             />
             <Button

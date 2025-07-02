@@ -1,14 +1,19 @@
 import { db } from "@/database/db";
 import { getCurrentUser } from "@/services/middleware-hono";
 import { Hono } from "hono";
+import { and, desc, eq } from "drizzle-orm";
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
+
 import {
     preOrder as PreOrderTable,
     preOrderInfo as PreOrderInfoTable,
 } from "@/database/schema/pre-order";
 import { table as TablesTable } from "@/database/schema/table";
-import { and, desc, eq } from "drizzle-orm";
-import { zValidator } from "@hono/zod-validator";
-import { z } from "zod";
+import {
+    active as ActiveTable,
+    activeInfo as ActiveInfoTable,
+} from "@/database/schema/active";
 
 const app = new Hono()
     .get("/", getCurrentUser, async (c) => {
@@ -186,8 +191,62 @@ const app = new Hono()
             try {
                 const { preOrderId } = c.req.valid("json");
 
+                const result = await db.transaction(async (tx) => {
+                    const [preOrder] = await tx
+                        .select({
+                            id: PreOrderTable.id,
+                            customerName: PreOrderTable.customerName,
+                            phoneNumber: PreOrderTable.phoneNumber,
+                            adultNumber: PreOrderTable.adultNumber,
+                            childNumber: PreOrderTable.childNumber,
+                            reservationDate: PreOrderTable.reservationDate,
+                            reservationTime: PreOrderTable.reservationTime,
+                        })
+                        .from(PreOrderTable)
+                        .where(eq(PreOrderTable.id, preOrderId))
+                        .limit(1);
+
+                    if (!preOrder) {
+                        throw new Error("Pre-order not found");
+                    }
+
+                    const preOrderInfo = await tx
+                        .select({
+                            id: PreOrderInfoTable.id,
+                            tableId: PreOrderInfoTable.tableId,
+                        })
+                        .from(PreOrderInfoTable)
+                        .where(eq(PreOrderInfoTable.preOrderId, preOrderId));
+
+                    if (!preOrderInfo) {
+                        throw new Error("Pre-order info not found");
+                    }
+
+                    const [active] = await tx
+                        .insert(ActiveTable)
+                        .values({
+                            customerName: preOrder.customerName,
+                            customerPhone: preOrder.phoneNumber,
+                            openTime: preOrder.reservationTime,
+                        })
+                        .returning({
+                            id: ActiveTable.id,
+                        });
+
+                    await tx.insert(ActiveInfoTable).values(
+                        preOrderInfo.map((info) => ({
+                            activeId: active.id,
+                            tableId: info.tableId,
+                            adultNumber: preOrder.adultNumber,
+                            childNumber: preOrder.childNumber,
+                        }))
+                    );
+
+                    return active;
+                });
+
                 return c.json(
-                    { message: "Active created successfully", preOrderId },
+                    { message: "Active created successfully", result },
                     200
                 );
             } catch (error) {
