@@ -8,7 +8,6 @@ type ReservationDetailProps = {
         preOrderNumber: string;
         customerName: string;
         phoneNumber: string;
-        email: string;
         adultNumber: number;
         childNumber: number;
         reservationDate: string;
@@ -100,11 +99,6 @@ function ReservationDetail({ reservation }: ReservationDetailProps) {
                                 ? reservation.phoneNumber
                                 : "เบอร์โทรศัพท์ไม่ระบุ"
                         }
-                    />
-
-                    <TextInfo
-                        label="อีเมล :"
-                        value={reservation?.email ?? "-"}
                     />
                 </div>
             </div>

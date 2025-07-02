@@ -14,6 +14,7 @@ type AlertDialogCustomProps = {
     open: boolean;
     setOpen: (open: boolean) => void;
     action: () => void;
+    cancelAction?: () => void;
     title: string;
     description: string;
     buttonActionText: string;
@@ -23,6 +24,7 @@ function AlertDialogCustom({
     open,
     setOpen,
     action,
+    cancelAction,
     title,
     description,
     buttonActionText,
@@ -37,7 +39,9 @@ function AlertDialogCustom({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel onClick={cancelAction}>
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction onClick={action}>
                         {buttonActionText}
                     </AlertDialogAction>

@@ -32,7 +32,6 @@ function ReservationPage() {
         defaultValues: {
             customerName: "",
             phoneNumber: "",
-            email: "",
             adultNumber: 0,
             childNumber: 0,
             reservationDate: new Date().toISOString(),
@@ -81,7 +80,7 @@ function ReservationPage() {
                             <div className="flex items-center gap-4">
                                 <Button
                                     variant="coffeePrimary"
-                                    className="w-full"
+                                    className="w-full hidden md:flex"
                                     type="button"
                                     disabled={isCreateReservationPending}
                                     onClick={async () => {
@@ -121,15 +120,12 @@ function ReservationPage() {
                                 </Button>
                             </div>
                         </div>
-
                         <div className="mt-10 rounded-lg border-2 border-gray-300 px-4 py-6">
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                                <div className="col-span-1">
-                                    <DateTimeWithLabel<insertPreOrderSchemaType>
-                                        timeNameInSchema="reservationTime"
-                                        dateNameInSchema="reservationDate"
-                                    />
-                                </div>
+                                <DateTimeWithLabel<insertPreOrderSchemaType>
+                                    timeNameInSchema="reservationTime"
+                                    dateNameInSchema="reservationDate"
+                                />
                                 <div className="col-span-1">
                                     <InputWithLabel
                                         fieldTitle="ผู้ใหญ่"
@@ -163,25 +159,55 @@ function ReservationPage() {
                                         type="number"
                                     />
                                 </div>
-                                <div className="col-span-1">
-                                    <InputWithLabel
-                                        fieldTitle="อีเมล"
-                                        nameInSchema="email"
-                                        placeholder="กรุณากรอกอีเมล (ถ้ามี)"
-                                        type="email"
-                                    />
-                                </div>
                             </div>
                         </div>
-
                         <div className="mt-10 border-t border-gray-300" />
-
                         <TableReservation
                             arrayTable={arrayTable}
                             setArrayTable={setArrayTable}
                         />
-                        <div className="mt-10 border-t border-gray-300" />
 
+                        <div className="flex items-center gap-4">
+                            <Button
+                                variant="coffeePrimary"
+                                className="w-full flex mt-8 md:mt-0 md:hidden"
+                                type="button"
+                                disabled={isCreateReservationPending}
+                                onClick={async () => {
+                                    const result = await form.trigger();
+
+                                    if (!result) {
+                                        toast.error(
+                                            "กรุณากรอกข้อมูลให้ครบถ้วน",
+                                            {
+                                                style: {
+                                                    background: "red",
+                                                    color: "white",
+                                                },
+                                            }
+                                        );
+                                        return;
+                                    } else {
+                                        if (arrayTable.length === 0) {
+                                            toast.error(
+                                                "กรุณาเลือกโต๊ะที่ต้องการจอง",
+                                                {
+                                                    style: {
+                                                        background: "red",
+                                                        color: "white",
+                                                    },
+                                                }
+                                            );
+                                            return;
+                                        }
+                                        setOpenAlertDialog(true);
+                                    }
+                                }}
+                            >
+                                <p className="text-lg font-bold">จองตาราง</p>
+                            </Button>
+                        </div>
+                        <div className="mt-10 border-t border-gray-300" />
                         <div className="mt-10">
                             <div className="relative z-30 mx-auto mt-10 w-[90%] rounded-lg bg-white p-4">
                                 <Image

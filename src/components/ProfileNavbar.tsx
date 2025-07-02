@@ -48,7 +48,7 @@ export function ProfileNavbar({ currentUser, isAdmin }: ProfileType) {
                     </>
                 )}
                 <DropdownMenuItem asChild>
-                    <Link href={"/orders"}>My Orders</Link>
+                    <Link href={"/pre-orders"}>My Orders</Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>

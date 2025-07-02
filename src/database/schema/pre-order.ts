@@ -7,7 +7,6 @@ export const preOrder = pgTable("pre_order", {
     userKindeId: text("user_kinde_id").notNull(),
     customerName: text("customer_name").notNull(),
     phoneNumber: text("phone_number").notNull(),
-    email: text("email"),
 
     adultNumber: integer("adult_number").notNull().default(0),
     childNumber: integer("child_number").notNull().default(0),

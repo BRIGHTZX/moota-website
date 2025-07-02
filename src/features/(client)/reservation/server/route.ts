@@ -32,7 +32,6 @@ const reservationRoute = new Hono()
                         preOrderNumber: PreOrderTable.preOrderNumber,
                         customerName: PreOrderTable.customerName,
                         phoneNumber: PreOrderTable.phoneNumber,
-                        email: PreOrderTable.email,
                         adultNumber: PreOrderTable.adultNumber,
                         childNumber: PreOrderTable.childNumber,
                         totalPrice: PreOrderTable.totalPrice,
@@ -108,7 +107,6 @@ const reservationRoute = new Hono()
                 const {
                     customerName,
                     phoneNumber,
-                    email,
                     tableId,
                     adultNumber,
                     childNumber,
@@ -126,7 +124,6 @@ const reservationRoute = new Hono()
                             userKindeId: user.id.toString(),
                             customerName,
                             phoneNumber,
-                            email: email === "" ? null : email,
                             adultNumber: adultNumber,
                             childNumber: childNumber,
                             status: "pending",

@@ -38,76 +38,80 @@ export function DateTimeWithLabel<S>({
     const form = useFormContext();
 
     return (
-        <div className="flex w-full gap-4">
-            {/* Date Field */}
-            <FormField
-                control={form.control}
-                name={dateNameInSchema}
-                render={({ field }) => (
-                    <FormItem className="relative">
-                        <FormLabel htmlFor="date-picker" className="px-1">
-                            Date
-                        </FormLabel>
-                        <Popover open={open} onOpenChange={setOpen}>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    id="date-picker"
-                                    className="w-full justify-between font-normal"
+        <>
+            <div className="col-span-1">
+                {/* Date Field */}
+                <FormField
+                    control={form.control}
+                    name={dateNameInSchema}
+                    render={({ field }) => (
+                        <FormItem className="relative">
+                            <FormLabel htmlFor="date-picker" className="px-1">
+                                Date
+                            </FormLabel>
+                            <Popover open={open} onOpenChange={setOpen}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        id="date-picker"
+                                        className="w-full justify-between font-normal"
+                                    >
+                                        {field.value
+                                            ? format(field.value, "dd/MM/yyyy")
+                                            : "Select date"}
+                                        <ChevronDownIcon />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                    className="w-full overflow-hidden p-0"
+                                    align="start"
                                 >
-                                    {field.value
-                                        ? format(field.value, "dd/MM/yyyy")
-                                        : "Select date"}
-                                    <ChevronDownIcon />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                                className="w-full overflow-hidden p-0"
-                                align="start"
-                            >
-                                <Calendar
-                                    mode="single"
-                                    selected={field.value}
-                                    disabled={(date) =>
-                                        date <
-                                        new Date(
-                                            new Date().setDate(
-                                                new Date().getDate() - 1
+                                    <Calendar
+                                        mode="single"
+                                        selected={field.value}
+                                        disabled={(date) =>
+                                            date <
+                                            new Date(
+                                                new Date().setDate(
+                                                    new Date().getDate() - 1
+                                                )
                                             )
-                                        )
-                                    }
-                                    onSelect={(date) => {
-                                        field.onChange(date);
-                                        setOpen(false);
-                                    }}
-                                    captionLayout="dropdown"
-                                    className="w-full"
-                                />
-                            </PopoverContent>
-                        </Popover>
-                        <FormMessage className="absolute text-xs -bottom-5 left-0" />
-                    </FormItem>
-                )}
-            />
+                                        }
+                                        onSelect={(date) => {
+                                            field.onChange(date);
+                                            setOpen(false);
+                                        }}
+                                        captionLayout="dropdown"
+                                        className="w-full"
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                            <FormMessage className="absolute text-xs -bottom-5 left-0" />
+                        </FormItem>
+                    )}
+                />
+            </div>
+            <div className="col-span-1">
+                <FormField
+                    control={form.control}
+                    name={timeNameInSchema}
+                    render={({ field }) => (
+                        <FormItem className="relative">
+                            <FormLabel htmlFor="time-picker" className="px-1">
+                                Time
+                            </FormLabel>
+                            <TimeDropdown
+                                value={field.value}
+                                onChange={field.onChange}
+                            />
+                            <FormMessage className="absolute text-xs -bottom-5 left-0" />
+                        </FormItem>
+                    )}
+                />
+            </div>
 
             {/* Time Field */}
-            <FormField
-                control={form.control}
-                name={timeNameInSchema}
-                render={({ field }) => (
-                    <FormItem className="relative">
-                        <FormLabel htmlFor="time-picker" className="px-1">
-                            Time
-                        </FormLabel>
-                        <TimeDropdown
-                            value={field.value}
-                            onChange={field.onChange}
-                        />
-                        <FormMessage className="absolute text-xs -bottom-5 left-0" />
-                    </FormItem>
-                )}
-            />
-        </div>
+        </>
     );
 }
 

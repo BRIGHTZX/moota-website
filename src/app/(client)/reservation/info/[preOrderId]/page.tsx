@@ -17,7 +17,6 @@ import { toast } from "sonner";
 function ReservationInfoPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [paymentImage, setPaymentImage] = useState<File | null>(null);
-    console.log(paymentImage);
     const preOrderId = useGetPreOrderId();
     const {
         data: reservation,
@@ -84,7 +83,7 @@ function ReservationInfoPage() {
                         className="flex items-center gap-2 py-6 text-sm md:text-lg"
                         disabled={isLoading}
                     >
-                        <Link href="/reservation">
+                        <Link href="/pre-orders">
                             <ArrowLeftIcon className="size-4" />
                             ย้อนกลับ
                         </Link>
@@ -150,7 +149,6 @@ function ReservationInfoPage() {
                                     reservationData?.customerName ?? "-",
                                 phoneNumber:
                                     reservationData?.phoneNumber ?? "-",
-                                email: reservationData?.email ?? "-",
                                 adultNumber: reservationData?.adultNumber ?? 0,
                                 childNumber: reservationData?.childNumber ?? 0,
                                 reservationDate:

@@ -5,13 +5,6 @@ export const insertPreOrderWithoutTableIdSchema = z.object({
     phoneNumber: z
         .string()
         .length(10, "กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง 10 หลัก"),
-    email: z
-        .string()
-        .trim()
-        .optional()
-        .refine((val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
-            message: "กรุณากรอกอีเมลให้ถูกต้อง",
-        }),
     adultNumber: z.coerce
         .number({
             required_error: "กรุณากรอกจำนวนผู้ใหญ่",
