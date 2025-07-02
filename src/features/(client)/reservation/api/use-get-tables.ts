@@ -1,7 +1,7 @@
 import { client } from "@/lib/rpc";
 import { useQuery } from "@tanstack/react-query";
 
-const api = client.api.admin.tables["$get"];
+const api = client.api.reservation.tables["$get"];
 
 export const useGetTables = () => {
     return useQuery({

@@ -8,11 +8,12 @@ import {
     preOrder as PreOrderTable,
     preOrderInfo as PreOrderInfoTable,
 } from "@/database/schema/pre-order";
-import { table as TalbesTable } from "@/database/schema/table";
+import { table as TablesTable } from "@/database/schema/table";
 import { z } from "zod";
 import { generateOrderNumber } from "@/lib/generateOrderNumber";
 import { and, eq } from "drizzle-orm";
 import { connectCloudinary } from "@/lib/cloudinary";
+import { selectTablesSchemaType } from "@/features/(admin)/tables/schema";
 
 const reservationRoute = new Hono()
     .get("/:preOrderId", getCurrentUser, async (c) => {
@@ -44,7 +45,7 @@ const reservationRoute = new Hono()
                     },
                     table: {
                         id: PreOrderInfoTable.tableId,
-                        tableNumber: TalbesTable.tableNumber,
+                        tableNumber: TablesTable.tableNumber,
                     },
                 })
                 .from(PreOrderTable)
@@ -53,8 +54,8 @@ const reservationRoute = new Hono()
                     eq(PreOrderTable.id, PreOrderInfoTable.preOrderId)
                 )
                 .leftJoin(
-                    TalbesTable,
-                    eq(PreOrderInfoTable.tableId, TalbesTable.id)
+                    TablesTable,
+                    eq(PreOrderInfoTable.tableId, TablesTable.id)
                 )
                 .where(
                     and(
@@ -85,6 +86,31 @@ const reservationRoute = new Hono()
         } catch (error) {
             console.log(error);
             return c.json({ message: "Internal server error", error }, 500);
+        }
+    })
+    .get("/tables", getCurrentUser, async (c) => {
+        const user = c.get("user");
+
+        if (!user) {
+            return c.json({ message: "Unauthorized" }, 401);
+        }
+
+        try {
+            const tables: selectTablesSchemaType[] = await db
+                .select({
+                    id: TablesTable.id,
+                    tableNumber: TablesTable.tableNumber,
+                    tableType: TablesTable.tableType,
+                    isAvailable: TablesTable.isAvailable,
+                })
+                .from(TablesTable);
+            return c.json(
+                { message: "Tables fetched successfully", tables },
+                200
+            );
+        } catch (error) {
+            console.log(error);
+            return c.json({ message: "Internal server error" }, 500);
         }
     })
     .post(

@@ -3,9 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 
 const api = client.api.admin.tables["$get"];
 
-export const useGetTables = () => {
+export const useGetAdminTables = () => {
     return useQuery({
-        queryKey: ["tables"],
+        queryKey: ["admin-tables"],
         queryFn: async () => {
             const response = await api();
 

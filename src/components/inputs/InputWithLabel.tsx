@@ -2,6 +2,7 @@ import React from "react";
 import { Input } from "../ui/input";
 import { useFormContext } from "react-hook-form";
 import { FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { cn } from "@/lib/utils";
 
 type InputWithLabelProps<S> = {
     type?: string;
@@ -10,6 +11,7 @@ type InputWithLabelProps<S> = {
     placeholder: string;
     labelClassName?: string;
     inputClassName?: string;
+    errorClassName?: string;
 };
 
 function InputWithLabel<S>({
@@ -19,6 +21,7 @@ function InputWithLabel<S>({
     placeholder,
     labelClassName,
     inputClassName,
+    errorClassName,
     ...props
 }: InputWithLabelProps<S>) {
     const form = useFormContext();
@@ -43,7 +46,12 @@ function InputWithLabel<S>({
                         className={inputClassName}
                         value={field.value}
                     />
-                    <FormMessage className="absolute text-xs -bottom-5 left-0" />
+                    <FormMessage
+                        className={cn(
+                            "absolute text-xs -bottom-5",
+                            errorClassName || "left-0"
+                        )}
+                    />
                 </FormItem>
             )}
         />
