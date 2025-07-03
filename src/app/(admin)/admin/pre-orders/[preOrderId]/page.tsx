@@ -4,8 +4,8 @@ import SeperateLine from "@/components/SeperateLine";
 import { TextCardInfo } from "@/components/TextCardInfo";
 import TextHeader from "@/components/TextHeader";
 import { Button } from "@/components/ui/button";
-import { useGetOrder } from "@/features/(admin)/orders/api/use-get-order";
-import ConfirmOrder from "@/features/(admin)/orders/components/ConfirmOrder";
+import { useGetOrder } from "@/features/(admin)/pre-orders/api/use-get-admin-preOrder";
+import ConfirmOrder from "@/features/(admin)/pre-orders/components/ConfirmOrder";
 import { useGetPreOrderId } from "@/features/(client)/reservation/hooks/get-preOrderId";
 import { ArrowLeftIcon } from "lucide-react";
 import Image from "next/image";
@@ -102,7 +102,7 @@ function OrderDetailPage() {
             </div>
 
             <div className="mt-4">
-                <ConfirmOrder />
+                <ConfirmOrder orderId={preOrderId} />
             </div>
         </div>
     );

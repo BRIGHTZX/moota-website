@@ -24,27 +24,27 @@ function MenuAdmin() {
                 />
                 <MenuItem
                     icon={<ShoppingCartIcon />}
-                    text="Order"
-                    active={pathname.startsWith("/admin/orders")}
-                    href="/admin/orders"
+                    text="Pre-Order"
+                    active={pathname.startsWith("/admin/pre-orders")}
+                    href="/admin/pre-orders"
                 />
                 <MenuItem
                     icon={<TableIcon />}
                     text="Table"
-                    active={pathname.startsWith("/admin/table")}
+                    active={pathname.startsWith("/admin/tables")}
                     href="/admin/tables"
                 />
                 <MenuItem
                     icon={<Table2Icon />}
                     text="Active"
-                    active={pathname.startsWith("/admin/active")}
-                    href="/admin/active"
+                    active={pathname.startsWith("/admin/actives")}
+                    href="/admin/actives"
                 />
                 <MenuItem
                     icon={<PackageIcon />}
                     text="Product"
-                    active={pathname.startsWith("/admin/product")}
-                    href="/admin/product"
+                    active={pathname.startsWith("/admin/products")}
+                    href="/admin/products"
                 />
             </ul>
         </div>

@@ -2,7 +2,7 @@ import { client } from "@/lib/rpc";
 import { useMutation } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
 
-const api = client.api.admin.orders["create-active"]["$post"];
+const api = client.api.admin["pre-orders"]["create-active"]["$post"];
 type ResponseType = InferResponseType<typeof api>;
 type RequestType = InferRequestType<typeof api>;
 

@@ -11,9 +11,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { insertTalblesSchema, insertTalblesSchemaType } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputWithLabel from "@/components/inputs/InputWithLabel";
+import { useCreateAdminTables } from "../api/use-create-admin-tables";
+import { TableStateType } from "../type";
 
 type AddTableFormProps = {
-    selectedTables: string[];
+    selectedTables: TableStateType[];
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
 };
@@ -23,6 +25,7 @@ function AddTableForm({
     isOpen,
     setIsOpen,
 }: AddTableFormProps) {
+    const { mutate: createOpenTable } = useCreateAdminTables();
     const form = useForm<insertTalblesSchemaType>({
         resolver: zodResolver(insertTalblesSchema),
         defaultValues: {
@@ -33,7 +36,18 @@ function AddTableForm({
         },
     });
 
-    const handleSubmit = (data: insertTalblesSchemaType) => {};
+    const handleSubmit = (data: insertTalblesSchemaType) => {
+        const tableIdArray = selectedTables.map((table) => table.tableId);
+
+        const finalValues = {
+            ...data,
+            tableNumber: tableIdArray,
+        };
+
+        createOpenTable({
+            json: finalValues,
+        });
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -94,8 +108,8 @@ function AddTableForm({
                                 <div className="flex items-center gap-2">
                                     {selectedTables.map((table) => (
                                         <BadgeTable
-                                            key={table}
-                                            tableNumber={table}
+                                            key={table.tableId}
+                                            tableNumber={table.tableNumber.toString()}
                                         />
                                     ))}
                                 </div>

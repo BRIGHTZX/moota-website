@@ -1,7 +1,7 @@
 import { client } from "@/lib/rpc";
 import { useQuery } from "@tanstack/react-query";
 
-const api = client.api.admin.orders[":preOrderId"]["$get"];
+const api = client.api.admin["pre-orders"][":preOrderId"]["$get"];
 
 export const useGetOrder = (preOrderId: string) => {
     return useQuery({

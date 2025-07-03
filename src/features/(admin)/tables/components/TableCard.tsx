@@ -1,23 +1,33 @@
 import { cn } from "@/lib/utils";
 import React from "react";
+import { TableStateType } from "../type";
 
 type TableCardProps = {
+    tableId: string;
     tableNumber: string;
-    selectedTables: string[];
-    setSelectedTables: (tables: string[]) => void;
+    selectedTables: TableStateType[];
+    setSelectedTables: React.Dispatch<React.SetStateAction<TableStateType[]>>;
 };
 
 function TableCard({
+    tableId,
     tableNumber,
     selectedTables,
     setSelectedTables,
 }: TableCardProps) {
-    const isSelected = selectedTables?.includes(tableNumber);
+    const isSelected = selectedTables.some((t) => t.tableId === tableId);
     const handleSelectTable = () => {
         if (isSelected) {
-            setSelectedTables(selectedTables.filter((t) => t !== tableNumber));
+            // เอาออก
+            setSelectedTables(
+                selectedTables.filter((t) => t.tableId !== tableId)
+            );
         } else {
-            setSelectedTables([...selectedTables, tableNumber]);
+            // เพิ่มเข้า (แปลง tableNumber เป็น number ถ้าต้องการเก็บเป็นตัวเลข)
+            setSelectedTables([
+                ...selectedTables,
+                { tableId, tableNumber: Number(tableNumber) },
+            ]);
         }
     };
     return (

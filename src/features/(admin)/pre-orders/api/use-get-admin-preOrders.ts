@@ -1,21 +1,23 @@
 import { client } from "@/lib/rpc";
 import { useQuery } from "@tanstack/react-query";
 
-const api = client.api.admin.tables["$get"];
+const api = client.api.admin["pre-orders"]["$get"];
 
-export const useGetTables = () => {
-    return useQuery({
-        queryKey: ["tables"],
+export const useGetOrders = () => {
+    const query = useQuery({
+        queryKey: ["orders"],
         queryFn: async () => {
             const response = await api();
 
             if (!response.ok) {
-                throw new Error("Failed to fetch tables");
+                throw new Error("Failed to fetch pre-orders");
             }
 
             const data = await response.json();
 
-            return data;
+            return data.result;
         },
     });
+
+    return query;
 };

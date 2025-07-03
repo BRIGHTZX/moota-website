@@ -4,10 +4,12 @@ export const TextCardInfo = ({
     text,
     value,
     status,
+    className,
 }: {
     text: string;
     value: string;
     status?: string;
+    className?: string;
 }) => {
     const statusColor = {
         paid: "bg-green-500",
@@ -22,9 +24,11 @@ export const TextCardInfo = ({
         failed: "ยกเลิก",
     };
     return (
-        <div className="flex justify-between gap-2">
-            <p className="font-semibold">{text}</p>
-            {value && <p>{value}</p>}
+        <div
+            className={cn("flex justify-between items-center gap-2", className)}
+        >
+            <p className="font-semibold text-xs">{text}</p>
+            {value && <p className="text-xs">{value}</p>}
             {status && (
                 <div className="flex items-center gap-2">
                     <div
@@ -33,7 +37,9 @@ export const TextCardInfo = ({
                             statusColor[status as keyof typeof statusColor]
                         )}
                     />
-                    <p>{statusText[status as keyof typeof statusText]}</p>
+                    <p className="text-xs">
+                        {statusText[status as keyof typeof statusText]}
+                    </p>
                 </div>
             )}
         </div>

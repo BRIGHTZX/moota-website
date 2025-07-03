@@ -1,8 +1,8 @@
 "use client";
 import PageLoader from "@/components/PageLoader";
 import TextHeader from "@/components/TextHeader";
-import { useGetOrders } from "@/features/(admin)/orders/api/use-get-orders";
-import OrderCard from "@/features/(admin)/orders/components/OrderCard";
+import { useGetOrders } from "@/features/(admin)/pre-orders/api/use-get-admin-preOrders";
+import OrderCard from "@/features/(admin)/pre-orders/components/OrderCard";
 
 function OrderPage() {
     const {

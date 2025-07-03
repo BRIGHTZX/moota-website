@@ -11,7 +11,12 @@ export type selectTablesSchemaType = z.infer<typeof selectTablesSchema>;
 
 export const insertTalblesSchema = z.object({
     customerName: z.string().min(1, { message: "กรุณากรอกชื่อลูกค้า" }),
-    customerPhone: z.string(),
+    customerPhone: z
+        .string()
+        .optional()
+        .refine((val) => !val || val.length === 10, {
+            message: "กรุณากรอกหมายเลขโทรศักท์ให้ครบ10ตัว",
+        }),
     adultNumber: z.coerce
         .number({
             required_error: "กรุณากรอกจำนวนผู้ใหญ่",

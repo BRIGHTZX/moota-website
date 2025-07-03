@@ -1,16 +1,16 @@
 import { client } from "@/lib/rpc";
 import { useQuery } from "@tanstack/react-query";
 
-const api = client.api.admin.orders["$get"];
+const api = client.api.admin.actives["$get"];
 
-export const useGetOrders = () => {
+export const useGetActives = () => {
     const query = useQuery({
-        queryKey: ["orders"],
+        queryKey: ["admin-actives"],
         queryFn: async () => {
             const response = await api();
 
             if (!response.ok) {
-                throw new Error("Failed to fetch pre-orders");
+                throw new Error("Failed to fetch actives");
             }
 
             const data = await response.json();
@@ -18,6 +18,5 @@ export const useGetOrders = () => {
             return data.result;
         },
     });
-
     return query;
 };

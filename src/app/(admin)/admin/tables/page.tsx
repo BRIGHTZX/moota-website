@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import AddTableForm from "@/features/(admin)/tables/components/AddTableForm";
+import { TableStateType } from "@/features/(admin)/tables/type";
 
 function TablesPage() {
-    const [selectedTables, setSelectedTables] = useState<string[]>([]);
+    const [selectedTables, setSelectedTables] = useState<TableStateType[]>([]);
     const [isOpenAddTableForm, setIsOpenAddTableForm] =
         useState<boolean>(false);
 
@@ -34,6 +35,7 @@ function TablesPage() {
                         .map((t) => (
                             <TableCard
                                 key={t.id}
+                                tableId={t.id}
                                 tableNumber={t.tableNumber}
                                 selectedTables={selectedTables}
                                 setSelectedTables={setSelectedTables}
@@ -52,6 +54,7 @@ function TablesPage() {
                         .map((t) => (
                             <TableCard
                                 key={t.id}
+                                tableId={t.id}
                                 tableNumber={t.tableNumber}
                                 selectedTables={selectedTables}
                                 setSelectedTables={setSelectedTables}
