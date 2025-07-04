@@ -8,7 +8,6 @@ type TableActiveSectionProps = {
 };
 
 function TableActiveSection({ active }: TableActiveSectionProps) {
-    console.log(active);
     const { customerName, customerPhone, openTime, activeInfo } = active;
     const totalAdult = (activeInfo ?? []).reduce(
         (acc, curr) => acc + curr.customerAdult,
@@ -68,8 +67,8 @@ const HaveTable = ({
     tableNumber: string;
 }) => {
     return (
-        <Link href={`/admin/tables/${tableId}`}>
-            <div className="bg-coffee-light rounded-lg p-4 border border-coffee-dark">
+        <Link href={`/admin/actives/orders/${tableId}`}>
+            <div className="bg-coffee-light rounded-lg p-4 border border-coffee-dark cursor-pointer hover:bg-coffee-brown transition-all duration-300">
                 <p className="text-coffee-dark text-xs text-center font-bold">
                     {tableNumber}
                 </p>

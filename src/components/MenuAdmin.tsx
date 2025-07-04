@@ -42,9 +42,9 @@ function MenuAdmin() {
                 />
                 <MenuItem
                     icon={<PackageIcon />}
-                    text="Product"
-                    active={pathname.startsWith("/admin/products")}
-                    href="/admin/products"
+                    text="Stock"
+                    active={pathname.startsWith("/admin/stocks")}
+                    href="/admin/stocks"
                 />
             </ul>
         </div>
