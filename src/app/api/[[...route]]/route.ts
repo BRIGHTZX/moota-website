@@ -10,6 +10,7 @@ import tablesRoute from "@/features/(admin)/tables/server/route";
 import preOrderAdminRoute from "@/features/(admin)/pre-orders/server/route";
 import activesRoute from "@/features/(admin)/actives/server/route";
 import ordersRoute from "@/features/(admin)/orders/server/route";
+import stocksRoute from "@/features/(admin)/stocks/server/route";
 
 const app = new Hono().basePath("/api");
 
@@ -24,7 +25,8 @@ const routes = app
     .route("/admin/tables", tablesRoute)
     .route("/admin/pre-orders", preOrderAdminRoute)
     .route("/admin/actives", activesRoute)
-    .route("/admin/orders", ordersRoute);
+    .route("/admin/orders", ordersRoute)
+    .route("/admin/stocks", stocksRoute);
 
 // Handle all HTTP methods
 export const GET = handle(app);

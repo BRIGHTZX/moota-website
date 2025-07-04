@@ -18,6 +18,7 @@ import {
 import ImageInput from "@/components/inputs/ImageInput";
 import SelectWithLabel from "@/components/inputs/SelectWithLabel";
 import { StockProductCategory } from "../types";
+import { useAddProductStock } from "../api/use-add-product-stock";
 
 type AddStockProductFormProps = {
     isOpen: boolean;
@@ -25,6 +26,11 @@ type AddStockProductFormProps = {
 };
 
 function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
+    const {
+        mutate: addProductStock,
+        // isPending: isAddingProductStock,
+        // isError: isErrorAddingProductStock,
+    } = useAddProductStock();
     const form = useForm<insertStockProductSchemaType>({
         resolver: zodResolver(insertStockProductSchema),
         defaultValues: {
@@ -45,7 +51,12 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
     };
 
     const onSubmit = (data: insertStockProductSchemaType) => {
-        console.log(data);
+        const finalValues = {
+            ...data,
+            price: String(data.price),
+            stock: String(data.stock),
+        };
+        addProductStock({ form: finalValues });
     };
 
     return (
