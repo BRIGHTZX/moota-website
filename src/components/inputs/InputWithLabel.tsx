@@ -44,7 +44,7 @@ function InputWithLabel<S>({
                         placeholder={placeholder}
                         type={type}
                         className={inputClassName}
-                        value={field.value}
+                        value={field.value ?? ""}
                     />
                     <FormMessage
                         className={cn(

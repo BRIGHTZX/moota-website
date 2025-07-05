@@ -1,3 +1,4 @@
+"use client";
 import React, { useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { FormField, FormItem, FormMessage } from "../ui/form";
@@ -35,7 +36,9 @@ function ImageInput<S>({
                             src={
                                 value instanceof File
                                     ? URL.createObjectURL(value)
-                                    : value ?? "/product-default.jpg"
+                                    : value
+                                    ? value
+                                    : "/product-default.jpg"
                             }
                             alt="preview"
                             width={1000}

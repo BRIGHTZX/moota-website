@@ -1,4 +1,5 @@
 "use client";
+import PageLoader from "@/components/PageLoader";
 import TextHeader from "@/components/TextHeader";
 import { Button } from "@/components/ui/button";
 import { useGetProductsStock } from "@/features/(admin)/stocks/api/use-get-products-stock";
@@ -11,7 +12,12 @@ function StockPage() {
     const [isAddStockProductFormOpen, setIsAddStockProductFormOpen] =
         useState<boolean>(false);
 
-    const { data: productsStockData } = useGetProductsStock();
+    const { data: productsStockData, isLoading: isLoadingProductsStock } =
+        useGetProductsStock();
+
+    if (isLoadingProductsStock) {
+        return <PageLoader />;
+    }
 
     return (
         <div className="p-4 pt-20 pb-8 relative h-[calc(100vh-5rem)]  overflow-y-auto">

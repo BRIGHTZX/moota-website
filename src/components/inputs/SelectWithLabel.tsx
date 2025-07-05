@@ -44,7 +44,12 @@ function SelectWithLabel<S>({
                     </FormLabel>
                     <Select
                         value={field.value === "" ? undefined : field.value}
-                        onValueChange={field.onChange}
+                        onValueChange={(value) => {
+                            if (value === "") {
+                                return;
+                            }
+                            field.onChange(value);
+                        }}
                     >
                         <SelectTrigger className={cn(inputClassName, "w-full")}>
                             <SelectValue placeholder={placeholder} />

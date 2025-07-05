@@ -19,6 +19,7 @@ import ImageInput from "@/components/inputs/ImageInput";
 import SelectWithLabel from "@/components/inputs/SelectWithLabel";
 import { StockProductCategory } from "../types";
 import { useAddProductStock } from "../api/use-add-product-stock";
+import { toast } from "sonner";
 
 type AddStockProductFormProps = {
     isOpen: boolean;
@@ -28,9 +29,9 @@ type AddStockProductFormProps = {
 function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
     const {
         mutate: addProductStock,
-        // isPending: isAddingProductStock,
-        // isError: isErrorAddingProductStock,
-    } = useAddProductStock();
+        isPending: isAddingProductStock,
+        isError: isErrorAddingProductStock,
+    } = useAddProductStock({ setIsOpen });
     const form = useForm<insertStockProductSchemaType>({
         resolver: zodResolver(insertStockProductSchema),
         defaultValues: {
@@ -58,6 +59,11 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
         };
         addProductStock({ form: finalValues });
     };
+
+    if (isErrorAddingProductStock) {
+        toast.error("เพิ่มสินค้าไม่สำเร็จ");
+        return <div>error</div>;
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -139,6 +145,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                     <Button
                                         type="button"
                                         variant="coffeeOutline"
+                                        disabled={isAddingProductStock}
                                     >
                                         ยกเลิก
                                     </Button>
@@ -147,6 +154,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                     form="add-stock-product-form"
                                     type="submit"
                                     variant="coffeePrimary"
+                                    disabled={isAddingProductStock}
                                 >
                                     เพิ่มสินค้าใหม่
                                 </Button>

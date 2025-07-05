@@ -14,7 +14,12 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontalIcon, PencilIcon, TableOfContents } from "lucide-react";
+import {
+    MoreHorizontalIcon,
+    PencilLineIcon,
+    PlusIcon,
+    TableOfContents,
+} from "lucide-react";
 import Link from "next/link";
 import {
     Table,
@@ -60,23 +65,14 @@ function StockProductTable({ products }: StockProductTableType) {
                             <Link
                                 href={`/admin/stocks/detail/${row.original.id}`}
                             >
-                                <PencilIcon className="size-4" />
-                                See Details
+                                <PencilLineIcon className="size-4" />
+                                แก้ไขสินค้า
                             </Link>
                         </DropdownMenuItem>
-                        {/* <DropdownMenuItem
-                            className="text-red-500 hover:bg-red-100! hover:text-red-500!"
-                            disabled={isDeletingOrder}
-                            onClick={() => {
-                                setTimeout(() => {
-                                    setOpen(true);
-                                    setDeleteOrderId(row.original.orderId);
-                                }, 0);
-                            }}
-                        >
-                            <TrashIcon className="size-4 text-red-500" />
-                            Delete
-                        </DropdownMenuItem> */}
+                        <DropdownMenuItem>
+                            <PlusIcon className="size-4" />
+                            เพิ่ม/ลดสินค้า
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>

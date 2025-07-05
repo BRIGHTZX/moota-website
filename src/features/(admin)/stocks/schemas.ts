@@ -24,3 +24,16 @@ export type selectStockProductSchemaType = {
         unit: string;
     };
 };
+
+export const updateStockProductSchema = z.object({
+    name: z.string().min(1, "กรุณากรอกชื่อสินค้า"),
+    image: z.union([z.instanceof(File), z.string()]),
+    unit: z.string().min(1, "กรุณากรอกหน่วยสินค้า"),
+    category: z.string().min(1, "กรุณากรอกหมวดหมู่"),
+    stock: z.coerce.number().min(0, "กรุณากรอกจำนวนสินค้า"),
+    price: z.coerce.number().min(0, "กรุณากรอกราคาสินค้า"),
+});
+
+export type updateStockProductSchemaType = z.infer<
+    typeof updateStockProductSchema
+>;
