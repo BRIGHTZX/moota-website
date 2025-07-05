@@ -4,7 +4,7 @@ import { Hono } from "hono";
 import { insertStockProductSchema, updateStockProductSchema } from "../schemas";
 import { db } from "@/database/db";
 import { product as ProductTable } from "@/database/schema/product";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { connectCloudinary } from "@/lib/cloudinary";
 
 const app = new Hono()
@@ -23,7 +23,8 @@ const app = new Hono()
                     stocks: ProductTable.stock,
                     unit: ProductTable.unit,
                 })
-                .from(ProductTable);
+                .from(ProductTable)
+                .orderBy(desc(ProductTable.updatedAt));
 
             const formattedProducts = products.map((product) => ({
                 id: product.id,
@@ -93,7 +94,7 @@ const app = new Hono()
             }
 
             try {
-                const { name, image, unit, category, stock, price } =
+                const { name, image, unit, category, price } =
                     c.req.valid("form");
 
                 const cloudinaryInstance = await connectCloudinary();
@@ -126,7 +127,6 @@ const app = new Hono()
                     image: imageUrl,
                     unit,
                     category,
-                    stock,
                     price,
                 });
 

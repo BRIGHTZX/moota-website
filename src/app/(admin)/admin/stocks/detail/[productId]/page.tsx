@@ -31,7 +31,6 @@ function StockDetailPage() {
             image: undefined,
             unit: "",
             category: "",
-            stock: 0,
             price: 0,
         },
     });
@@ -50,7 +49,6 @@ function StockDetailPage() {
                 image: productStockData.image,
                 unit: productStockData.unit,
                 category: productStockData.category,
-                stock: productStockData.stocks,
                 price: productStockData.price,
             });
         }
@@ -61,7 +59,6 @@ function StockDetailPage() {
         const finalValues = {
             ...data,
             price: String(data.price),
-            stock: String(data.stock),
         };
 
         console.log(finalValues);
@@ -101,39 +98,29 @@ function StockDetailPage() {
                                 disabled={!isEditing}
                             />
 
+                            <InputWithLabel
+                                fieldTitle="หน่วยสินค้า"
+                                nameInSchema="unit"
+                                placeholder="หน่วยของสินค้า"
+                                inputClassName="text-sm bg-white  w-full "
+                                labelClassName="text-sm font-medium text-coffee-dark"
+                                disabled={!isEditing}
+                            />
+
                             <div className="flex gap-2">
                                 <div className="w-full">
                                     <InputWithLabel
-                                        fieldTitle="หน่วยสินค้า"
-                                        nameInSchema="unit"
-                                        placeholder="หน่วยของสินค้า"
-                                        inputClassName="text-sm bg-white  w-full "
-                                        labelClassName="text-sm font-medium text-coffee-dark"
+                                        fieldTitle="ราคาสินค้า"
+                                        nameInSchema="price"
+                                        placeholder="กรุณากรอกราคาสินค้า"
                                         disabled={!isEditing}
                                     />
                                 </div>
-
                                 <SelectWithLabel
                                     fieldTitle="หมวดหมู่"
                                     nameInSchema="category"
                                     options={StockProductCategory}
                                     placeholder="หมวดหมู่"
-                                    disabled={!isEditing}
-                                />
-                            </div>
-
-                            <div className="flex gap-2">
-                                <InputWithLabel
-                                    fieldTitle="จำนวนสินค้า"
-                                    nameInSchema="stock"
-                                    placeholder="กรุณากรอกจำนวนสินค้า"
-                                    disabled={!isEditing}
-                                />
-
-                                <InputWithLabel
-                                    fieldTitle="ราคาสินค้า"
-                                    nameInSchema="price"
-                                    placeholder="กรุณากรอกราคาสินค้า"
                                     disabled={!isEditing}
                                 />
                             </div>

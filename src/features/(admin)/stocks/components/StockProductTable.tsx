@@ -15,10 +15,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import {
+    HistoryIcon,
     MoreHorizontalIcon,
     PencilLineIcon,
     PlusIcon,
     TableOfContents,
+    TrashIcon,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -84,6 +86,14 @@ function StockProductTable({
                             <PlusIcon className="size-4" />
                             นำเข้าสินค้า
                         </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <HistoryIcon className="size-4" />
+                            ประวัติการนำเข้า/ออก
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <TrashIcon className="size-4" />
+                            ลบสินค้า
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
@@ -107,7 +117,7 @@ function StockProductTable({
                     header: () => {
                         if (columnName === "products") {
                             return (
-                                <div className="text-center">
+                                <div className="text-start">
                                     <p>สินค้า</p>
                                 </div>
                             );

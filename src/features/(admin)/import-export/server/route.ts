@@ -77,6 +77,7 @@ const app = new Hono()
                                 type === "import"
                                     ? sql`${ProductTable.stock} + ${stock}`
                                     : sql`${ProductTable.stock} - ${stock}`,
+                            updatedAt: new Date(),
                         })
                         .where(eq(ProductTable.id, productId));
 

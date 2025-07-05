@@ -39,7 +39,6 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
             unit: "",
             image: undefined,
             category: "",
-            stock: 0,
             price: 0,
         },
     });
@@ -55,7 +54,6 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
         const finalValues = {
             ...data,
             price: String(data.price),
-            stock: String(data.stock),
         };
         addProductStock({ form: finalValues });
     };
@@ -96,35 +94,24 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                 inputClassName="text-sm bg-white border border-coffee-dark"
                                 errorClassName="right-0"
                             />
-                            <div className="flex items-center gap-2">
-                                <InputWithLabel<insertStockProductSchemaType>
-                                    fieldTitle="จำนวน"
-                                    nameInSchema="stock"
-                                    placeholder="จำนวน"
-                                    type="number"
-                                    labelClassName="text-sm font-medium text-coffee-dark"
-                                    inputClassName="text-sm bg-white border border-coffee-dark"
-                                    errorClassName="right-0"
-                                />
-                                <InputWithLabel<insertStockProductSchemaType>
-                                    fieldTitle="ราคา"
-                                    nameInSchema="price"
-                                    placeholder="ราคา"
-                                    type="number"
-                                    labelClassName="text-sm font-medium text-coffee-dark"
-                                    inputClassName="text-sm bg-white border border-coffee-dark"
-                                    errorClassName="right-0"
-                                />
-                            </div>
+                            <InputWithLabel<insertStockProductSchemaType>
+                                fieldTitle="หน่วย"
+                                nameInSchema="unit"
+                                placeholder="หน่วย"
+                                type="text"
+                                labelClassName="text-sm font-medium text-coffee-dark"
+                                inputClassName="text-sm bg-white border  border-coffee-dark"
+                                errorClassName="right-0"
+                            />
                             <div className="flex items-center gap-2">
                                 <div className="w-full">
                                     <InputWithLabel<insertStockProductSchemaType>
-                                        fieldTitle="หน่วย"
-                                        nameInSchema="unit"
-                                        placeholder="หน่วย"
-                                        type="text"
+                                        fieldTitle="ราคา"
+                                        nameInSchema="price"
+                                        placeholder="ราคา"
+                                        type="number"
                                         labelClassName="text-sm font-medium text-coffee-dark"
-                                        inputClassName="text-sm bg-white border  border-coffee-dark"
+                                        inputClassName="text-sm bg-white border border-coffee-dark"
                                         errorClassName="right-0"
                                     />
                                 </div>
