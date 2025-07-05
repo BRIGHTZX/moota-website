@@ -1,7 +1,7 @@
 import { getCurrentUser } from "@/services/middleware-hono";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { insertStockProductSchema } from "../schemas";
+import { insertStockProductSchema, updateStockProductSchema } from "../schemas";
 import { db } from "@/database/db";
 import { product as ProductTable } from "@/database/schema/product";
 import { eq } from "drizzle-orm";
@@ -132,6 +132,70 @@ const app = new Hono()
 
                 return c.json(
                     { message: "Product stock added successfully" },
+                    200
+                );
+            } catch (error) {
+                console.log(error);
+                return c.json({ error: "Internal Server Error" }, 500);
+            }
+        }
+    )
+    .put(
+        "/:productId",
+        getCurrentUser,
+        zValidator("form", updateStockProductSchema),
+        async (c) => {
+            const user = c.get("user");
+            if (!user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
+            try {
+                const productId = c.req.param("productId");
+
+                const { name, image, unit, category, stock, price } =
+                    c.req.valid("form");
+
+                let imageUrl = "";
+                const cloudinaryInstance = await connectCloudinary();
+
+                if (image instanceof File) {
+                    imageUrl = await (async (): Promise<string> => {
+                        if (image instanceof File) {
+                            const arrayBuffer = await image.arrayBuffer();
+                            const buffer = Buffer.from(arrayBuffer);
+                            const result =
+                                await cloudinaryInstance.uploader.upload(
+                                    "data:" +
+                                        image.type +
+                                        ";base64," +
+                                        buffer.toString("base64"),
+                                    {
+                                        resource_type: "image",
+                                    }
+                                );
+                            return result.secure_url;
+                        }
+                        throw new Error("รูปภาพหลักฐานการชำระเงินไม่ถูกต้อง");
+                    })();
+                } else {
+                    imageUrl = image;
+                }
+
+                await db
+                    .update(ProductTable)
+                    .set({
+                        name,
+                        image: imageUrl,
+                        unit,
+                        category,
+                        stock,
+                        price,
+                    })
+                    .where(eq(ProductTable.id, productId));
+
+                return c.json(
+                    { message: "Product stock updated successfully" },
                     200
                 );
             } catch (error) {

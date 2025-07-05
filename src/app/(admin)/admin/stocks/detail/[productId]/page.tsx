@@ -3,7 +3,10 @@ import ImageInput from "@/components/inputs/ImageInput";
 import TextHeader from "@/components/TextHeader";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
-import { updateStockProductSchema } from "@/features/(admin)/stocks/schemas";
+import {
+    updateStockProductSchema,
+    updateStockProductSchemaType,
+} from "@/features/(admin)/stocks/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputWithLabel from "@/components/inputs/InputWithLabel";
 import SelectWithLabel from "@/components/inputs/SelectWithLabel";
@@ -12,10 +15,14 @@ import { Button } from "@/components/ui/button";
 import { useGetProductId } from "@/features/(admin)/stocks/hooks/get-productId";
 import { useGetProductStock } from "@/features/(admin)/stocks/api/use-get-product-stock";
 import { useEffect } from "react";
+import { useUpdateProductStock } from "@/features/(admin)/stocks/api/use-update-product-stock";
 
 function StockDetailPage() {
     const productId = useGetProductId();
     const { data: productStockData } = useGetProductStock(productId);
+    const { mutate: updateProductStock } = useUpdateProductStock({
+        productId,
+    });
     const form = useForm<z.infer<typeof updateStockProductSchema>>({
         resolver: zodResolver(updateStockProductSchema),
         defaultValues: {
@@ -49,12 +56,29 @@ function StockDetailPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [productStockData]);
 
+    const onSubmit = (data: updateStockProductSchemaType) => {
+        const finalValues = {
+            ...data,
+            price: String(data.price),
+            stock: String(data.stock),
+        };
+
+        console.log(finalValues);
+
+        updateProductStock({
+            param: {
+                productId,
+            },
+            form: finalValues,
+        });
+    };
+
     return (
         <div className="p-4 pt-20 relative h-[calc(100vh-5rem)]  overflow-y-auto">
             <TextHeader text="รายละเอียดสินค้า" />
 
             <FormProvider {...form}>
-                <form>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="mt-4">
                         {/* Image */}
                         <div className="w-4/5 mx-auto">
@@ -90,7 +114,6 @@ function StockDetailPage() {
                                     nameInSchema="category"
                                     options={StockProductCategory}
                                     placeholder="หมวดหมู่"
-                                    value={form.watch("category")}
                                 />
                             </div>
 
