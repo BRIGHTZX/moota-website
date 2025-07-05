@@ -56,7 +56,7 @@ function AddTableForm({
                     id="add-table-form"
                     onSubmit={form.handleSubmit(handleSubmit)}
                 >
-                    <DialogContent className="bg-coffee-light border-coffee-dark sm:max-w-[425px]">
+                    <DialogContent className=" border-coffee-dark sm:max-w-[425px]">
                         <DialogHeader>
                             <DialogTitle asChild>
                                 <p className="text-coffee-dark text-lg font-bold">

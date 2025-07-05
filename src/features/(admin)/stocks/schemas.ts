@@ -12,3 +12,15 @@ export const insertStockProductSchema = z.object({
 export type insertStockProductSchemaType = z.infer<
     typeof insertStockProductSchema
 >;
+
+export type selectStockProductSchemaType = {
+    id: string;
+    products: {
+        name: string;
+        image: string;
+    };
+    stocks: {
+        stock: number;
+        unit: string;
+    };
+};

@@ -66,7 +66,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                     id="add-stock-product-form"
                     onSubmit={form.handleSubmit(onSubmit)}
                 >
-                    <DialogContent className="bg-coffee-light border-coffee-dark sm:max-w-[425px]">
+                    <DialogContent className=" border-coffee-dark sm:max-w-[425px]">
                         <DialogHeader>
                             <DialogTitle asChild>
                                 <p className="text-coffee-dark text-lg font-bold">

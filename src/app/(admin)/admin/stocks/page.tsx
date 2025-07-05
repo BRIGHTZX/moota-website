@@ -1,14 +1,17 @@
 "use client";
 import TextHeader from "@/components/TextHeader";
 import { Button } from "@/components/ui/button";
+import { useGetProductsStock } from "@/features/(admin)/stocks/api/use-get-products-stock";
 import AddStockProductForm from "@/features/(admin)/stocks/components/AddStockProductForm";
-import StockProductSection from "@/features/(admin)/stocks/components/StockProductSection";
+import StockProductTable from "@/features/(admin)/stocks/components/StockProductTable";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 
 function StockPage() {
     const [isAddStockProductFormOpen, setIsAddStockProductFormOpen] =
         useState<boolean>(false);
+
+    const { data: productsStockData } = useGetProductsStock();
 
     return (
         <div className="p-4 pt-20 pb-8 relative h-[calc(100vh-5rem)]  overflow-y-auto">
@@ -25,17 +28,16 @@ function StockPage() {
             </div>
 
             <div className="mt-4">
-                <div className="flex items-center gap-2">
-                    <div className="border border-coffee-dark bg-coffee-light rounded-lg p-2 w-full">
-                        <p>Search....</p>
-                    </div>
-                </div>
+                <StockProductTable
+                    products={
+                        productsStockData?.map((r) => ({
+                            id: r.id,
+                            products: r.products,
+                            stocks: r.stocks,
+                        })) || []
+                    }
+                />
             </div>
-
-            <div className="mt-4 grid grid-cols-3 gap-4">
-                <StockProductSection />
-            </div>
-
             <AddStockProductForm
                 isOpen={isAddStockProductFormOpen}
                 setIsOpen={setIsAddStockProductFormOpen}
