@@ -34,11 +34,17 @@ import Image from "next/image";
 
 type StockProductTableType = {
     products: selectStockProductSchemaType[];
+    setIsImportProductFormOpen: () => void;
+    setImportProductId: (id: string) => void;
 };
 
 type rowType = selectStockProductSchemaType;
 
-function StockProductTable({ products }: StockProductTableType) {
+function StockProductTable({
+    products,
+    setIsImportProductFormOpen,
+    setImportProductId,
+}: StockProductTableType) {
     const columnHeaderArray: Array<keyof rowType> = ["products", "stocks"];
 
     const columnWidths = {
@@ -69,9 +75,14 @@ function StockProductTable({ products }: StockProductTableType) {
                                 แก้ไขสินค้า
                             </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setIsImportProductFormOpen();
+                                setImportProductId(row.original.id);
+                            }}
+                        >
                             <PlusIcon className="size-4" />
-                            เพิ่ม/ลดสินค้า
+                            นำเข้าสินค้า
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

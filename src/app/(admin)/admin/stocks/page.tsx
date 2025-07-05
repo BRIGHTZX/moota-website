@@ -4,6 +4,7 @@ import TextHeader from "@/components/TextHeader";
 import { Button } from "@/components/ui/button";
 import { useGetProductsStock } from "@/features/(admin)/stocks/api/use-get-products-stock";
 import AddStockProductForm from "@/features/(admin)/stocks/components/AddStockProductForm";
+import ImportExportProduct from "@/features/(admin)/import-export/components/ImportExportProduct";
 import StockProductTable from "@/features/(admin)/stocks/components/StockProductTable";
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
@@ -11,6 +12,9 @@ import { useState } from "react";
 function StockPage() {
     const [isAddStockProductFormOpen, setIsAddStockProductFormOpen] =
         useState<boolean>(false);
+    const [isImportProductFormOpen, setIsImportProductFormOpen] =
+        useState<boolean>(false);
+    const [importProductId, setImportProductId] = useState<string | null>(null);
 
     const { data: productsStockData, isLoading: isLoadingProductsStock } =
         useGetProductsStock();
@@ -42,11 +46,20 @@ function StockPage() {
                             stocks: r.stocks,
                         })) || []
                     }
+                    setIsImportProductFormOpen={() =>
+                        setIsImportProductFormOpen(true)
+                    }
+                    setImportProductId={setImportProductId}
                 />
             </div>
             <AddStockProductForm
                 isOpen={isAddStockProductFormOpen}
                 setIsOpen={setIsAddStockProductFormOpen}
+            />
+            <ImportExportProduct
+                importProductId={importProductId}
+                isOpen={isImportProductFormOpen}
+                setIsOpen={setIsImportProductFormOpen}
             />
         </div>
     );

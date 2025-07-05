@@ -18,6 +18,7 @@ type InputWithLabelProps<S> = {
     inputClassName?: string;
     options: string[];
     errorClassName?: string;
+    disabled?: boolean;
 };
 
 function SelectWithLabel<S>({
@@ -28,6 +29,7 @@ function SelectWithLabel<S>({
     inputClassName,
     options,
     errorClassName,
+    disabled,
 }: InputWithLabelProps<S>) {
     const form = useFormContext();
     return (
@@ -50,6 +52,7 @@ function SelectWithLabel<S>({
                             }
                             field.onChange(value);
                         }}
+                        disabled={disabled}
                     >
                         <SelectTrigger className={cn(inputClassName, "w-full")}>
                             <SelectValue placeholder={placeholder} />

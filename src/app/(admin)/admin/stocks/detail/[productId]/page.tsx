@@ -14,10 +14,11 @@ import { StockProductCategory } from "@/features/(admin)/stocks/types";
 import { Button } from "@/components/ui/button";
 import { useGetProductId } from "@/features/(admin)/stocks/hooks/get-productId";
 import { useGetProductStock } from "@/features/(admin)/stocks/api/use-get-product-stock";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUpdateProductStock } from "@/features/(admin)/stocks/api/use-update-product-stock";
 
 function StockDetailPage() {
+    const [isEditing, setIsEditing] = useState<boolean>(false);
     const productId = useGetProductId();
     const { data: productStockData } = useGetProductStock(productId);
     const { mutate: updateProductStock } = useUpdateProductStock({
@@ -88,6 +89,7 @@ function StockDetailPage() {
                                 value={
                                     form.watch("image") as File | string | null
                                 }
+                                disabled={!isEditing}
                             />
                         </div>
 
@@ -96,6 +98,7 @@ function StockDetailPage() {
                                 fieldTitle="ชื่อสินค้า"
                                 nameInSchema="name"
                                 placeholder="กรุณากรอกชื่อสินค้า"
+                                disabled={!isEditing}
                             />
 
                             <div className="flex gap-2">
@@ -106,6 +109,7 @@ function StockDetailPage() {
                                         placeholder="หน่วยของสินค้า"
                                         inputClassName="text-sm bg-white  w-full "
                                         labelClassName="text-sm font-medium text-coffee-dark"
+                                        disabled={!isEditing}
                                     />
                                 </div>
 
@@ -114,6 +118,7 @@ function StockDetailPage() {
                                     nameInSchema="category"
                                     options={StockProductCategory}
                                     placeholder="หมวดหมู่"
+                                    disabled={!isEditing}
                                 />
                             </div>
 
@@ -122,22 +127,50 @@ function StockDetailPage() {
                                     fieldTitle="จำนวนสินค้า"
                                     nameInSchema="stock"
                                     placeholder="กรุณากรอกจำนวนสินค้า"
+                                    disabled={!isEditing}
                                 />
 
                                 <InputWithLabel
                                     fieldTitle="ราคาสินค้า"
                                     nameInSchema="price"
                                     placeholder="กรุณากรอกราคาสินค้า"
+                                    disabled={!isEditing}
                                 />
                             </div>
 
-                            <div className="mt-4">
-                                <Button
-                                    variant="coffeePrimary"
-                                    className="w-full"
-                                >
-                                    บันทึก
-                                </Button>
+                            <div className="mt-4 flex flex-col gap-2">
+                                {isEditing && (
+                                    <Button
+                                        key="save-button"
+                                        variant="coffeePrimary"
+                                        className="w-full"
+                                        type="submit"
+                                    >
+                                        บันทึก
+                                    </Button>
+                                )}
+
+                                {isEditing ? (
+                                    <Button
+                                        key="edit-button"
+                                        variant="coffeeOutline"
+                                        className="w-full"
+                                        type="button"
+                                        onClick={() => setIsEditing(false)}
+                                    >
+                                        ยกเลิก
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        key="cancel-button"
+                                        variant="coffeePrimary"
+                                        className="w-full"
+                                        type="button"
+                                        onClick={() => setIsEditing(true)}
+                                    >
+                                        แก้ไข
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     </div>

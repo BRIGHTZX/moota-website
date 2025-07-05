@@ -6,12 +6,13 @@ import { cn } from "@/lib/utils";
 
 type InputWithLabelProps<S> = {
     type?: string;
-    fieldTitle: string;
+    fieldTitle?: string;
     nameInSchema: keyof S & string;
     placeholder: string;
     labelClassName?: string;
     inputClassName?: string;
     errorClassName?: string;
+    disabled?: boolean;
 };
 
 function InputWithLabel<S>({
@@ -22,6 +23,7 @@ function InputWithLabel<S>({
     labelClassName,
     inputClassName,
     errorClassName,
+    disabled,
     ...props
 }: InputWithLabelProps<S>) {
     const form = useFormContext();
@@ -45,6 +47,7 @@ function InputWithLabel<S>({
                         type={type}
                         className={inputClassName}
                         value={field.value ?? ""}
+                        disabled={disabled}
                     />
                     <FormMessage
                         className={cn(

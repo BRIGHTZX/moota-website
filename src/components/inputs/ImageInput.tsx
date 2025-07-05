@@ -10,6 +10,7 @@ type ImageInputProps<S> = {
     nameInSchema: keyof S & string;
     errorClassName?: string;
     handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    disabled?: boolean;
 };
 
 function ImageInput<S>({
@@ -17,6 +18,7 @@ function ImageInput<S>({
     value,
     errorClassName,
     handleImageChange,
+    disabled,
 }: ImageInputProps<S>) {
     const inputRef = useRef<HTMLInputElement>(null);
     const form = useFormContext();
@@ -43,7 +45,10 @@ function ImageInput<S>({
                             alt="preview"
                             width={1000}
                             height={1000}
-                            className="w-full h-full object-cover object-t "
+                            className={cn(
+                                "w-full h-full object-cover object-t ",
+                                disabled && "opacity-50"
+                            )}
                         />
                     </div>
                     {/* Input File */}
@@ -53,6 +58,7 @@ function ImageInput<S>({
                         hidden
                         ref={inputRef}
                         onChange={(e) => handleImageChange(e)}
+                        disabled={disabled}
                     />
                     <FormMessage
                         className={cn(
