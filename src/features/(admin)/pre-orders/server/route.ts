@@ -228,6 +228,8 @@ const app = new Hono()
                             customerName: preOrder.customerName,
                             customerPhone: preOrder.phoneNumber,
                             openTime: preOrder.reservationTime,
+                            adultNumber: preOrder.adultNumber,
+                            childNumber: preOrder.childNumber,
                         })
                         .returning({
                             id: ActiveTable.id,
@@ -237,8 +239,6 @@ const app = new Hono()
                         preOrderInfo.map((info) => ({
                             activeId: active.id,
                             tableId: info.tableId,
-                            adultNumber: preOrder.adultNumber,
-                            childNumber: preOrder.childNumber,
                         }))
                     );
 

@@ -1,40 +1,88 @@
-import Image from "next/image";
-import React from "react";
+"use client";
+import React, { useState } from "react";
+import { useGetProductDrinks } from "../api/use-get-product-drinks";
+import OrderProductCard from "./OrderProductCard";
+import PageLoader from "@/components/PageLoader";
+import { OrderItem } from "../types";
+import { Button } from "@/components/ui/button";
+import AlertDialogCustom from "@/components/AlertDialogCustom";
 
-function ProductCard() {
+function OrderProductSection() {
+    const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false);
+    const { data: drinkList, isLoading: isLoadingDrinkList } =
+        useGetProductDrinks();
+
+    const [orderList, setOrderList] = useState<OrderItem[]>([]);
+
     return (
-        <div className="bg-white border border-coffee-dark/50 rounded-lg overflow-hidden w-full">
-            <div className="flex items-stretch h-24">
-                {/* Product Section */}
-                <div className="flex items-center gap-2 size-full">
-                    <div className="min-h-24 min-w-24 size-24 rounded-lg border border-coffee-dark/50 overflow-hidden relative">
-                        <Image
-                            src="/images/product/product-1.png"
-                            alt="product"
-                            width={100}
-                            height={100}
-                            className="object-cover"
-                        />
-                    </div>
+        <div>
+            {/* Alert Dialog */}
+            <AlertDialogCustom
+                open={openAlertDialog}
+                setOpen={setOpenAlertDialog}
+                action={() => {}}
+                cancelAction={() => {}}
+                title="ยืนยันการสั่งซื้อ"
+                description="คุณต้องการยืนยันการสั่งซื้อหรือไม่"
+                buttonActionText="ยืนยัน"
+            />
+            {/* Drink List */}
 
-                    <div className="flex justify-between flex-col w-full h-full gap-2 p-2">
-                        <p className="text-coffee-dark text-sm font-bold">
-                            น้ำเปล่า
-                        </p>
-                        {/* Button Section */}
-                        <div className="flex items-center gap-2">
-                            <button className="border border-red-400 text-red-400 rounded-sm size-8 flex items-center justify-center">
-                                -
-                            </button>
-                            <div className="size-8  rounded-md flex items-center justify-center">
-                                <p className="text-coffee-dark text-sm font-bold">
-                                    1
-                                </p>
-                            </div>
-                            <button className="border border-emerald-500 text-emerald-500 rounded-sm size-8 flex items-center justify-center">
-                                +
-                            </button>
+            {isLoadingDrinkList ? (
+                <PageLoader className="h-[400px]" />
+            ) : (
+                <div className="flex flex-col gap-2">
+                    {drinkList?.map((drink) => (
+                        <OrderProductCard
+                            key={drink.id}
+                            product={drink}
+                            orderList={orderList}
+                            setOrderList={setOrderList}
+                        />
+                    ))}
+                </div>
+            )}
+            {/* Order List and Send Data */}
+            <div className="flex flex-col gap-2 border border-coffee-dark rounded-md mt-4 p-4">
+                <div className="flex items-center justify-between">
+                    <p className="text-coffee-dark text-lg font-bold">
+                        รายการสั่งซื้อ
+                    </p>
+                    <p className="text-coffee-dark text-sm font-bold">
+                        รวม{" "}
+                        {orderList.reduce(
+                            (acc, item) => acc + item.quantity,
+                            0
+                        )}
+                    </p>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                    {orderList.length === 0 && (
+                        <div className="flex items-center justify-center h-24">
+                            <p className="text-gray-500 text-center text-sm font-bold">
+                                ไม่มีรายการสั่งซื้อ
+                            </p>
                         </div>
+                    )}
+                    {orderList.map((item) => (
+                        <OrderInfoCard
+                            key={item.product.id}
+                            productName={item.product.name}
+                            price={item.product.price}
+                            quantity={item.quantity}
+                        />
+                    ))}
+
+                    <div className="mt-4">
+                        <Button
+                            disabled={orderList.length === 0}
+                            variant="coffeePrimary"
+                            className="w-full"
+                            onClick={() => setOpenAlertDialog(true)}
+                        >
+                            ยืนยันการสั่งซื้อ
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -42,4 +90,32 @@ function ProductCard() {
     );
 }
 
-export default ProductCard;
+export default OrderProductSection;
+
+type OrderInfoCardProps = {
+    productName: string;
+    price: number;
+    quantity: number;
+};
+
+const OrderInfoCard = ({
+    productName,
+    price,
+    quantity,
+}: OrderInfoCardProps) => {
+    const totalPrice = price * quantity;
+    return (
+        <div className="flex justify-between items-center">
+            <div>
+                <p>{productName}</p>
+                <div className="flex text-sm text-gray-500 items-center gap-2">
+                    <p>{price} ฿</p>
+                    <p>x</p>
+                    <p>{quantity}</p>
+                </div>
+            </div>
+
+            <p>{totalPrice} ฿</p>
+        </div>
+    );
+};

@@ -7,7 +7,13 @@ const api = client.api.admin.stocks[":productId"]["$put"];
 type RequestType = InferRequestType<typeof api>;
 type ResponseType = InferResponseType<typeof api>;
 
-export const useUpdateProductStock = ({ productId }: { productId: string }) => {
+export const useUpdateProductStock = ({
+    productId,
+    setIsEditing,
+}: {
+    productId: string;
+    setIsEditing: (isEditing: boolean) => void;
+}) => {
     const queryClient = useQueryClient();
     return useMutation<ResponseType, Error, RequestType>({
         mutationFn: async ({ param, form }) => {
@@ -26,8 +32,12 @@ export const useUpdateProductStock = ({ productId }: { productId: string }) => {
         },
         onSuccess: () => {
             toast.success("อัพเดตสินค้าเรียบร้อย");
+            setIsEditing(false);
             queryClient.invalidateQueries({
                 queryKey: ["product-stock", productId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ["products-stock"],
             });
         },
         onError: (error) => {

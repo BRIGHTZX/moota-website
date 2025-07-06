@@ -8,15 +8,14 @@ type TableActiveSectionProps = {
 };
 
 function TableActiveSection({ active }: TableActiveSectionProps) {
-    const { customerName, customerPhone, openTime, activeInfo } = active;
-    const totalAdult = (activeInfo ?? []).reduce(
-        (acc, curr) => acc + curr.customerAdult,
-        0
-    );
-    const totalChild = (activeInfo ?? []).reduce(
-        (acc, curr) => acc + curr.customerChild,
-        0
-    );
+    const {
+        customerName,
+        customerPhone,
+        openTime,
+        activeInfo,
+        adultNumber,
+        childNumber,
+    } = active;
 
     return (
         <div className="border border-coffee-dark rounded-lg p-4 relative">
@@ -36,11 +35,11 @@ function TableActiveSection({ active }: TableActiveSectionProps) {
                 />
                 <TextCardInfo
                     text="จำนวนผู้ใหญ่ :"
-                    value={totalAdult.toString()}
+                    value={adultNumber.toString()}
                 />
                 <TextCardInfo
                     text="จำนวนเด็ก :"
-                    value={totalChild.toString()}
+                    value={childNumber.toString()}
                 />
             </div>
             {/* Table Info */}
@@ -48,7 +47,7 @@ function TableActiveSection({ active }: TableActiveSectionProps) {
                 {activeInfo?.map((info) => (
                     <HaveTable
                         key={info.activeInfoId}
-                        tableId={info.tableId}
+                        activeInfoId={info.activeInfoId}
                         tableNumber={info.tableNumber}
                     />
                 ))}
@@ -60,14 +59,14 @@ function TableActiveSection({ active }: TableActiveSectionProps) {
 export default TableActiveSection;
 
 const HaveTable = ({
-    tableId,
+    activeInfoId,
     tableNumber,
 }: {
-    tableId: string;
+    activeInfoId: string;
     tableNumber: string;
 }) => {
     return (
-        <Link href={`/admin/actives/orders/${tableId}`}>
+        <Link href={`/admin/actives/orders/${activeInfoId}`}>
             <div className="bg-coffee-light rounded-lg p-4 border border-coffee-dark cursor-pointer hover:bg-coffee-brown transition-all duration-300">
                 <p className="text-coffee-dark text-xs text-center font-bold">
                     {tableNumber}

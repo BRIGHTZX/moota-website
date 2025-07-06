@@ -22,6 +22,8 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
                     activeId: ActiveTable.id,
                     customerName: ActiveTable.customerName,
                     customerPhone: ActiveTable.customerPhone,
+                    adultNumber: ActiveTable.adultNumber,
+                    childNumber: ActiveTable.childNumber,
                     openTime: ActiveTable.openTime,
                     updatedAt: ActiveTable.updatedAt,
                 },
@@ -29,8 +31,6 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
                     activeInfoId: ActiveInfoTable.id,
                     tableId: ActiveInfoTable.tableId,
                     tableNumber: TablesTable.tableNumber,
-                    customerAdult: ActiveInfoTable.adultNumber,
-                    customerChild: ActiveInfoTable.childNumber,
                 },
             })
             .from(ActiveTable)
@@ -58,8 +58,6 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
                     activeInfoId: row.activeInfo.activeInfoId,
                     tableId: row.activeInfo.tableId,
                     tableNumber: row.activeInfo.tableNumber,
-                    customerAdult: row.activeInfo.customerAdult,
-                    customerChild: row.activeInfo.customerChild,
                 });
             }
         }
