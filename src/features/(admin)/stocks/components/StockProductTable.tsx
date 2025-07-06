@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import {
-    HistoryIcon,
     MoreHorizontalIcon,
     PencilLineIcon,
     PlusIcon,
@@ -85,10 +84,6 @@ function StockProductTable({
                         >
                             <PlusIcon className="size-4" />
                             นำเข้าสินค้า
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <HistoryIcon className="size-4" />
-                            ประวัติการนำเข้า/ออก
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                             <TrashIcon className="size-4" />

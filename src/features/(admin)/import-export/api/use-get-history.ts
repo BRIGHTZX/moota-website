@@ -1,16 +1,16 @@
 import { client } from "@/lib/rpc";
 import { useQuery } from "@tanstack/react-query";
 
-const api =
-    client.api.admin["import-export"]["get-product-info"][":productId"]["$get"];
+const api = client.api.admin["import-export"]["$get"];
 
-export const useGetImportExportProduct = (productId: string | null) => {
+export const useGetHistory = (startDate: string, endDate: string) => {
     const query = useQuery({
-        queryKey: ["importExportProduct", productId],
+        queryKey: ["importExportProduct", startDate, endDate],
         queryFn: async () => {
             const response = await api({
-                param: {
-                    productId: productId ?? "",
+                query: {
+                    startDate,
+                    endDate,
                 },
             });
 
@@ -20,9 +20,9 @@ export const useGetImportExportProduct = (productId: string | null) => {
 
             const data = await response.json();
 
-            return data.product;
+            return data.history;
         },
-        enabled: !!productId,
+        enabled: !!startDate && !!endDate,
     });
 
     return query;

@@ -5,6 +5,7 @@ import { AuthProvider } from "@/lib/KindeAuthProvider";
 import { NavbarProvider } from "@/context/NavbarProvider";
 import { QueryProviders } from "@/context/QueryClientProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -28,16 +29,18 @@ export default function RootLayout({
 }>) {
     return (
         <AuthProvider>
-            <QueryProviders>
-                <html lang="en">
-                    <body
-                        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-                    >
-                        <NavbarProvider>{children}</NavbarProvider>
-                        <Toaster />
-                    </body>
-                </html>
-            </QueryProviders>
+            <html lang="en">
+                <body
+                    className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+                >
+                    <NuqsAdapter>
+                        <QueryProviders>
+                            <NavbarProvider>{children}</NavbarProvider>
+                            <Toaster />
+                        </QueryProviders>
+                    </NuqsAdapter>
+                </body>
+            </html>
         </AuthProvider>
     );
 }
