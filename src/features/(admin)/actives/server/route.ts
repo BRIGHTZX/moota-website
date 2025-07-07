@@ -1,12 +1,6 @@
 import { db } from "@/database/db";
 import { getCurrentUser } from "@/services/middleware-hono";
 import { Hono } from "hono";
-import { desc, eq } from "drizzle-orm";
-import {
-    active as ActiveTable,
-    activeInfo as ActiveInfoTable,
-} from "@/database/schema/tables/active";
-import { diningTable as DiningTable } from "@/database/schema/tables/diningTable";
 
 const app = new Hono().get("/", getCurrentUser, async (c) => {
     const user = c.get("user");
@@ -16,53 +10,49 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
     }
 
     try {
-        const actives = await db
-            .select({
-                active: {
-                    activeId: ActiveTable.id,
-                    customerName: ActiveTable.customerName,
-                    customerPhone: ActiveTable.customerPhone,
-                    adultNumber: ActiveTable.adultNumber,
-                    childNumber: ActiveTable.childNumber,
-                    openTime: ActiveTable.openTime,
-                    updatedAt: ActiveTable.updatedAt,
+        const actives = await db.query.active.findMany({
+            columns: {
+                id: true,
+                customerName: true,
+                customerPhone: true,
+                adultNumber: true,
+                childNumber: true,
+                openTime: true,
+                updatedAt: true,
+            },
+            with: {
+                activeInfos: {
+                    columns: {
+                        id: true,
+                        tableId: true,
+                    },
+                    with: {
+                        diningTable: {
+                            columns: {
+                                tableNumber: true,
+                            },
+                        },
+                    },
                 },
-                activeInfo: {
-                    activeInfoId: ActiveInfoTable.id,
-                    tableId: ActiveInfoTable.tableId,
-                    tableNumber: DiningTable.tableNumber,
-                },
-            })
-            .from(ActiveTable)
-            .leftJoin(
-                ActiveInfoTable,
-                eq(ActiveTable.id, ActiveInfoTable.activeId)
-            )
-            .leftJoin(DiningTable, eq(ActiveInfoTable.tableId, DiningTable.id))
-            .orderBy(desc(ActiveTable.updatedAt));
+            },
+        });
 
-        const activeMap = new Map();
+        const formattedActives = actives.map((active) => ({
+            activeId: active.id,
+            customerName: active.customerName,
+            customerPhone: active.customerPhone,
+            adultNumber: active.adultNumber,
+            childNumber: active.childNumber,
+            openTime: active.openTime,
+            updatedAt: active.updatedAt,
+            activeInfos: active.activeInfos.map((info) => ({
+                activeInfoId: info.id,
+                tableId: info.tableId,
+                tableNumber: info.diningTable.tableNumber,
+            })),
+        }));
 
-        for (const row of actives) {
-            const activeId = row.active.activeId;
-
-            if (!activeMap.has(activeId)) {
-                activeMap.set(activeId, {
-                    ...row.active,
-                    activeInfo: [],
-                });
-            }
-
-            if (row.activeInfo.activeInfoId) {
-                activeMap.get(activeId).activeInfo.push({
-                    activeInfoId: row.activeInfo.activeInfoId,
-                    tableId: row.activeInfo.tableId,
-                    tableNumber: row.activeInfo.tableNumber,
-                });
-            }
-        }
-
-        const formattedActives = Array.from(activeMap.values());
+        console.log(formattedActives);
 
         return c.json({
             message: "Actives fetched successfully",

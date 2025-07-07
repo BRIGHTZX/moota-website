@@ -9,7 +9,7 @@ import {
     preOrder as PreOrderTable,
     preOrderInfo as PreOrderInfoTable,
 } from "@/database/schema/pre-order";
-import { table as TablesTable } from "@/database/schema/table";
+import { diningTable as TablesTable } from "@/database/schema/diningTable";
 import {
     active as ActiveTable,
     activeInfo as ActiveInfoTable,

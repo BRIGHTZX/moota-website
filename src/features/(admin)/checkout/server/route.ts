@@ -9,69 +9,55 @@ import {
     order as OrderTable,
     orderItem as OrderItemTable,
 } from "@/database/schema/order";
+import { active as ActiveTable } from "@/database/schema/active";
 
 const app = new Hono()
     .get("/checkout-info/:activeId", async (c) => {
         try {
             const activeId = c.req.param("activeId");
 
-            const active = await db;
-            console.log(active);
-            // const actives = await db
-            //     .select({
-            //         active: {
-            //             activeId: ActiveTable.id,
-            //             customerName: ActiveTable.customerName,
-            //             customerPhone: ActiveTable.customerPhone,
-            //             adultNumber: ActiveTable.adultNumber,
-            //             childNumber: ActiveTable.childNumber,
-            //             openTime: ActiveTable.openTime,
-            //             updatedAt: ActiveTable.updatedAt,
-            //         },
-            //         activeInfo: {
-            //             activeInfoId: ActiveInfoTable.id,
-            //             tableId: ActiveInfoTable.tableId,
-            //             tableNumber: TablesTable.tableNumber,
-            //         },
-            //     })
-            //     .from(ActiveTable)
-            //     .leftJoin(
-            //         ActiveInfoTable,
-            //         eq(ActiveTable.id, ActiveInfoTable.activeId)
-            //     )
-            //     .leftJoin(
-            //         TablesTable,
-            //         eq(ActiveInfoTable.tableId, TablesTable.id)
-            //     )
-            //     .orderBy(desc(ActiveTable.updatedAt))
-            //     .where(eq(ActiveTable.id, activeId));
+            const active = await db.query.active.findFirst({
+                where: eq(ActiveTable.id, activeId),
+                columns: {
+                    id: true,
+                    customerName: true,
+                    customerPhone: true,
+                    adultNumber: true,
+                    childNumber: true,
+                    openTime: true,
+                    updatedAt: true,
+                },
+                with: {
+                    activeInfos: {
+                        columns: {
+                            id: true,
+                            tableId: true,
+                        },
+                        with: {
+                            diningTable: {
+                                columns: {
+                                    tableNumber: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            });
 
-            // const activeMap = new Map();
+            const formattedActives = {
+                ...active,
+                activeInfos: active?.activeInfos.map((info) => ({
+                    activeInfoId: info.id,
+                    tableId: info.tableId,
+                    tableNumber: info.diningTable.tableNumber,
+                })),
+            };
 
-            // for (const row of actives) {
-            //     const activeId = row.active.activeId;
-
-            //     if (!activeMap.has(activeId)) {
-            //         activeMap.set(activeId, {
-            //             ...row.active,
-            //             activeInfo: [],
-            //         });
-            //     }
-
-            //     if (row.activeInfo.activeInfoId) {
-            //         activeMap.get(activeId).activeInfo.push({
-            //             activeInfoId: row.activeInfo.activeInfoId,
-            //             tableId: row.activeInfo.tableId,
-            //             tableNumber: row.activeInfo.tableNumber,
-            //         });
-            //     }
-            // }
-
-            // const formattedActives = Array.from(activeMap.values())[0] ?? null;
+            console.log(formattedActives);
 
             return c.json({
-                message: "Success",
-                result: active,
+                message: "Fetch checkout info successfully",
+                result: formattedActives,
             });
         } catch (error) {
             if (error instanceof Error) {

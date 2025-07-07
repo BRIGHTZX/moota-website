@@ -19,7 +19,7 @@ function TableActiveSection({
         customerName,
         customerPhone,
         openTime,
-        activeInfo,
+        activeInfos,
         adultNumber,
         childNumber,
     } = active;
@@ -51,7 +51,7 @@ function TableActiveSection({
             </div>
             {/* Table Info */}
             <div className="grid grid-cols-3 gap-2 mt-4">
-                {activeInfo?.map((info) => (
+                {activeInfos?.map((info) => (
                     <HaveTable
                         key={info.activeInfoId}
                         activeInfoId={info.activeInfoId}

@@ -5,7 +5,8 @@ export type ActiveType = {
     adultNumber: number;
     childNumber: number;
     openTime: string;
-    activeInfo: {
+    updatedAt: string;
+    activeInfos: {
         activeInfoId: string;
         tableId: string;
         tableNumber: string;

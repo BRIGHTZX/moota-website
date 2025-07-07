@@ -9,7 +9,7 @@ import { insertOrderSchema } from "../schemas";
 
 import { product as ProductTable } from "@/database/schema/product";
 import { activeInfo as ActiveInfoTable } from "@/database/schema/active";
-import { table as TablesTable } from "@/database/schema/table";
+import { diningTable as TablesTable } from "@/database/schema/diningTable";
 import {
     order as OrderTable,
     orderItem as OrderItemTable,

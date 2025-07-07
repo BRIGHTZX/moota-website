@@ -1,5 +1,6 @@
 import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { product as ProductTable } from "./product";
+import { product, product as ProductTable } from "./product";
+import { relations } from "drizzle-orm";
 
 export const importExportHistory = pgTable("import_export_history", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -14,3 +15,13 @@ export const importExportHistory = pgTable("import_export_history", {
         .defaultNow()
         .$onUpdate(() => new Date()),
 });
+
+export const importExportHistoryRelations = relations(
+    importExportHistory,
+    ({ one }) => ({
+        product: one(product, {
+            fields: [importExportHistory.productId],
+            references: [product.id],
+        }),
+    })
+);

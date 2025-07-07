@@ -5,8 +5,8 @@ import { Hono } from "hono";
 import {
     preOrder as PreOrderTable,
     preOrderInfo as PreOrderInfoTable,
-} from "@/database/schema/tables/pre-order";
-import { diningTable as DiningTable } from "@/database/schema/tables/diningTable";
+} from "@/database/schema//pre-order";
+import { diningTable as DiningTable } from "@/database/schema//diningTable";
 
 const app = new Hono().get("/", getCurrentUser, async (c) => {
     const user = c.get("user");

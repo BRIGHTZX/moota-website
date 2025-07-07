@@ -34,52 +34,48 @@ const app = new Hono()
                 const end = new Date(endDate);
                 end.setDate(end.getDate() + 1); // exclusive upper bound
 
-                const result = await db
-                    .select({
-                        id: ImportExportHistoryTable.id,
-                        productId: ImportExportHistoryTable.productId,
-                        productName: ProductTable.name,
-                        productUnit: ProductTable.unit,
-                        stock: ImportExportHistoryTable.stock,
-                        type: ImportExportHistoryTable.type,
-                        updatedAt: ImportExportHistoryTable.updatedAt,
-                    })
-                    .from(ImportExportHistoryTable)
-                    .where(
-                        and(
-                            gte(
-                                ImportExportHistoryTable.updatedAt,
-                                new Date(start)
-                            ),
-                            lte(
-                                ImportExportHistoryTable.updatedAt,
-                                new Date(end)
-                            )
-                        )
-                    )
-                    .leftJoin(
-                        ProductTable,
-                        eq(ImportExportHistoryTable.productId, ProductTable.id)
-                    )
-                    .orderBy(desc(ImportExportHistoryTable.updatedAt));
+                const result = await db.query.importExportHistory.findMany({
+                    columns: {
+                        id: true,
+                        productId: true,
+                        stock: true,
+                        type: true,
+                        updatedAt: true,
+                    },
+                    where: and(
+                        gte(
+                            ImportExportHistoryTable.updatedAt,
+                            new Date(start)
+                        ),
+                        lte(ImportExportHistoryTable.updatedAt, new Date(end))
+                    ),
+                    orderBy: desc(ImportExportHistoryTable.updatedAt),
+                    with: {
+                        product: {
+                            columns: {
+                                name: true,
+                                unit: true,
+                            },
+                        },
+                    },
+                });
 
-                const formattedHistory = mapHistoryDateToRecord(
-                    result
-                        .filter((item) => item.productId !== null)
-                        .map((item) => ({
-                            ...item,
-                            productId: item.productId!,
-                            productName: item.productName!,
-                            productUnit: item.productUnit!,
-                            type: item.type as "import" | "export",
-                            updatedAt: item.updatedAt.toISOString(),
-                        }))
-                );
+                const formattedHistory = result.map((item) => ({
+                    id: item.id,
+                    productId: item.productId,
+                    productName: item.product.name,
+                    productUnit: item.product.unit,
+                    stock: item.stock,
+                    type: item.type as "import" | "export",
+                    updatedAt: item.updatedAt.toISOString(),
+                }));
+
+                const groupByDate = mapHistoryDateToRecord(formattedHistory);
 
                 return c.json(
                     {
                         message: "History fetched successfully",
-                        history: formattedHistory,
+                        history: groupByDate,
                     },
                     200
                 );
@@ -98,16 +94,15 @@ const app = new Hono()
         try {
             const productId = c.req.param("productId");
 
-            const [product] = await db
-                .select({
-                    id: ProductTable.id,
-                    name: ProductTable.name,
-                    unit: ProductTable.unit,
-                    stock: ProductTable.stock,
-                })
-                .from(ProductTable)
-                .where(eq(ProductTable.id, productId))
-                .limit(1);
+            const product = await db.query.product.findFirst({
+                columns: {
+                    id: true,
+                    name: true,
+                    unit: true,
+                    stock: true,
+                },
+                where: eq(ProductTable.id, productId),
+            });
 
             if (!product) {
                 return c.json({ error: "Product not found" }, 404);

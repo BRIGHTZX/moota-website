@@ -7,8 +7,8 @@ import { insertPreOrderWithoutTableIdSchema } from "../schema";
 import {
     preOrder as PreOrderTable,
     preOrderInfo as PreOrderInfoTable,
-} from "@/database/schema/tables/pre-order";
-import { diningTable as DiningTable } from "@/database/schema/tables/diningTable";
+} from "@/database/schema/pre-order";
+import { diningTable as DiningTable } from "@/database/schema/diningTable";
 import { z } from "zod";
 import { generateOrderNumber } from "@/lib/generateOrderNumber";
 import { and, eq } from "drizzle-orm";

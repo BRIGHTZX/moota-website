@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { db } from "@/database/db";
-import { diningTable as DiningTable } from "@/database/schema/tables/diningTable";
+import { diningTable as DiningTable } from "@/database/schema//diningTable";
 import {
     active as ActiveTable,
     activeInfo as ActiveInfoTable,
-} from "@/database/schema/tables/active";
+} from "@/database/schema//active";
 import { insertTalblesSchema, selectTablesSchemaType } from "../schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/services/middleware-hono";

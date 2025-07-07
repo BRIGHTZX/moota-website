@@ -31,15 +31,15 @@ function CheckoutPage() {
                 <div className="flex flex-col gap-2 border border-gray-500 rounded-md p-4">
                     <TextCardInfo
                         text="ชื่อลูกค้า"
-                        value={checkoutInfo?.customerName}
+                        value={checkoutInfo?.customerName ?? ""}
                     />
                     <TextCardInfo
                         text="จำนวนผู้ใหญ่"
-                        value={checkoutInfo?.adultNumber.toString()}
+                        value={checkoutInfo?.adultNumber?.toString() ?? ""}
                     />
                     <TextCardInfo
                         text="จำนวนเด็ก"
-                        value={checkoutInfo?.childNumber.toString()}
+                        value={checkoutInfo?.childNumber?.toString() ?? ""}
                     />
                 </div>
             </div>
@@ -48,7 +48,7 @@ function CheckoutPage() {
             <div className="flex flex-col gap-2 mt-4">
                 <TextHeader text="โต๊ะที่กำลังทำงาน" className="text-md" />
                 <div className="grid grid-cols-4 gap-2">
-                    {checkoutInfo?.activeInfo.map((info: ActiveInfo) => (
+                    {checkoutInfo?.activeInfos?.map((info: ActiveInfo) => (
                         <TableSelector key={info.activeInfoId} tables={info} />
                     ))}
                 </div>
