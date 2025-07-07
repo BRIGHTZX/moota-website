@@ -26,7 +26,7 @@ function OrdersPage() {
 
             {/* Order Product Section */}
             <div className="mt-4">
-                <OrderProductSection />
+                <OrderProductSection activeInfoId={activeInfoId} />
             </div>
         </div>
     );

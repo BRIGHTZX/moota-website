@@ -1,6 +1,7 @@
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
 import { OrderItem, ProductDrink } from "../types";
+import { cn } from "@/lib/utils";
 
 interface Props {
     product: ProductDrink;
@@ -23,7 +24,17 @@ function OrderProductCard({ product, orderList = [], setOrderList }: Props) {
                     return idx === -1 ? prev : prev.filter((_, i) => i !== idx);
                 }
                 if (idx === -1) {
-                    return [...prev, { product, quantity: nextQty }];
+                    return [
+                        ...prev,
+                        {
+                            product: {
+                                id: product.id,
+                                name: product.name,
+                                price: product.price,
+                            },
+                            quantity: nextQty,
+                        },
+                    ];
                 }
                 const next = [...prev];
                 next[idx] = { ...next[idx], quantity: nextQty };
@@ -79,8 +90,13 @@ function OrderProductCard({ product, orderList = [], setOrderList }: Props) {
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => handleQuantityChange("sub")}
-                                className="border border-red-400 text-red-400 rounded-sm size-7 flex items-center justify-center"
-                                disabled={quantity === 0}
+                                className={cn(
+                                    "border border-red-400 text-red-400 rounded-sm size-7 flex items-center justify-center",
+                                    quantity === 0 || product.stock === 0
+                                        ? "opacity-40 cursor-not-allowed"
+                                        : ""
+                                )}
+                                disabled={quantity === 0 || product.stock === 0}
                             >
                                 -
                             </button>
@@ -91,7 +107,12 @@ function OrderProductCard({ product, orderList = [], setOrderList }: Props) {
                             </div>
                             <button
                                 onClick={() => handleQuantityChange("add")}
-                                className="border border-emerald-500 text-emerald-500 rounded-sm size-7 flex items-center justify-center"
+                                className={cn(
+                                    "border border-emerald-500 text-emerald-500 rounded-sm size-7 flex items-center justify-center",
+                                    product.stock === 0 &&
+                                        "opacity-40 cursor-not-allowed"
+                                )}
+                                disabled={product.stock === 0}
                             >
                                 +
                             </button>

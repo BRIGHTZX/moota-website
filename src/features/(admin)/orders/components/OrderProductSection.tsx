@@ -1,18 +1,65 @@
 "use client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useGetProductDrinks } from "../api/use-get-product-drinks";
 import OrderProductCard from "./OrderProductCard";
 import PageLoader from "@/components/PageLoader";
 import { OrderItem } from "../types";
 import { Button } from "@/components/ui/button";
 import AlertDialogCustom from "@/components/AlertDialogCustom";
+import { useCreateOrder } from "../api/use-create-order";
+import SeperateLine from "@/components/SeperateLine";
+import { useGetOrderHistoryActiveInfoId } from "../api/use-get-order-history-activeInfoId";
+import TextHeader from "@/components/TextHeader";
+import OrderHistoryCard from "./OrderHistoryCard";
 
-function OrderProductSection() {
+function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
     const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false);
-    const { data: drinkList, isLoading: isLoadingDrinkList } =
-        useGetProductDrinks();
-
     const [orderList, setOrderList] = useState<OrderItem[]>([]);
+    const totalPrice = useMemo(
+        () =>
+            orderList.reduce(
+                (acc, item) => acc + item.product.price * item.quantity,
+                0
+            ),
+        [orderList]
+    );
+
+    // Get Product Drinks
+    const {
+        data: drinkList,
+        isLoading: isLoadingDrinkList,
+        isError: isErrorDrinkList,
+    } = useGetProductDrinks();
+    // Create Order
+    const {
+        mutate: createOrder,
+        isPending: isPendingCreateOrder,
+        isError: isErrorCreateOrder,
+    } = useCreateOrder({
+        activeInfoId,
+        setOrderList,
+    });
+
+    // Get Order History
+    const {
+        data: orderHistory,
+        isLoading: isLoadingOrderHistory,
+        isError: isErrorOrderHistory,
+    } = useGetOrderHistoryActiveInfoId(activeInfoId);
+
+    const handleCreateOrder = () => {
+        createOrder({
+            json: {
+                activeInfoId,
+                totalPrice,
+                orderList: orderList,
+            },
+        });
+    };
+
+    if (isErrorDrinkList || isErrorCreateOrder || isErrorOrderHistory) {
+        return <div>Error</div>;
+    }
 
     return (
         <div>
@@ -20,8 +67,8 @@ function OrderProductSection() {
             <AlertDialogCustom
                 open={openAlertDialog}
                 setOpen={setOpenAlertDialog}
-                action={() => {}}
-                cancelAction={() => {}}
+                action={handleCreateOrder}
+                cancelAction={() => setOpenAlertDialog(false)}
                 title="ยืนยันการสั่งซื้อ"
                 description="คุณต้องการยืนยันการสั่งซื้อหรือไม่"
                 buttonActionText="ยืนยัน"
@@ -74,9 +121,17 @@ function OrderProductSection() {
                         />
                     ))}
 
+                    <SeperateLine className="my-2" />
+                    <div className="flex justify-between items-center">
+                        <p className="text-black font-bold">รวมราคา</p>
+                        <p className="text-black font-bold">{totalPrice}฿</p>
+                    </div>
+
                     <div className="mt-4">
                         <Button
-                            disabled={orderList.length === 0}
+                            disabled={
+                                orderList.length === 0 || isPendingCreateOrder
+                            }
                             variant="coffeePrimary"
                             className="w-full"
                             onClick={() => setOpenAlertDialog(true)}
@@ -84,6 +139,16 @@ function OrderProductSection() {
                             ยืนยันการสั่งซื้อ
                         </Button>
                     </div>
+                </div>
+            </div>
+
+            {/* Order History */}
+            <div className="mt-4">
+                <TextHeader text="ประวัติการสั่งซื้อ" className="text-xl" />
+                <div className="flex flex-col gap-2">
+                    {orderHistory?.map((item) => (
+                        <OrderHistoryCard key={item.id} order={item} />
+                    ))}
                 </div>
             </div>
         </div>
