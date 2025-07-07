@@ -41,11 +41,8 @@ function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
     });
 
     // Get Order History
-    const {
-        data: orderHistory,
-        isLoading: isLoadingOrderHistory,
-        isError: isErrorOrderHistory,
-    } = useGetOrderHistoryActiveInfoId(activeInfoId);
+    const { data: orderHistory, isError: isErrorOrderHistory } =
+        useGetOrderHistoryActiveInfoId(activeInfoId);
 
     const handleCreateOrder = () => {
         createOrder({
@@ -145,9 +142,13 @@ function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
             {/* Order History */}
             <div className="mt-4">
                 <TextHeader text="ประวัติการสั่งซื้อ" className="text-xl" />
-                <div className="flex flex-col gap-2">
-                    {orderHistory?.map((item) => (
-                        <OrderHistoryCard key={item.id} order={item} />
+                <div className="flex flex-col gap-2 mt-4">
+                    {orderHistory?.map((item, index) => (
+                        <OrderHistoryCard
+                            key={index}
+                            index={index}
+                            order={item}
+                        />
                     ))}
                 </div>
             </div>

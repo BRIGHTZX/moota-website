@@ -23,7 +23,7 @@ export const orderItem = pgTable("order_item", {
         .notNull(),
     quantity: integer("quantity").notNull(),
     pricePerUnit: integer("price_per_unit").notNull(),
-    createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at").defaultNow(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
     deletedAt: timestamp("deleted_at"),
 });

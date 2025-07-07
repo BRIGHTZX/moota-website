@@ -119,8 +119,7 @@ const app = new Hono()
                     ProductTable,
                     eq(OrderItemTable.productId, ProductTable.id)
                 )
-                .where(inArray(OrderItemTable.orderId, orderIds))
-                .limit(1);
+                .where(inArray(OrderItemTable.orderId, orderIds));
 
             const groupedOrderItems = groupBy<OrderItemDB, string>(
                 orderItems as OrderItemDB[],
@@ -132,7 +131,7 @@ const app = new Hono()
             const formattedOrderList = orders.map((order) => ({
                 id: order.id,
                 totalPrice: order.totalPrice,
-                updatedAt: order.updatedAt,
+                updatedAt: order.updatedAt!,
                 orderItems: groupedOrderItems[order.id],
             }));
 
