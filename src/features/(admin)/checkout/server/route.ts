@@ -8,23 +8,14 @@ import { getOrderListSchema } from "../schemas";
 import {
     order as OrderTable,
     orderItem as OrderItemTable,
-} from "@/database/schema/tables/order";
+} from "@/database/schema/order";
 
 const app = new Hono()
     .get("/checkout-info/:activeId", async (c) => {
         try {
             const activeId = c.req.param("activeId");
 
-            const active = await db.query.active.findFirst({
-                where: (active, { eq }) => eq(active.id, activeId),
-                with: {
-                    activeInfos: {
-                        with: {
-                            diningTable: true,
-                        },
-                    },
-                },
-            });
+            const active = await db;
             console.log(active);
             // const actives = await db
             //     .select({

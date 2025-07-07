@@ -1,5 +1,5 @@
 import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { table as TableSchema } from "./table";
+import { diningTable as DiningTable } from "./diningTable";
 
 export const preOrder = pgTable("pre_order", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -29,8 +29,12 @@ export const preOrder = pgTable("pre_order", {
 
 export const preOrderInfo = pgTable("pre_order_info", {
     id: uuid("id").primaryKey().defaultRandom(),
-    preOrderId: uuid("pre_order_id").references(() => preOrder.id),
-    tableId: uuid("table_id").references(() => TableSchema.id),
+    preOrderId: uuid("pre_order_id")
+        .references(() => preOrder.id)
+        .notNull(),
+    tableId: uuid("table_id")
+        .references(() => DiningTable.id)
+        .notNull(),
 
     createdAt: timestamp("created_at").defaultNow(),
     updatedAt: timestamp("updated_at")

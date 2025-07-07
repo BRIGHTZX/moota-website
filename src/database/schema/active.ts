@@ -1,5 +1,5 @@
 import { pgTable, uuid, timestamp, text, integer } from "drizzle-orm/pg-core";
-import { table as TablesTable } from "./table";
+import { diningTable as DiningTable } from "./diningTable";
 
 export const active = pgTable("active", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -18,6 +18,10 @@ export const active = pgTable("active", {
 
 export const activeInfo = pgTable("active_info", {
     id: uuid("id").primaryKey().defaultRandom(),
-    activeId: uuid("active_id").references(() => active.id),
-    tableId: uuid("table_id").references(() => TablesTable.id),
+    activeId: uuid("active_id")
+        .references(() => active.id)
+        .notNull(),
+    tableId: uuid("table_id")
+        .references(() => DiningTable.id)
+        .notNull(),
 });
