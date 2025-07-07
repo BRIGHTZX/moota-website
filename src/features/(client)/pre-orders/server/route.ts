@@ -5,8 +5,8 @@ import { Hono } from "hono";
 import {
     preOrder as PreOrderTable,
     preOrderInfo as PreOrderInfoTable,
-} from "@/database/schema/pre-order";
-import { table as TablesTable } from "@/database/schema/table";
+} from "@/database/schema/tables/pre-order";
+import { diningTable as DiningTable } from "@/database/schema/tables/diningTable";
 
 const app = new Hono().get("/", getCurrentUser, async (c) => {
     const user = c.get("user");
@@ -34,8 +34,8 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
                 },
                 table: {
                     preOrderId: PreOrderInfoTable.preOrderId,
-                    id: TablesTable.id,
-                    tableNumber: TablesTable.tableNumber,
+                    id: DiningTable.id,
+                    tableNumber: DiningTable.tableNumber,
                 },
             })
             .from(PreOrderTable)
@@ -44,8 +44,8 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
                 eq(PreOrderTable.id, PreOrderInfoTable.preOrderId)
             )
             .leftJoin(
-                TablesTable,
-                eq(PreOrderInfoTable.tableId, TablesTable.id)
+                DiningTable,
+                eq(PreOrderInfoTable.tableId, DiningTable.id)
             )
             .where(eq(PreOrderTable.userKindeId, user.id))
             .orderBy(desc(PreOrderTable.createdAt));

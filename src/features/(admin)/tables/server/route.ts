@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import { db } from "@/database/db";
-import { table as TablesTable } from "@/database/schema/table";
+import { diningTable as DiningTable } from "@/database/schema/tables/diningTable";
 import {
     active as ActiveTable,
     activeInfo as ActiveInfoTable,
-} from "@/database/schema/active";
+} from "@/database/schema/tables/active";
 import { insertTalblesSchema, selectTablesSchemaType } from "../schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/services/middleware-hono";
@@ -22,13 +22,13 @@ const app = new Hono()
         try {
             const tables: selectTablesSchemaType[] = await db
                 .select({
-                    id: TablesTable.id,
-                    tableNumber: TablesTable.tableNumber,
-                    tableType: TablesTable.tableType,
-                    isAvailable: TablesTable.isAvailable,
+                    id: DiningTable.id,
+                    tableNumber: DiningTable.tableNumber,
+                    tableType: DiningTable.tableType,
+                    isAvailable: DiningTable.isAvailable,
                 })
-                .from(TablesTable)
-                .where(eq(TablesTable.isAvailable, true));
+                .from(DiningTable)
+                .where(eq(DiningTable.isAvailable, true));
             return c.json(
                 { message: "Tables fetched successfully", tables },
                 200
@@ -70,7 +70,9 @@ const app = new Hono()
                         .insert(ActiveTable)
                         .values({
                             customerName,
-                            customerPhone: customerPhone ?? null,
+                            customerPhone,
+                            adultNumber,
+                            childNumber,
                             openTime: new Date().toLocaleTimeString("th-TH", {
                                 hour: "2-digit",
                                 minute: "2-digit",
@@ -84,8 +86,6 @@ const app = new Hono()
                         await tx.insert(ActiveInfoTable).values({
                             activeId: active.id,
                             tableId: tableId,
-                            adultNumber,
-                            childNumber,
                         });
                     }
                 });

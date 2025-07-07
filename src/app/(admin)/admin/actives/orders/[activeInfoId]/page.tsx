@@ -5,6 +5,9 @@ import { useGetActiveInfoTableNumber } from "@/features/(admin)/orders/api/use-g
 import { useGetActiveInfoIdTableId } from "@/features/(admin)/orders/hooks/get-activeInfoId-tableId";
 import OrderProductSection from "@/features/(admin)/orders/components/OrderProductSection";
 import React, { useEffect } from "react";
+import { ArrowLeftIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 function OrdersPage() {
     const activeInfoId = useGetActiveInfoIdTableId();
@@ -22,7 +25,15 @@ function OrdersPage() {
 
     return (
         <div className="p-4 pt-20 pb-8 relative h-[calc(100vh-5rem)]  overflow-y-auto">
-            <TextHeader text={`รายการออเดอร์โต๊ะ ${activeInfo?.tableNumber}`} />
+            <div className="flex items-center gap-4">
+                <Button asChild variant="outline" className="size-8">
+                    <Link href="/admin/actives">
+                        <ArrowLeftIcon className="w-6 h-6" />
+                    </Link>
+                </Button>
+
+                <TextHeader text={`ออเดอร์โต๊ะ ${activeInfo?.tableNumber}`} />
+            </div>
 
             {/* Order Product Section */}
             <div className="mt-4">

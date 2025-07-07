@@ -7,8 +7,8 @@ import { insertPreOrderWithoutTableIdSchema } from "../schema";
 import {
     preOrder as PreOrderTable,
     preOrderInfo as PreOrderInfoTable,
-} from "@/database/schema/pre-order";
-import { table as TablesTable } from "@/database/schema/table";
+} from "@/database/schema/tables/pre-order";
+import { diningTable as DiningTable } from "@/database/schema/tables/diningTable";
 import { z } from "zod";
 import { generateOrderNumber } from "@/lib/generateOrderNumber";
 import { and, eq } from "drizzle-orm";
@@ -45,7 +45,7 @@ const reservationRoute = new Hono()
                     },
                     table: {
                         id: PreOrderInfoTable.tableId,
-                        tableNumber: TablesTable.tableNumber,
+                        tableNumber: DiningTable.tableNumber,
                     },
                 })
                 .from(PreOrderTable)
@@ -54,8 +54,8 @@ const reservationRoute = new Hono()
                     eq(PreOrderTable.id, PreOrderInfoTable.preOrderId)
                 )
                 .leftJoin(
-                    TablesTable,
-                    eq(PreOrderInfoTable.tableId, TablesTable.id)
+                    DiningTable,
+                    eq(PreOrderInfoTable.tableId, DiningTable.id)
                 )
                 .where(
                     and(
@@ -98,12 +98,12 @@ const reservationRoute = new Hono()
         try {
             const tables: selectTablesSchemaType[] = await db
                 .select({
-                    id: TablesTable.id,
-                    tableNumber: TablesTable.tableNumber,
-                    tableType: TablesTable.tableType,
-                    isAvailable: TablesTable.isAvailable,
+                    id: DiningTable.id,
+                    tableNumber: DiningTable.tableNumber,
+                    tableType: DiningTable.tableType,
+                    isAvailable: DiningTable.isAvailable,
                 })
-                .from(TablesTable);
+                .from(DiningTable);
             return c.json(
                 { message: "Tables fetched successfully", tables },
                 200

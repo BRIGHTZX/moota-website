@@ -5,8 +5,8 @@ import { desc, eq } from "drizzle-orm";
 import {
     active as ActiveTable,
     activeInfo as ActiveInfoTable,
-} from "@/database/schema/active";
-import { table as TablesTable } from "@/database/schema/table";
+} from "@/database/schema/tables/active";
+import { diningTable as DiningTable } from "@/database/schema/tables/diningTable";
 
 const app = new Hono().get("/", getCurrentUser, async (c) => {
     const user = c.get("user");
@@ -30,7 +30,7 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
                 activeInfo: {
                     activeInfoId: ActiveInfoTable.id,
                     tableId: ActiveInfoTable.tableId,
-                    tableNumber: TablesTable.tableNumber,
+                    tableNumber: DiningTable.tableNumber,
                 },
             })
             .from(ActiveTable)
@@ -38,7 +38,7 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
                 ActiveInfoTable,
                 eq(ActiveTable.id, ActiveInfoTable.activeId)
             )
-            .leftJoin(TablesTable, eq(ActiveInfoTable.tableId, TablesTable.id))
+            .leftJoin(DiningTable, eq(ActiveInfoTable.tableId, DiningTable.id))
             .orderBy(desc(ActiveTable.updatedAt));
 
         const activeMap = new Map();

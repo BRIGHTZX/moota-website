@@ -2,12 +2,19 @@ import { TextCardInfo } from "@/components/TextCardInfo";
 import React from "react";
 import { ActiveType } from "../types";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 type TableActiveSectionProps = {
     active: ActiveType;
+    setOpenAlertDialog: (open: boolean) => void;
+    setActiveId: (activeId: string) => void;
 };
 
-function TableActiveSection({ active }: TableActiveSectionProps) {
+function TableActiveSection({
+    active,
+    setOpenAlertDialog,
+    setActiveId,
+}: TableActiveSectionProps) {
     const {
         customerName,
         customerPhone,
@@ -51,6 +58,20 @@ function TableActiveSection({ active }: TableActiveSectionProps) {
                         tableNumber={info.tableNumber}
                     />
                 ))}
+            </div>
+
+            <div className="mt-4">
+                <Button
+                    size="sm"
+                    variant="coffeePrimary"
+                    className="w-full"
+                    onClick={() => {
+                        setOpenAlertDialog(true);
+                        setActiveId(active.activeId);
+                    }}
+                >
+                    ปิดโต๊ะ
+                </Button>
             </div>
         </div>
     );

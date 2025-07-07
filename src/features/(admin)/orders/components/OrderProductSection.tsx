@@ -41,8 +41,11 @@ function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
     });
 
     // Get Order History
-    const { data: orderHistory, isError: isErrorOrderHistory } =
-        useGetOrderHistoryActiveInfoId(activeInfoId);
+    const {
+        data: orderHistory,
+        isLoading: isLoadingOrderHistory,
+        isError: isErrorOrderHistory,
+    } = useGetOrderHistoryActiveInfoId(activeInfoId);
 
     const handleCreateOrder = () => {
         createOrder({
@@ -143,13 +146,25 @@ function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
             <div className="mt-4">
                 <TextHeader text="ประวัติการสั่งซื้อ" className="text-xl" />
                 <div className="flex flex-col gap-2 mt-4">
-                    {orderHistory?.map((item, index) => (
-                        <OrderHistoryCard
-                            key={index}
-                            index={index}
-                            order={item}
-                        />
-                    ))}
+                    {isLoadingOrderHistory ? (
+                        <PageLoader className="h-[400px]" />
+                    ) : orderHistory?.length === 0 ? (
+                        <div className="flex items-center justify-center h-24">
+                            <p className="text-gray-500 text-center text-sm font-bold">
+                                ไม่มีประวัติการสั่งซื้อ
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-2">
+                            {orderHistory?.map((item, index) => (
+                                <OrderHistoryCard
+                                    key={index}
+                                    index={index}
+                                    order={item}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
