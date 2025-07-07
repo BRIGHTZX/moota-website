@@ -5,7 +5,12 @@ import {
     activeRelations,
 } from "./schema/active";
 import { diningTable } from "./schema/diningTable";
-import { order, orderItem } from "./schema/order";
+import {
+    order,
+    orderItem,
+    orderItemRelations,
+    orderRelations,
+} from "./schema/order";
 import { preOrder, preOrderInfo } from "./schema/pre-order";
 import {
     importExportHistory,
@@ -27,4 +32,6 @@ export const schema = {
     activeRelations,
     activeInfoRelations,
     importExportHistoryRelations,
+    orderRelations,
+    orderItemRelations,
 };

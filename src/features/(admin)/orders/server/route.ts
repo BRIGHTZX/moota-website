@@ -3,19 +3,17 @@ import { zValidator } from "@hono/zod-validator";
 import { getCurrentUser } from "@/services/middleware-hono";
 
 import { db } from "@/database/db";
-import { asc, eq, inArray, sql } from "drizzle-orm";
+import { asc, eq, sql } from "drizzle-orm";
 import z from "zod";
 import { insertOrderSchema } from "../schemas";
 
 import { product as ProductTable } from "@/database/schema/product";
 import { activeInfo as ActiveInfoTable } from "@/database/schema/active";
-import { diningTable as TablesTable } from "@/database/schema/diningTable";
 import {
     order as OrderTable,
     orderItem as OrderItemTable,
 } from "@/database/schema/order";
-import { OrderItem, OrderItemDB } from "../types";
-import { groupBy } from "@/services/groupBy";
+import { OrderItem } from "../types";
 
 const app = new Hono()
     .get("/product-drink-list", getCurrentUser, async (c) => {
@@ -63,19 +61,21 @@ const app = new Hono()
 
             try {
                 const activeInfoId = c.req.param("activeInfoId");
-                const [activeInfo] = await db
-                    .select({
-                        activeInfoId: ActiveInfoTable.id,
-                        tableId: ActiveInfoTable.tableId,
-                        tableNumber: TablesTable.tableNumber,
-                    })
-                    .from(ActiveInfoTable)
-                    .where(eq(ActiveInfoTable.id, activeInfoId ?? ""))
-                    .innerJoin(
-                        TablesTable,
-                        eq(ActiveInfoTable.tableId, TablesTable.id)
-                    )
-                    .limit(1);
+
+                const activeInfo = await db.query.activeInfo.findFirst({
+                    columns: {
+                        id: true,
+                        tableId: true,
+                    },
+                    where: eq(ActiveInfoTable.id, activeInfoId ?? ""),
+                    with: {
+                        diningTable: {
+                            columns: {
+                                tableNumber: true,
+                            },
+                        },
+                    },
+                });
 
                 return c.json({ message: "success", result: activeInfo }, 200);
             } catch (error) {
@@ -94,53 +94,48 @@ const app = new Hono()
         try {
             const activeInfoId = c.req.param("activeInfoId");
 
-            const orders = await db
-                .select({
-                    id: OrderTable.id,
-                    totalPrice: OrderTable.totalPrice,
-                    updatedAt: OrderTable.updatedAt,
-                })
-                .from(OrderTable)
-                .where(eq(OrderTable.activeInfoId, activeInfoId));
+            const orders = await db.query.order.findMany({
+                where: eq(OrderTable.activeInfoId, activeInfoId),
+                columns: {
+                    id: true,
+                    totalPrice: true,
+                    updatedAt: true,
+                },
+                with: {
+                    orderItems: {
+                        columns: {
+                            id: true,
+                            orderId: true,
+                            productId: true,
+                            quantity: true,
+                            pricePerUnit: true,
+                        },
+                        with: {
+                            product: {
+                                columns: {
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            });
 
-            const orderIds = orders.map((order) => order.id);
-
-            const orderItems = await db
-                .select({
-                    id: OrderItemTable.id,
-                    orderId: OrderItemTable.orderId,
-                    productId: OrderItemTable.productId,
-                    quantity: OrderItemTable.quantity,
-                    pricePerUnit: OrderItemTable.pricePerUnit,
-                    productName: ProductTable.name,
-                })
-                .from(OrderItemTable)
-                .leftJoin(
-                    ProductTable,
-                    eq(OrderItemTable.productId, ProductTable.id)
-                )
-                .where(inArray(OrderItemTable.orderId, orderIds));
-
-            const groupedOrderItems = groupBy<OrderItemDB, string>(
-                orderItems as OrderItemDB[],
-                (item) => item.orderId
-            ) as Record<string, OrderItemDB[]>;
-
-            console.log("groupedOrderItems : ", groupedOrderItems);
-
-            const formattedOrderList = orders.map((order) => ({
+            const formattedOrders = orders.map((order) => ({
                 id: order.id,
                 totalPrice: order.totalPrice,
                 updatedAt: order.updatedAt!,
-                orderItems: groupedOrderItems[order.id],
+                orderItems: order.orderItems.map((item) => ({
+                    id: item.id,
+                    orderId: item.orderId,
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    pricePerUnit: item.pricePerUnit,
+                    productName: item.product.name,
+                })),
             }));
 
-            console.log("formattedOrderList : ", formattedOrderList);
-
-            return c.json(
-                { message: "success", result: formattedOrderList },
-                200
-            );
+            return c.json({ message: "success", result: formattedOrders }, 200);
         } catch (error) {
             console.log(error);
             return c.json({ error: "Internal server error" }, 500);

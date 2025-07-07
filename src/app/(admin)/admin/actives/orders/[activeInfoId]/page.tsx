@@ -32,7 +32,9 @@ function OrdersPage() {
                     </Link>
                 </Button>
 
-                <TextHeader text={`ออเดอร์โต๊ะ ${activeInfo?.tableNumber}`} />
+                <TextHeader
+                    text={`ออเดอร์โต๊ะ ${activeInfo?.diningTable?.tableNumber}`}
+                />
             </div>
 
             {/* Order Product Section */}
