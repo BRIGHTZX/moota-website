@@ -5,11 +5,15 @@ export const TextCardInfo = ({
     value,
     status,
     className,
+    textClassName,
+    valueClassName,
 }: {
     text: string;
     value: string;
     status?: string;
     className?: string;
+    textClassName?: string;
+    valueClassName?: string;
 }) => {
     const statusColor = {
         paid: "bg-green-500",
@@ -27,8 +31,8 @@ export const TextCardInfo = ({
         <div
             className={cn("flex justify-between items-center gap-2", className)}
         >
-            <p className="font-semibold text-xs">{text}</p>
-            {value && <p className="text-xs">{value}</p>}
+            <p className={cn("font-semibold text-xs", textClassName)}>{text}</p>
+            {value && <p className={cn("text-xs", valueClassName)}>{value}</p>}
             {status && (
                 <div className="flex items-center gap-2">
                     <div

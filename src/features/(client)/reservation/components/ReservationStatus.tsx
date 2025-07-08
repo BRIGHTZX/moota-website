@@ -1,44 +1,45 @@
 import { cn } from "@/lib/utils";
 import React from "react";
+import { PreOrderPaymentStatus, PreOrderStatus } from "../../pre-orders/types";
 
 function ReservationStatus({
     status,
     paymentStatus,
 }: {
-    status: "pending" | "confirmed" | "cancelled";
-    paymentStatus: "pending" | "paid";
+    status: PreOrderStatus;
+    paymentStatus: PreOrderPaymentStatus;
 }) {
     console.log(status, paymentStatus);
     const statusColor = {
         pending: "border-yellow-500",
         confirmed: "border-green-500",
-        cancelled: "border-red-500",
+        canceled: "border-red-500",
     };
 
     const statusBgColor = {
         pending: "bg-yellow-500",
         confirmed: "bg-green-500",
-        cancelled: "bg-red-500",
+        canceled: "bg-red-500",
     };
 
     const statusText = {
         pending: "รอการยืนยัน",
         confirmed: "ยืนยันแล้ว",
-        cancelled: "ยกเลิก",
+        canceled: "ยกเลิก",
     };
 
     const paymentStatusColor = {
-        pending: "border-yellow-500",
+        unpaid: "border-yellow-500",
         paid: "border-green-500",
     };
 
     const paymentStatusBgColor = {
-        pending: "bg-yellow-500",
+        unpaid: "bg-yellow-500",
         paid: "bg-green-500",
     };
 
     const paymentStatusText = {
-        pending: "รอการชำระเงิน",
+        unpaid: "รอการชำระเงิน",
         paid: "ชำระเงินแล้ว",
     };
 

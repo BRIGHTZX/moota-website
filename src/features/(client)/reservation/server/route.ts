@@ -16,6 +16,31 @@ import { connectCloudinary } from "@/lib/cloudinary";
 import { selectTablesSchemaType } from "@/features/(admin)/tables/schema";
 
 const reservationRoute = new Hono()
+    .get("/tables", getCurrentUser, async (c) => {
+        const user = c.get("user");
+
+        if (!user) {
+            return c.json({ message: "Unauthorized" }, 401);
+        }
+
+        try {
+            const tables: selectTablesSchemaType[] = await db
+                .select({
+                    id: DiningTable.id,
+                    tableNumber: DiningTable.tableNumber,
+                    tableType: DiningTable.tableType,
+                    isAvailable: DiningTable.isAvailable,
+                })
+                .from(DiningTable);
+            return c.json(
+                { message: "Tables fetched successfully", tables },
+                200
+            );
+        } catch (error) {
+            console.log(error);
+            return c.json({ message: "Internal server error" }, 500);
+        }
+    })
     .get("/:preOrderId", getCurrentUser, async (c) => {
         const user = c.get("user");
 
@@ -88,31 +113,6 @@ const reservationRoute = new Hono()
             return c.json({ message: "Internal server error", error }, 500);
         }
     })
-    .get("/tables", getCurrentUser, async (c) => {
-        const user = c.get("user");
-
-        if (!user) {
-            return c.json({ message: "Unauthorized" }, 401);
-        }
-
-        try {
-            const tables: selectTablesSchemaType[] = await db
-                .select({
-                    id: DiningTable.id,
-                    tableNumber: DiningTable.tableNumber,
-                    tableType: DiningTable.tableType,
-                    isAvailable: DiningTable.isAvailable,
-                })
-                .from(DiningTable);
-            return c.json(
-                { message: "Tables fetched successfully", tables },
-                200
-            );
-        } catch (error) {
-            console.log(error);
-            return c.json({ message: "Internal server error" }, 500);
-        }
-    })
     .post(
         "/",
         getCurrentUser,
@@ -153,7 +153,7 @@ const reservationRoute = new Hono()
                             adultNumber: adultNumber,
                             childNumber: childNumber,
                             status: "pending",
-                            paymentStatus: "pending",
+                            paymentStatus: "unpaid",
                             totalPrice: 50,
                             reservationDate: new Date(reservationDate),
                             reservationTime,

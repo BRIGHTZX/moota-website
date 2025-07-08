@@ -1,11 +1,15 @@
 "use client";
+import { TextCardInfo } from "@/components/TextCardInfo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+    PreOrderPaymentStatus,
+    PreOrderStatus,
+} from "@/features/(client)/pre-orders/types";
 import { useGetReservation } from "@/features/(client)/reservation/api/use-get-reservation";
 import { useUpdatePaymentImage } from "@/features/(client)/reservation/api/use-update-paymentImage";
 import ReservationDetail from "@/features/(client)/reservation/components/ReservationDetail";
 import ReservationStatus from "@/features/(client)/reservation/components/ReservationStatus";
-import TextInfo from "@/features/(client)/reservation/components/TextInfo";
 import { useGetPreOrderId } from "@/features/(client)/reservation/hooks/get-preOrderId";
 import { cn } from "@/lib/utils";
 import { ArrowLeftIcon, CheckIcon, XIcon } from "lucide-react";
@@ -115,14 +119,9 @@ function ReservationInfoPage() {
                     </div>
 
                     <ReservationStatus
-                        status={
-                            reservationData?.status as
-                                | "pending"
-                                | "confirmed"
-                                | "cancelled"
-                        }
+                        status={reservationData?.status as PreOrderStatus}
                         paymentStatus={
-                            reservationData?.paymentStatus as "pending" | "paid"
+                            reservationData?.paymentStatus as PreOrderPaymentStatus
                         }
                     />
                 </div>
@@ -180,13 +179,15 @@ function ReservationInfoPage() {
                                 </div>
                             </div>
                             <div className="flex flex-col gap-4 rounded-xl p-4">
-                                <TextInfo
-                                    label="ค่าจองโต๊ะ :"
+                                <TextCardInfo
+                                    text="ค่าจองโต๊ะ :"
                                     value={
                                         reservationData?.totalPrice
                                             ? reservationData.totalPrice.toString()
                                             : "ค่าจองไม่ระบุ"
                                     }
+                                    textClassName="text-lg"
+                                    valueClassName="text-lg"
                                 />
 
                                 {!paymentImage &&

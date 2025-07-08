@@ -1,6 +1,6 @@
 import { PaperclipIcon } from "lucide-react";
 import React from "react";
-import TextInfo from "./TextInfo";
+import { TextCardInfo } from "@/components/TextCardInfo";
 
 type ReservationDetailProps = {
     reservation: {
@@ -34,8 +34,8 @@ function ReservationDetail({ reservation }: ReservationDetailProps) {
                 </div>
 
                 <div className="mt-10 flex flex-col gap-4 px-4 pb-10">
-                    <TextInfo
-                        label="วันที่ทำการจอง :"
+                    <TextCardInfo
+                        text="วันที่ทำการจอง :"
                         value={
                             reservation?.reservationDate
                                 ? new Date(
@@ -43,37 +43,41 @@ function ReservationDetail({ reservation }: ReservationDetailProps) {
                                   ).toLocaleDateString()
                                 : "วันที่ไม่ระบุ"
                         }
+                        textClassName="text-lg"
+                        valueClassName="text-lg"
                     />
 
-                    <TextInfo
-                        label="เวลาที่ทำการจอง :"
-                        value={
-                            reservation?.reservationTime
-                                ? reservation.reservationTime
-                                : "เวลาไม่ระบุ"
-                        }
+                    <TextCardInfo
+                        text="เวลาที่ทำการจอง :"
+                        value={reservation?.reservationTime}
+                        textClassName="text-lg"
+                        valueClassName="text-lg"
                     />
 
-                    <TextInfo
-                        label="จำนวนผู้ใหญ่ :"
+                    <TextCardInfo
+                        text="จำนวนผู้ใหญ่ :"
                         value={
                             reservation?.adultNumber
                                 ? String(reservation.adultNumber)
                                 : "จำนวนไม่ระบุ"
                         }
+                        textClassName="text-lg"
+                        valueClassName="text-lg"
                     />
 
-                    <TextInfo
-                        label="จำนวนผู้เด็ก :"
+                    <TextCardInfo
+                        text="จำนวนผู้เด็ก :"
                         value={
                             reservation?.childNumber
                                 ? String(reservation.childNumber)
                                 : "จำนวนไม่ระบุ"
                         }
+                        textClassName="text-lg"
+                        valueClassName="text-lg"
                     />
 
-                    <TextInfo
-                        label="หมายเลขโต๊ะที่ทำการจอง :"
+                    <TextCardInfo
+                        text="หมายเลขโต๊ะที่ทำการจอง :"
                         value={
                             reservation?.table
                                 ? reservation.table
@@ -81,24 +85,30 @@ function ReservationDetail({ reservation }: ReservationDetailProps) {
                                       .join(", ")
                                 : "โต๊ะไม่ระบุ"
                         }
+                        textClassName="text-lg"
+                        valueClassName="text-lg"
                     />
 
-                    <TextInfo
-                        label="ชื่อผู้จอง :"
+                    <TextCardInfo
+                        text="ชื่อผู้จอง :"
                         value={
                             reservation?.customerName
                                 ? reservation.customerName
                                 : "ชื่อไม่ระบุ"
                         }
+                        textClassName="text-lg"
+                        valueClassName="text-lg"
                     />
 
-                    <TextInfo
-                        label="เบอร์โทรศัพท์ :"
+                    <TextCardInfo
+                        text="เบอร์โทรศัพท์ :"
                         value={
                             reservation?.phoneNumber
                                 ? reservation.phoneNumber
                                 : "เบอร์โทรศัพท์ไม่ระบุ"
                         }
+                        textClassName="text-lg"
+                        valueClassName="text-lg"
                     />
                 </div>
             </div>

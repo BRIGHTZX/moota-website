@@ -12,7 +12,10 @@ export type PreOrderType = {
     paymentStatus: string;
     createdAt: string;
     tables: {
-        id: string;
+        tableId: string;
         tableNumber: string;
     }[];
 };
+
+export type PreOrderStatus = "pending" | "confirmed" | "canceled";
+export type PreOrderPaymentStatus = "unpaid" | "paid";

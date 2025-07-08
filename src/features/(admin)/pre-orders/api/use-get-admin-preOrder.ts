@@ -5,7 +5,7 @@ const api = client.api.admin["pre-orders"][":preOrderId"]["$get"];
 
 export const useGetOrder = (preOrderId: string) => {
     return useQuery({
-        queryKey: ["order", preOrderId],
+        queryKey: ["admin-pre-order", preOrderId],
         queryFn: async () => {
             const response = await api({ param: { preOrderId } });
 

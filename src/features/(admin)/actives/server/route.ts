@@ -37,6 +37,10 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
             },
         });
 
+        if (!actives.length) {
+            return c.json({ message: "Actives not found", result: [] }, 200);
+        }
+
         const formattedActives = actives.map((active) => ({
             activeId: active.id,
             customerName: active.customerName,

@@ -17,9 +17,12 @@ export const insertPreOrderWithoutTableIdSchema = z.object({
             invalid_type_error: "กรุณากรอกจำนวนเด็กเป็นตัวเลข",
         })
         .min(0, "จำนวนเด็กต้องไม่น้อยกว่า 0"),
-    reservationDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
-        message: "กรุณากรอกวันที่ให้ถูกต้อง",
-    }),
+    reservationDate: z.union([
+        z.string().refine((val) => !isNaN(Date.parse(val)), {
+            message: "กรุณากรอกวันที่ให้ถูกต้อง",
+        }),
+        z.date(),
+    ]),
     reservationTime: z.string().min(1, "กรุณากรอกเวลาจอง"),
 });
 

@@ -11,7 +11,12 @@ import {
     orderItemRelations,
     orderRelations,
 } from "./schema/order";
-import { preOrder, preOrderInfo } from "./schema/pre-order";
+import {
+    preOrder,
+    preOrderInfo,
+    preOrderInfoRelations,
+    preOrderRelations,
+} from "./schema/pre-order";
 import {
     importExportHistory,
     importExportHistoryRelations,
@@ -34,4 +39,6 @@ export const schema = {
     importExportHistoryRelations,
     orderRelations,
     orderItemRelations,
+    preOrderRelations,
+    preOrderInfoRelations,
 };

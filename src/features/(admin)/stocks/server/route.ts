@@ -153,7 +153,7 @@ const app = new Hono()
             try {
                 const productId = c.req.param("productId");
 
-                const { name, image, unit, category, stock, price } =
+                const { name, image, unit, category, price } =
                     c.req.valid("form");
 
                 let imageUrl = "";
@@ -189,7 +189,6 @@ const app = new Hono()
                         image: imageUrl,
                         unit,
                         category,
-                        stock,
                         price,
                     })
                     .where(eq(ProductTable.id, productId));

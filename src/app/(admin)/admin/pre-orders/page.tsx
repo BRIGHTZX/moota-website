@@ -25,9 +25,18 @@ function OrderPage() {
                 <PageLoader className="h-[400px]" />
             ) : (
                 <div className="flex flex-col gap-4">
-                    {orders?.map((order) => (
-                        <OrderCard key={order.id} order={order} />
-                    ))}
+                    {orders?.length === 0 ? (
+                        <div className="flex items-center justify-center h-[400px]">
+                            <TextHeader
+                                text="ไม่มีออเดอร์จอง"
+                                className="text-lg text-gray-400"
+                            />
+                        </div>
+                    ) : (
+                        orders?.map((order) => (
+                            <OrderCard key={order.id} order={order} />
+                        ))
+                    )}
                 </div>
             )}
         </div>

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const selectTablesSchema = z.object({
-    id: z.string().uuid(),
+    id: z.string(),
     tableNumber: z.string(),
     tableType: z.string(),
     isAvailable: z.boolean(),

@@ -1,7 +1,6 @@
 import { db } from "@/database/db";
 import { getCurrentUser } from "@/services/middleware-hono";
 import { Hono } from "hono";
-import { and, desc, eq } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
@@ -9,11 +8,12 @@ import {
     preOrder as PreOrderTable,
     preOrderInfo as PreOrderInfoTable,
 } from "@/database/schema/pre-order";
-import { diningTable as TablesTable } from "@/database/schema/diningTable";
+import { diningTable as DiningTable } from "@/database/schema/diningTable";
 import {
     active as ActiveTable,
     activeInfo as ActiveInfoTable,
 } from "@/database/schema/active";
+import { and, eq, inArray } from "drizzle-orm";
 
 const app = new Hono()
     .get("/", getCurrentUser, async (c) => {
@@ -23,70 +23,56 @@ const app = new Hono()
         }
 
         try {
-            const preOrders = await db
-                .select({
-                    preOrder: {
-                        id: PreOrderTable.id,
-                        preOrderNumber: PreOrderTable.preOrderNumber,
-                        customerName: PreOrderTable.customerName,
-                        phoneNumber: PreOrderTable.phoneNumber,
-                        adultNumber: PreOrderTable.adultNumber,
-                        childNumber: PreOrderTable.childNumber,
-                        totalPrice: PreOrderTable.totalPrice,
-                        reservationDate: PreOrderTable.reservationDate,
-                        reservationTime: PreOrderTable.reservationTime,
-                        status: PreOrderTable.status,
-                        paymentStatus: PreOrderTable.paymentStatus,
-                        createdAt: PreOrderTable.createdAt,
+            const preOrders = await db.query.preOrder.findMany({
+                where: and(
+                    eq(PreOrderTable.status, "pending"),
+                    eq(PreOrderTable.paymentStatus, "paid")
+                ),
+                columns: {
+                    id: true,
+                    preOrderNumber: true,
+                    customerName: true,
+                    phoneNumber: true,
+                    adultNumber: true,
+                    childNumber: true,
+                    totalPrice: true,
+                    reservationDate: true,
+                    reservationTime: true,
+                    status: true,
+                    paymentStatus: true,
+                    createdAt: true,
+                },
+                with: {
+                    preOrderInfo: {
+                        columns: {
+                            id: true,
+                            tableId: true,
+                        },
+                        with: {
+                            table: {
+                                columns: {
+                                    tableNumber: true,
+                                },
+                            },
+                        },
                     },
-                    table: {
-                        preOrderId: PreOrderInfoTable.preOrderId,
-                        id: TablesTable.id,
-                        tableNumber: TablesTable.tableNumber,
-                    },
-                })
-                .from(PreOrderTable)
-                .leftJoin(
-                    PreOrderInfoTable,
-                    eq(PreOrderTable.id, PreOrderInfoTable.preOrderId)
-                )
-                .leftJoin(
-                    TablesTable,
-                    eq(PreOrderInfoTable.tableId, TablesTable.id)
-                )
-                .where(
-                    and(
-                        eq(PreOrderTable.status, "pending"),
-                        eq(PreOrderTable.paymentStatus, "paid")
-                    )
-                )
-                .orderBy(desc(PreOrderTable.createdAt));
+                },
+            });
 
             if (!preOrders.length) {
-                return c.json({ message: "Reservation not found" }, 404);
+                return c.json(
+                    { message: "Reservation not found", result: [] },
+                    200
+                );
             }
 
-            const preOrderMap = new Map();
-
-            for (const row of preOrders) {
-                const preOrderId = row.preOrder.id;
-
-                if (!preOrderMap.has(preOrderId)) {
-                    preOrderMap.set(preOrderId, {
-                        ...row.preOrder,
-                        tables: [],
-                    });
-                }
-
-                if (row.table?.id) {
-                    preOrderMap.get(preOrderId).tables.push({
-                        id: row.table.id,
-                        tableNumber: row.table.tableNumber,
-                    });
-                }
-            }
-
-            const formattedPreOrders = Array.from(preOrderMap.values());
+            const formattedPreOrders = preOrders.map((preOrder) => ({
+                ...preOrder,
+                tables: preOrder.preOrderInfo.map((info) => ({
+                    tableId: info.tableId,
+                    tableNumber: info.table.tableNumber,
+                })),
+            }));
 
             return c.json(
                 {
@@ -110,55 +96,90 @@ const app = new Hono()
         try {
             const preOrderId = c.req.param("preOrderId");
 
-            const preOrders = await db
-                .select({
-                    preOrder: {
-                        id: PreOrderTable.id,
-                        preOrderNumber: PreOrderTable.preOrderNumber,
-                        customerName: PreOrderTable.customerName,
-                        phoneNumber: PreOrderTable.phoneNumber,
-                        adultNumber: PreOrderTable.adultNumber,
-                        childNumber: PreOrderTable.childNumber,
-                        totalPrice: PreOrderTable.totalPrice,
-                        reservationDate: PreOrderTable.reservationDate,
-                        reservationTime: PreOrderTable.reservationTime,
-                        status: PreOrderTable.status,
-                        paymentStatus: PreOrderTable.paymentStatus,
-                        paymentImage: PreOrderTable.paymentImage,
-                        createdAt: PreOrderTable.createdAt,
+            const preOrder = await db.query.preOrder.findFirst({
+                where: eq(PreOrderTable.id, preOrderId),
+                columns: {
+                    id: true,
+                    preOrderNumber: true,
+                    customerName: true,
+                    phoneNumber: true,
+                    adultNumber: true,
+                    childNumber: true,
+                    totalPrice: true,
+                    reservationDate: true,
+                    reservationTime: true,
+                    status: true,
+                    paymentStatus: true,
+                    paymentImage: true,
+                    createdAt: true,
+                },
+                with: {
+                    preOrderInfo: {
+                        columns: {
+                            id: true,
+                            tableId: true,
+                        },
+                        with: {
+                            table: {
+                                columns: {
+                                    tableNumber: true,
+                                },
+                            },
+                        },
                     },
-                    table: {
-                        id: PreOrderInfoTable.tableId,
-                        tableNumber: TablesTable.tableNumber,
-                    },
-                })
-                .from(PreOrderTable)
-                .leftJoin(
-                    PreOrderInfoTable,
-                    eq(PreOrderTable.id, PreOrderInfoTable.preOrderId)
-                )
-                .leftJoin(
-                    TablesTable,
-                    eq(PreOrderInfoTable.tableId, TablesTable.id)
-                )
-                .where(
-                    and(
-                        eq(PreOrderTable.id, preOrderId),
-                        eq(PreOrderTable.userKindeId, user.id.toString())
-                    )
-                );
+                },
+            });
 
-            if (!preOrders.length) {
+            // const preOrders = await db
+            //     .select({
+            //         preOrder: {
+            //             id: PreOrderTable.id,
+            //             preOrderNumber: PreOrderTable.preOrderNumber,
+            //             customerName: PreOrderTable.customerName,
+            //             phoneNumber: PreOrderTable.phoneNumber,
+            //             adultNumber: PreOrderTable.adultNumber,
+            //             childNumber: PreOrderTable.childNumber,
+            //             totalPrice: PreOrderTable.totalPrice,
+            //             reservationDate: PreOrderTable.reservationDate,
+            //             reservationTime: PreOrderTable.reservationTime,
+            //             status: PreOrderTable.status,
+            //             paymentStatus: PreOrderTable.paymentStatus,
+            //             paymentImage: PreOrderTable.paymentImage,
+            //             createdAt: PreOrderTable.createdAt,
+            //         },
+            //         table: {
+            //             id: PreOrderInfoTable.tableId,
+            //             tableNumber: TablesTable.tableNumber,
+            //         },
+            //     })
+            //     .from(PreOrderTable)
+            //     .leftJoin(
+            //         PreOrderInfoTable,
+            //         eq(PreOrderTable.id, PreOrderInfoTable.preOrderId)
+            //     )
+            //     .leftJoin(
+            //         TablesTable,
+            //         eq(PreOrderInfoTable.tableId, TablesTable.id)
+            //     )
+            //     .where(
+            //         and(
+            //             eq(PreOrderTable.id, preOrderId),
+            //             eq(PreOrderTable.userKindeId, user.id.toString())
+            //         )
+            //     );
+
+            if (!preOrder) {
                 return c.json({ message: "Reservation not found" }, 404);
             }
 
             const formattedPreOrder = {
-                ...preOrders[0].preOrder,
-                table: preOrders.map((row) => ({
-                    id: row.table.id!,
-                    tableNumber: row.table.tableNumber!,
+                ...preOrder,
+                table: preOrder.preOrderInfo.map((info) => ({
+                    tableNumber: info.table.tableNumber,
                 })),
             };
+
+            console.log(formattedPreOrder);
 
             return c.json(
                 {
@@ -241,6 +262,25 @@ const app = new Hono()
                             tableId: info.tableId,
                         }))
                     );
+
+                    await tx
+                        .update(DiningTable)
+                        .set({
+                            isAvailable: false,
+                        })
+                        .where(
+                            inArray(
+                                DiningTable.id,
+                                preOrderInfo.map((info) => info.tableId)
+                            )
+                        );
+
+                    await tx
+                        .update(PreOrderTable)
+                        .set({
+                            status: "confirmed",
+                        })
+                        .where(eq(PreOrderTable.id, preOrderId));
 
                     return active;
                 });

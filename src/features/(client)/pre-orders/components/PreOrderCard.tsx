@@ -3,7 +3,7 @@ import React from "react";
 import { PreOrderType } from "../types";
 import Link from "next/link";
 import SeperateLine from "@/components/SeperateLine";
-import { HeaderInfo, TextInfo } from "@/components/TextInfo";
+import { TextCardInfo } from "@/components/TextCardInfo";
 
 function PreOrderCard({ preOrder }: { preOrder: PreOrderType }) {
     return (
@@ -21,52 +21,76 @@ function PreOrderCard({ preOrder }: { preOrder: PreOrderType }) {
             </div>
 
             <div className="mt-4 flex flex-col sm:flex-row">
-                <div className="flex-1 px-4">
-                    <div className="flex">
-                        <div className="w-[40%]">
-                            <HeaderInfo value="Order ID: " />
-                            <HeaderInfo value="Order Date: " />
-                            <HeaderInfo value="Order Time: " />
-                            <HeaderInfo value="Order Status : " />
-                            <HeaderInfo value="Payment Status: " />
-                        </div>
-                        <div className="col-span-1">
-                            <TextInfo value={preOrder.preOrderNumber} />
-                            <TextInfo
-                                value={new Date(
-                                    preOrder.reservationDate
-                                ).toLocaleDateString()}
-                            />
-                            <TextInfo value={preOrder.reservationTime} />
-                            <TextInfo value={preOrder.status} />
-                            <TextInfo value={preOrder.paymentStatus} />
-                        </div>
-                    </div>
+                <div className="flex-1 px-4 flex flex-col gap-2">
+                    <TextCardInfo
+                        text="Order ID: "
+                        value={preOrder.preOrderNumber}
+                        textClassName="text-lg text-nowrap"
+                        valueClassName="text-lg"
+                    />
+                    <TextCardInfo
+                        text="Order Date: "
+                        value={new Date(
+                            preOrder.reservationDate
+                        ).toLocaleDateString()}
+                        textClassName="text-lg text-nowrap"
+                        valueClassName="text-lg"
+                    />
+                    <TextCardInfo
+                        text="Order Time: "
+                        value={preOrder.reservationTime}
+                        textClassName="text-lg text-nowrap"
+                        valueClassName="text-lg"
+                    />
+                    <TextCardInfo
+                        text="Order Status : "
+                        value={preOrder.status}
+                        textClassName="text-lg text-nowrap"
+                        valueClassName="text-lg"
+                    />
+                    <TextCardInfo
+                        text="Payment Status: "
+                        value={preOrder.paymentStatus}
+                        textClassName="text-lg text-nowrap"
+                        valueClassName="text-lg"
+                    />
                 </div>
 
                 <SeperateLine className="sm:hidden max-sm:my-4 w-full h-[1px] bg-gray-300" />
 
-                <div className="flex-1 px-4">
-                    <div className="flex">
-                        <div className="w-[40%]">
-                            <HeaderInfo value="Name : " />
-                            <HeaderInfo value="Phone : " />
-                            <HeaderInfo value="Adult : " />
-                            <HeaderInfo value="Child : " />
-                            <HeaderInfo value="Table : " />
-                        </div>
-                        <div className="col-span-1">
-                            <TextInfo value={preOrder.customerName} />
-                            <TextInfo value={preOrder.phoneNumber} />
-                            <TextInfo value={preOrder.adultNumber.toString()} />
-                            <TextInfo value={preOrder.childNumber.toString()} />
-                            <TextInfo
-                                value={preOrder.tables
-                                    .map((table) => table.tableNumber)
-                                    .join(", ")}
-                            />
-                        </div>
-                    </div>
+                <div className="flex-1 px-4 flex flex-col gap-2">
+                    <TextCardInfo
+                        text="Name : "
+                        value={preOrder.customerName}
+                        textClassName="text-lg"
+                        valueClassName="text-lg"
+                    />
+                    <TextCardInfo
+                        text="Phone : "
+                        value={preOrder.phoneNumber}
+                        textClassName="text-lg"
+                        valueClassName="text-lg"
+                    />
+                    <TextCardInfo
+                        text="Adult : "
+                        value={preOrder.adultNumber.toString()}
+                        textClassName="text-lg"
+                        valueClassName="text-lg"
+                    />
+                    <TextCardInfo
+                        text="Child : "
+                        value={preOrder.childNumber.toString()}
+                        textClassName="text-lg"
+                        valueClassName="text-lg"
+                    />
+                    <TextCardInfo
+                        text="Table : "
+                        value={preOrder.tables
+                            .map((table) => table.tableNumber)
+                            .join(", ")}
+                        textClassName="text-lg"
+                        valueClassName="text-lg"
+                    />
                 </div>
             </div>
             <div className="flex items-center justify-end gap-2">

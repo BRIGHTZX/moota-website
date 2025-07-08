@@ -1,5 +1,5 @@
 import PageLoader from "@/components/PageLoader";
-import { useGetTables } from "@/features/(admin)/tables/api/use-get-tables";
+import { useGetTables } from "@/features/(client)/reservation/api/use-get-tables";
 import { selectTablesSchemaType } from "@/features/(admin)/tables/schema";
 import { cn } from "@/lib/utils";
 import React from "react";

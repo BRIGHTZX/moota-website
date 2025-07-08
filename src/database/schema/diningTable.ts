@@ -5,8 +5,9 @@ export const diningTable = pgTable("dining_table", {
     tableNumber: text("table_number").notNull(), // เช่น "1", "4"
     tableType: text("table_type").notNull(), // เช่น "ด้านนอก", "ด้านใน"
     isAvailable: boolean("is_available").default(true).notNull(),
-    createdAt: timestamp("created_at").defaultNow(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
         .defaultNow()
-        .$onUpdate(() => new Date()),
+        .$onUpdate(() => new Date())
+        .notNull(),
 });

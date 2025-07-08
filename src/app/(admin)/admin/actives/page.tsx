@@ -24,14 +24,23 @@ function ActivePage() {
         <div className="p-4 pt-20 pb-8 relative h-[calc(100vh-5rem)]  overflow-y-auto">
             <TextHeader text="โต๊ะที่กำลังทำงาน" />
             <div className="mt-4 flex flex-col gap-2">
-                {activesData?.map((active) => (
-                    <TableActiveSection
-                        key={active.activeId}
-                        active={active}
-                        setOpenAlertDialog={setOpenAlertDialog}
-                        setActiveId={setActiveId}
-                    />
-                ))}
+                {activesData?.length === 0 ? (
+                    <div className="flex items-center justify-center h-[400px]">
+                        <TextHeader
+                            text="ไม่มีโต๊ะที่กำลังทำงาน"
+                            className="text-lg text-gray-400"
+                        />
+                    </div>
+                ) : (
+                    activesData?.map((active) => (
+                        <TableActiveSection
+                            key={active.activeId}
+                            active={active}
+                            setOpenAlertDialog={setOpenAlertDialog}
+                            setActiveId={setActiveId}
+                        />
+                    ))
+                )}
             </div>
             <AlertDialogCustom
                 open={openAlertDialog}

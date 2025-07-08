@@ -10,12 +10,11 @@ export type OrderType = {
     reservationTime: string;
     status: string;
     paymentStatus: string;
-    createdAt: string;
+    createdAt: string | null;
     tables: TableType[];
 };
 
 export type TableType = {
-    preOrderId: string;
-    id: string;
+    tableId: string;
     tableNumber: string;
 };

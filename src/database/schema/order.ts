@@ -9,8 +9,11 @@ export const order = pgTable("order", {
         .references(() => ActiveInfoTable.id)
         .notNull(),
     totalPrice: integer("total_price").notNull(),
-    createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at").defaultNow(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+        .defaultNow()
+        .$onUpdate(() => new Date())
+        .notNull(),
     deletedAt: timestamp("deleted_at"),
 });
 

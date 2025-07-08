@@ -9,17 +9,18 @@ export const active = pgTable("active", {
     adultNumber: integer("adult_number").notNull(),
     childNumber: integer("child_number").notNull(),
     openTime: text("open_time").notNull(),
-    createdAt: timestamp("created_at").defaultNow(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
         .defaultNow()
-        .$onUpdate(() => new Date()),
+        .$onUpdate(() => new Date())
+        .notNull(),
     deletedAt: timestamp("deleted_at"),
 });
 
 export const activeInfo = pgTable("active_info", {
     id: uuid("id").primaryKey().defaultRandom(),
     activeId: uuid("active_id")
-        .references(() => active.id)
+        .references(() => active.id, { onDelete: "cascade" })
         .notNull(),
     tableId: uuid("table_id")
         .references(() => DiningTable.id)
