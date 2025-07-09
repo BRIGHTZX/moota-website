@@ -27,4 +27,6 @@ export type TotalProduct = {
     totalPrice: number;
 };
 
+export const checkoutStatus = ["partial", "closed"] as const;
+export type CheckoutStatus = (typeof checkoutStatus)[number];
 export type PaymentMethod = "cash" | "promptpay";

@@ -12,13 +12,14 @@ import TotalProductCard from "@/features/(admin)/checkout/components/TotalProduc
 import { useGetActiveId } from "@/features/(admin)/checkout/hooks/use-getActiveId";
 import {
     ActiveInfo,
+    CheckoutStatus,
     PaymentMethod,
     SelectedTable,
 } from "@/features/(admin)/checkout/types";
 import { Switch } from "@/components/ui/switch";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import SeperateLine from "@/components/SeperateLine";
 import SelectedPaymentMethod from "@/features/(admin)/checkout/components/SelectedPaymentMethod";
 import AlertDialogCustom from "@/components/AlertDialogCustom";
@@ -41,6 +42,10 @@ function CheckoutPage() {
 
     const activeInfoIds = useMemo(() => {
         return selectedTable?.map((info) => info.activeInfoId) ?? [];
+    }, [selectedTable]);
+
+    const tableIds = useMemo(() => {
+        return selectedTable?.map((info) => info.tableId) ?? [];
     }, [selectedTable]);
 
     // Order List
@@ -80,10 +85,46 @@ function CheckoutPage() {
     }, [priceAdult, priceChild, orderPrice, discount]);
 
     // submit checkout
+    const isAllTablesSelected = useMemo(() => {
+        return (
+            checkoutInfo?.activeInfos &&
+            selectedTable.length === checkoutInfo?.activeInfos?.length
+        );
+    }, [selectedTable, checkoutInfo]);
+
+    useEffect(() => {
+        if (isAllTablesSelected) {
+            setAdult(checkoutInfo?.adultNumber ?? 0);
+            setChild(checkoutInfo?.childNumber ?? 0);
+        }
+    }, [isAllTablesSelected, checkoutInfo]);
+
+    const handleSetActiveStatus = () => {
+        if (selectedTable.length === (checkoutInfo?.activeInfos?.length ?? 0)) {
+            return "closed";
+        } else if (selectedTable.length > 0) {
+            return "partial";
+        }
+        return "partial";
+    };
+
     const validateCheckout = () => {
         if (selectedTable.length === 0) {
             toast.error("กรุณาเลือกโต๊ะ");
             return;
+        }
+        if (
+            checkoutInfo &&
+            adult === checkoutInfo.adultNumber &&
+            child === checkoutInfo.childNumber
+        ) {
+            const totalTables = checkoutInfo.activeInfos?.length ?? 0;
+            if (selectedTable.length !== totalTables) {
+                toast.error(
+                    `เมื่อเลือกจำนวนคนครบ ต้องเลือกโต๊ะครบทั้งหมด (${totalTables} โต๊ะ)`
+                );
+                return;
+            }
         }
         if (adult === 0 && child === 0) {
             toast.error("กรุณาเลือกจำนวนคน");
@@ -93,6 +134,7 @@ function CheckoutPage() {
             toast.error("กรุณาเลือกช่องทางชำระเงิน");
             return;
         }
+
         setOpenAlertDialog(true);
     };
     const handleSubmitCheckout = () => {
@@ -101,8 +143,11 @@ function CheckoutPage() {
             return;
         }
 
+        const activeStatus = handleSetActiveStatus() as CheckoutStatus;
+
         const finalValue = {
             activeInfoId: activeInfoIds,
+            tableId: tableIds,
             customerName: checkoutInfo.customerName,
             paidAdultNumber: adult,
             paidChildNumber: child,
@@ -110,6 +155,7 @@ function CheckoutPage() {
             totalDiscount: discount,
             totalAmount: totalPrice,
             paymentMethod: paymentMethod,
+            status: activeStatus,
             orderList: orderList ?? [],
         };
         console.log(finalValue);
@@ -213,10 +259,13 @@ function CheckoutPage() {
                 <div className="w-full relative">
                     <div className="w-full">
                         <SelectedPeople
-                            adult={checkoutInfo?.adultNumber ?? 0}
-                            child={checkoutInfo?.childNumber ?? 0}
+                            adult={adult}
+                            adultMax={checkoutInfo?.adultNumber ?? 0}
+                            child={child}
+                            childMax={checkoutInfo?.childNumber ?? 0}
                             setAdult={setAdult}
                             setChild={setChild}
+                            disabled={isAllTablesSelected}
                         />
                     </div>
                 </div>

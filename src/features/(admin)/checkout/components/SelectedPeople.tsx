@@ -4,7 +4,6 @@ import {
     SelectContent,
     SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
@@ -12,27 +11,37 @@ import {
 type SelectedPeopleProps = {
     adult: number;
     child: number;
+    adultMax: number;
+    childMax: number;
     setAdult: (adult: number) => void;
     setChild: (child: number) => void;
+    disabled?: boolean;
 };
 
 function SelectedPeople({
     adult,
     child,
+    adultMax,
+    childMax,
     setAdult,
     setChild,
+    disabled = false,
 }: SelectedPeopleProps) {
     return (
         <div className="flex items-center gap-4">
             <SelectPeople
-                amount={adult}
+                amount={adultMax}
                 placeholder="จำนวนผู้ใหญ่"
                 setValue={setAdult}
+                disabled={disabled}
+                value={adult}
             />
             <SelectPeople
-                amount={child}
+                amount={childMax}
                 placeholder="จำนวนเด็ก"
                 setValue={setChild}
+                disabled={disabled}
+                value={child}
             />
         </div>
     );
@@ -43,29 +52,36 @@ export default SelectedPeople;
 const SelectPeople = ({
     amount,
     placeholder,
+    value,
     setValue,
+    disabled = false,
 }: {
     amount: number;
     placeholder: string;
+    value: number;
     setValue: (value: number) => void;
+    disabled?: boolean;
 }) => {
+    const valueString = value > 0 ? value.toString() : "";
     return (
-        <Select>
-            <SelectTrigger className="w-full">
+        <Select
+            value={valueString}
+            onValueChange={(value) => setValue(Number(value))}
+            disabled={disabled}
+        >
+            <SelectTrigger className="w-full" disabled={disabled}>
                 <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>
                 <SelectGroup>
-                    <SelectLabel></SelectLabel>
-                    {Array.from({ length: amount }, (_, i) => (
-                        <SelectItem
-                            key={i}
-                            value={i.toString()}
-                            onClick={() => setValue(i + 1)}
-                        >
-                            {i + 1}
-                        </SelectItem>
-                    ))}
+                    {Array.from({ length: amount }, (_, i) => {
+                        const value = (i + 1).toString();
+                        return (
+                            <SelectItem key={value} value={value}>
+                                {i + 1}
+                            </SelectItem>
+                        );
+                    })}
                 </SelectGroup>
             </SelectContent>
         </Select>

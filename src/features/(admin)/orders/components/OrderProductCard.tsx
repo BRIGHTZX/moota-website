@@ -9,9 +9,15 @@ interface Props {
     setOrderList: (
         list: OrderItem[] | ((prev: OrderItem[]) => OrderItem[])
     ) => void;
+    disabled?: boolean;
 }
 
-function OrderProductCard({ product, orderList = [], setOrderList }: Props) {
+function OrderProductCard({
+    product,
+    orderList = [],
+    setOrderList,
+    disabled = false,
+}: Props) {
     const initialQty =
         orderList.find((i) => i.product.id === product.id)?.quantity ?? 0;
     const [quantity, setQuantity] = useState<number>(initialQty);
@@ -96,7 +102,11 @@ function OrderProductCard({ product, orderList = [], setOrderList }: Props) {
                                         ? "opacity-40 cursor-not-allowed"
                                         : ""
                                 )}
-                                disabled={quantity === 0 || product.stock === 0}
+                                disabled={
+                                    quantity === 0 ||
+                                    product.stock === 0 ||
+                                    disabled
+                                }
                             >
                                 -
                             </button>
@@ -112,7 +122,7 @@ function OrderProductCard({ product, orderList = [], setOrderList }: Props) {
                                     product.stock === 0 &&
                                         "opacity-40 cursor-not-allowed"
                                 )}
-                                disabled={product.stock === 0}
+                                disabled={product.stock === 0 || disabled}
                             >
                                 +
                             </button>

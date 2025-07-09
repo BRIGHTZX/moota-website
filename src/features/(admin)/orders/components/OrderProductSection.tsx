@@ -85,6 +85,7 @@ function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
                             product={drink}
                             orderList={orderList}
                             setOrderList={setOrderList}
+                            disabled={isPendingCreateOrder}
                         />
                     ))}
                 </div>

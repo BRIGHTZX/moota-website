@@ -1,6 +1,9 @@
+import { eq, or } from "drizzle-orm";
 import { db } from "@/database/db";
 import { getCurrentUser } from "@/services/middleware-hono";
 import { Hono } from "hono";
+
+import { active as ActiveTable } from "@/database/schema/active";
 
 const app = new Hono().get("/", getCurrentUser, async (c) => {
     const user = c.get("user");
@@ -11,6 +14,10 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
 
     try {
         const actives = await db.query.active.findMany({
+            where: or(
+                eq(ActiveTable.status, "open"),
+                eq(ActiveTable.status, "partial")
+            ),
             columns: {
                 id: true,
                 customerName: true,
@@ -19,6 +26,7 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
                 childNumber: true,
                 openTime: true,
                 updatedAt: true,
+                status: true,
             },
             with: {
                 activeInfos: {

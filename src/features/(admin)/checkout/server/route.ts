@@ -2,7 +2,7 @@ import { getCurrentUser } from "@/services/middleware-hono";
 import { Hono } from "hono";
 
 import { db } from "@/database/db";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, or } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator";
 import { getOrderListSchema, insertCheckoutSchema } from "../schemas";
 
@@ -15,6 +15,7 @@ import {
     checkout as CheckoutTable,
     checkoutInfos as CheckoutInfosTable,
 } from "@/database/schema/checkout";
+import { diningTable as DiningTable } from "@/database/schema/diningTable";
 
 const app = new Hono()
     .get("/checkout-info/:activeId", async (c) => {
@@ -22,7 +23,13 @@ const app = new Hono()
             const activeId = c.req.param("activeId");
 
             const active = await db.query.active.findFirst({
-                where: eq(ActiveTable.id, activeId),
+                where: and(
+                    eq(ActiveTable.id, activeId),
+                    or(
+                        eq(ActiveTable.status, "open"),
+                        eq(ActiveTable.status, "partial")
+                    )
+                ),
                 columns: {
                     id: true,
                     customerName: true,
@@ -158,6 +165,7 @@ const app = new Hono()
                 const { activeId } = c.req.param();
                 const {
                     activeInfoId,
+                    tableId,
                     customerName,
                     paidAdultNumber,
                     paidChildNumber,
@@ -165,8 +173,13 @@ const app = new Hono()
                     totalDiscount,
                     totalAmount,
                     paymentMethod,
+                    status,
                     orderList,
                 } = c.req.valid("json");
+
+                if (status !== "partial" && status !== "closed") {
+                    return c.json({ message: "Invalid status" }, 400);
+                }
 
                 const result = await db.transaction(async (tx) => {
                     const [checkout] = await tx
@@ -194,13 +207,20 @@ const app = new Hono()
                     );
 
                     await tx
+                        .update(DiningTable)
+                        .set({
+                            isAvailable: true,
+                        })
+                        .where(inArray(DiningTable.id, tableId));
+
+                    await tx
                         .delete(ActiveInfoTable)
                         .where(inArray(ActiveInfoTable.id, activeInfoId));
 
                     await tx
                         .update(ActiveTable)
                         .set({
-                            status: "partial",
+                            status: status,
                         })
                         .where(eq(ActiveTable.id, activeId));
                 });
