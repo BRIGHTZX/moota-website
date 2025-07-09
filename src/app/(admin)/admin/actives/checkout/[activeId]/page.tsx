@@ -14,24 +14,34 @@ import {
     ActiveInfo,
     PaymentMethod,
     SelectedTable,
-    TotalProduct,
 } from "@/features/(admin)/checkout/types";
 import { Switch } from "@/components/ui/switch";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import SeperateLine from "@/components/SeperateLine";
 import SelectedPaymentMethod from "@/features/(admin)/checkout/components/SelectedPaymentMethod";
+import AlertDialogCustom from "@/components/AlertDialogCustom";
+import { toast } from "sonner";
+import { useCreateCheckout } from "@/features/(admin)/checkout/api/use-create-checkout";
 
 function CheckoutPage() {
+    const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false);
     const activeId = useGetActiveId();
     const [adult, setAdult] = useState<number>(0);
     const [child, setChild] = useState<number>(0);
     const [selectedTable, setSelectedTable] = useState<SelectedTable[]>([]);
     const [birthDate, setBirthDate] = useState<boolean>(false);
-    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(
+        null
+    );
     // Customer Info and Table Selector
-    const { data: checkoutInfo } = useGetCheckoutInfo(activeId);
+    const { data: checkoutInfo, isLoading: isLoadingCheckoutInfo } =
+        useGetCheckoutInfo(activeId);
+
+    const activeInfoIds = useMemo(() => {
+        return selectedTable?.map((info) => info.activeInfoId) ?? [];
+    }, [selectedTable]);
 
     // Order List
     const { data: orderList, isLoading: isLoadingOrderList } =
@@ -39,43 +49,80 @@ function CheckoutPage() {
             selectedTable?.map((info) => info.activeInfoId) ?? []
         );
 
+    // Create Checkout
+    const { mutate: createCheckout, isPending: isLoadingCreateCheckout } =
+        useCreateCheckout({
+            activeId: activeId,
+            activeInfoId: activeInfoIds,
+        });
+
     // function calculate
     const ADULT_PRICE = 199;
     const CHILD_PRICE = 129;
 
-    const totalPriceAdult = (adult: number) => {
-        return (adult * ADULT_PRICE).toFixed(2);
+    const priceAdult = useMemo(() => adult * ADULT_PRICE, [adult]);
+
+    const priceChild = useMemo(() => child * CHILD_PRICE, [child]);
+
+    const discount = useMemo(() => {
+        return birthDate ? (priceAdult + priceChild) * 0.1 : 0;
+    }, [priceAdult, priceChild, birthDate]);
+
+    const orderPrice = useMemo(() => {
+        return (orderList ?? []).reduce(
+            (acc, curr) => acc + curr.totalPrice,
+            0
+        );
+    }, [orderList]);
+
+    const totalPrice = useMemo(() => {
+        return priceAdult + priceChild + orderPrice - discount;
+    }, [priceAdult, priceChild, orderPrice, discount]);
+
+    // submit checkout
+    const validateCheckout = () => {
+        if (selectedTable.length === 0) {
+            toast.error("กรุณาเลือกโต๊ะ");
+            return;
+        }
+        if (adult === 0 && child === 0) {
+            toast.error("กรุณาเลือกจำนวนคน");
+            return;
+        }
+        if (!paymentMethod) {
+            toast.error("กรุณาเลือกช่องทางชำระเงิน");
+            return;
+        }
+        setOpenAlertDialog(true);
     };
-    const totalPriceChild = (child: number) => {
-        return (child * CHILD_PRICE).toFixed(2);
+    const handleSubmitCheckout = () => {
+        if (!checkoutInfo?.customerName || !paymentMethod) {
+            toast.error("ข้อมูลไม่ครบถ้วน");
+            return;
+        }
+
+        const finalValue = {
+            activeInfoId: activeInfoIds,
+            customerName: checkoutInfo.customerName,
+            paidAdultNumber: adult,
+            paidChildNumber: child,
+            totalOrderPrice: orderPrice,
+            totalDiscount: discount,
+            totalAmount: totalPrice,
+            paymentMethod: paymentMethod,
+            orderList: orderList ?? [],
+        };
+        console.log(finalValue);
+        createCheckout({
+            param: {
+                activeId: activeId,
+            },
+            json: finalValue,
+        });
     };
 
-    const totalPriceOrderList = (orderList: TotalProduct[]) => {
-        return orderList
-            .reduce((acc, curr) => acc + curr.totalPrice, 0)
-            .toFixed(2);
-    };
-
-    const totalPriceDiscount = (adult: number, child: number) => {
-        return (
-            (Number(totalPriceAdult(adult)) + Number(totalPriceChild(child))) *
-            0.1
-        ).toFixed(2);
-    };
-
-    const totalPriceService = (
-        adult: number,
-        child: number,
-        discount: number,
-        orderPrice: number
-    ) => {
-        return (
-            Number(adult) +
-            Number(child) +
-            Number(orderPrice) -
-            Number(discount)
-        ).toFixed(2);
-    };
+    const isLoading =
+        isLoadingOrderList || isLoadingCheckoutInfo || isLoadingCreateCheckout;
 
     return (
         <div className="p-4 pt-20 pb-8 relative h-[calc(100vh-5rem)]  overflow-y-auto">
@@ -136,6 +183,12 @@ function CheckoutPage() {
                                     product={product}
                                 />
                             ))
+                        ) : selectedTable.length > 0 ? (
+                            <div className="flex items-center justify-center h-[200px]">
+                                <p className="text-gray-500">
+                                    ไม่มีรายการออเดอร์
+                                </p>
+                            </div>
                         ) : (
                             <div className="flex items-center justify-center h-[200px]">
                                 <p className="text-gray-500">กรุณาเลือกโต๊ะ</p>
@@ -192,7 +245,7 @@ function CheckoutPage() {
                             }
                             textClassName="text-md font-medium"
                             valueClassName="text-md font-medium"
-                            value={`${totalPriceAdult(adult).toString()} ฿`}
+                            value={`${priceAdult.toString()} ฿`}
                         />
                     )}
                     {child > 0 && (
@@ -207,7 +260,7 @@ function CheckoutPage() {
                             }
                             textClassName="text-md font-medium"
                             valueClassName="text-md font-medium"
-                            value={`${totalPriceChild(child).toString()} ฿`}
+                            value={`${priceChild.toString()} ฿`}
                         />
                     )}
                     {birthDate && (
@@ -215,31 +268,21 @@ function CheckoutPage() {
                             text="ส่วนลดรวม(10%)"
                             textClassName="text-md font-medium text-amber-500"
                             valueClassName="text-md font-medium text-amber-500"
-                            value={`-${totalPriceDiscount(
-                                adult,
-                                child
-                            ).toString()} ฿`}
+                            value={`-${discount.toString()} ฿`}
                         />
                     )}
                     <TextCardInfo
                         text="ค่าเครื่องดื่ม"
                         textClassName="text-md font-medium"
                         valueClassName="text-md font-medium"
-                        value={`${totalPriceOrderList(
-                            orderList ?? []
-                        ).toString()} ฿`}
+                        value={`${orderPrice.toString()} ฿`}
                     />
                     <SeperateLine className="mt-4 mb-2" />
                     <TextCardInfo
                         text="รวมค่าบริการ"
                         textClassName="text-md font-medium"
                         valueClassName="text-md font-medium"
-                        value={`${totalPriceService(
-                            Number(totalPriceAdult(adult)),
-                            Number(totalPriceChild(child)),
-                            Number(totalPriceDiscount(adult, child)),
-                            Number(totalPriceOrderList(orderList ?? []))
-                        ).toString()} ฿`}
+                        value={`${totalPrice.toString()} ฿`}
                     />
                 </div>
             </div>
@@ -257,7 +300,27 @@ function CheckoutPage() {
             </div>
 
             {/* Action Buttons */}
-            <div></div>
+            <div>
+                <AlertDialogCustom
+                    open={openAlertDialog}
+                    setOpen={setOpenAlertDialog}
+                    action={() => {
+                        handleSubmitCheckout();
+                    }}
+                    title={"ยืนยันการชำระเงิน"}
+                    description={"คุณต้องการยืนยันการชำระเงินหรือไม่?"}
+                    buttonActionText={"ยืนยัน"}
+                />
+
+                <Button
+                    variant="coffeePrimary"
+                    className="w-full mt-4"
+                    onClick={() => validateCheckout()}
+                    disabled={isLoading}
+                >
+                    ชำระเงิน
+                </Button>
+            </div>
         </div>
     );
 }

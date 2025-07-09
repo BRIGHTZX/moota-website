@@ -1,4 +1,11 @@
-import { pgTable, uuid, timestamp, integer, text } from "drizzle-orm/pg-core";
+import {
+    pgTable,
+    uuid,
+    timestamp,
+    integer,
+    text,
+    real,
+} from "drizzle-orm/pg-core";
 import { active } from "./active";
 import { product } from "./product";
 
@@ -7,11 +14,12 @@ export const checkout = pgTable("checkout", {
     activeId: uuid("active_id")
         .references(() => active.id)
         .notNull(),
+    customerName: text("customer_name").notNull(),
     paidAdultNumber: integer("paid_adult_number").notNull(),
     paidChildNumber: integer("paid_child_number").notNull(),
-    totalOrderPrice: integer("total_order_price").notNull(),
-    totalDiscount: integer("total_discount").notNull(),
-    totalAmount: integer("total_amount").notNull(),
+    totalOrderPrice: real("total_order_price").notNull(),
+    totalDiscount: real("total_discount").notNull(),
+    totalAmount: real("total_amount").notNull(),
     paymentMethod: text("payment_method").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")

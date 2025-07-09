@@ -48,7 +48,11 @@ function TableReservation({
                         <div className="flex flex-wrap gap-2">
                             {insideTables?.length &&
                                 insideTables
-                                    .slice(0, 15)
+                                    .filter(
+                                        (table: selectTablesSchemaType) =>
+                                            Number(table.tableNumber) >= 1 &&
+                                            Number(table.tableNumber) <= 15
+                                    )
                                     .map((table: selectTablesSchemaType) => (
                                         <TableCard
                                             key={table.id}
@@ -69,7 +73,11 @@ function TableReservation({
                         <div className="flex flex-wrap gap-2">
                             {insideTables?.length &&
                                 insideTables
-                                    .slice(15)
+                                    .filter(
+                                        (table: selectTablesSchemaType) =>
+                                            Number(table.tableNumber) >= 16 &&
+                                            Number(table.tableNumber) <= 20
+                                    )
                                     .map((table: selectTablesSchemaType) => (
                                         <TableCard
                                             key={table.id}

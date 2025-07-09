@@ -6,7 +6,7 @@ import { relations } from "drizzle-orm";
 export const order = pgTable("order", {
     id: uuid("id").primaryKey().defaultRandom(),
     activeInfoId: uuid("active_info_id")
-        .references(() => ActiveInfoTable.id)
+        .references(() => ActiveInfoTable.id, { onDelete: "cascade" })
         .notNull(),
     totalPrice: integer("total_price").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -31,7 +31,7 @@ export const orderRelations = relations(order, ({ many, one }) => ({
 export const orderItem = pgTable("order_item", {
     id: uuid("id").primaryKey().defaultRandom(),
     orderId: uuid("order_id")
-        .references(() => order.id)
+        .references(() => order.id, { onDelete: "cascade" })
         .notNull(),
     productId: uuid("product_id")
         .references(() => ProductTable.id)

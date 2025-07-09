@@ -11,7 +11,7 @@ import {
 import { diningTable as DiningTable } from "@/database/schema/diningTable";
 import { z } from "zod";
 import { generateOrderNumber } from "@/lib/generateOrderNumber";
-import { and, eq } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import { connectCloudinary } from "@/lib/cloudinary";
 import { selectTablesSchemaType } from "@/features/(admin)/tables/schema";
 
@@ -31,7 +31,10 @@ const reservationRoute = new Hono()
                     tableType: DiningTable.tableType,
                     isAvailable: DiningTable.isAvailable,
                 })
-                .from(DiningTable);
+                .from(DiningTable)
+                .orderBy(asc(sql`CAST(${DiningTable.tableNumber} AS INTEGER)`));
+
+            console.log(tables);
             return c.json(
                 { message: "Tables fetched successfully", tables },
                 200

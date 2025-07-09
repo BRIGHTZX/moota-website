@@ -32,7 +32,7 @@ function SelectedPaymentMethod({
                             value={method}
                             onClick={() => setPaymentMethod(method)}
                         >
-                            {method === "cash" ? "สด" : "พร้อมเพย์"}
+                            {method === "cash" ? "เงินสด" : "พร้อมเพย์"}
                         </SelectItem>
                     ))}
                 </SelectGroup>

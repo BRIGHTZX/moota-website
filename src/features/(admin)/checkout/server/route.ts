@@ -4,9 +4,17 @@ import { Hono } from "hono";
 import { db } from "@/database/db";
 import { eq, inArray } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator";
-import { getOrderListSchema } from "../schemas";
-import { active as ActiveTable } from "@/database/schema/active";
+import { getOrderListSchema, insertCheckoutSchema } from "../schemas";
+
+import {
+    active as ActiveTable,
+    activeInfo as ActiveInfoTable,
+} from "@/database/schema/active";
 import { order as OrderTable } from "@/database/schema/order";
+import {
+    checkout as CheckoutTable,
+    checkoutInfos as CheckoutInfosTable,
+} from "@/database/schema/checkout";
 
 const app = new Hono()
     .get("/checkout-info/:activeId", async (c) => {
@@ -129,6 +137,78 @@ const app = new Hono()
                     },
                     200
                 );
+            } catch (error) {
+                console.log(error);
+                return c.json({ message: "Internal Server Error" }, 500);
+            }
+        }
+    )
+    .post(
+        "/checkout/:activeId",
+        getCurrentUser,
+        zValidator("json", insertCheckoutSchema),
+        async (c) => {
+            const user = c.get("user");
+
+            if (!user) {
+                return c.json({ message: "Unauthorized" }, 401);
+            }
+
+            try {
+                const { activeId } = c.req.param();
+                const {
+                    activeInfoId,
+                    customerName,
+                    paidAdultNumber,
+                    paidChildNumber,
+                    totalOrderPrice,
+                    totalDiscount,
+                    totalAmount,
+                    paymentMethod,
+                    orderList,
+                } = c.req.valid("json");
+
+                const result = await db.transaction(async (tx) => {
+                    const [checkout] = await tx
+                        .insert(CheckoutTable)
+                        .values({
+                            activeId,
+                            customerName,
+                            paidAdultNumber: Number(paidAdultNumber),
+                            paidChildNumber: Number(paidChildNumber),
+                            totalOrderPrice: Number(totalOrderPrice),
+                            totalDiscount: Number(totalDiscount),
+                            totalAmount: Number(totalAmount),
+                            paymentMethod,
+                        })
+                        .returning({ id: CheckoutTable.id });
+
+                    await tx.insert(CheckoutInfosTable).values(
+                        orderList.map((item) => ({
+                            checkoutId: checkout.id,
+                            productId: item.productId,
+                            quantity: Number(item.quantity),
+                            pricePerUnit: Number(item.pricePerUnit),
+                            totalPrice: Number(item.totalPrice),
+                        }))
+                    );
+
+                    await tx
+                        .delete(ActiveInfoTable)
+                        .where(inArray(ActiveInfoTable.id, activeInfoId));
+
+                    await tx
+                        .update(ActiveTable)
+                        .set({
+                            status: "partial",
+                        })
+                        .where(eq(ActiveTable.id, activeId));
+                });
+
+                return c.json({
+                    message: "Create checkout successfully",
+                    result: result,
+                });
             } catch (error) {
                 console.log(error);
                 return c.json({ message: "Internal Server Error" }, 500);
