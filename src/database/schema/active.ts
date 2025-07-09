@@ -1,6 +1,19 @@
-import { pgTable, uuid, timestamp, text, integer } from "drizzle-orm/pg-core";
+import {
+    pgTable,
+    uuid,
+    timestamp,
+    text,
+    integer,
+    pgEnum,
+} from "drizzle-orm/pg-core";
 import { diningTable, diningTable as DiningTable } from "./diningTable";
 import { relations } from "drizzle-orm";
+
+export const activeStatus = pgEnum("active_status", [
+    "open",
+    "partial",
+    "closed",
+]);
 
 export const active = pgTable("active", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -9,6 +22,7 @@ export const active = pgTable("active", {
     adultNumber: integer("adult_number").notNull(),
     childNumber: integer("child_number").notNull(),
     openTime: text("open_time").notNull(),
+    status: activeStatus("status").notNull().default("open"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
         .defaultNow()

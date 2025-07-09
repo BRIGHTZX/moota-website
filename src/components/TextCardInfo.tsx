@@ -8,7 +8,7 @@ export const TextCardInfo = ({
     textClassName,
     valueClassName,
 }: {
-    text: string;
+    text: string | React.ReactNode;
     value: string;
     status?: string;
     className?: string;

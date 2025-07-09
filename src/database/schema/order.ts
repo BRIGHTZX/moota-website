@@ -1,5 +1,5 @@
 import { integer, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
-import { activeInfo as ActiveInfoTable } from "./active";
+import { activeInfo, activeInfo as ActiveInfoTable } from "./active";
 import { product, product as ProductTable } from "./product";
 import { relations } from "drizzle-orm";
 
@@ -17,7 +17,12 @@ export const order = pgTable("order", {
     deletedAt: timestamp("deleted_at"),
 });
 
-export const orderRelations = relations(order, ({ many }) => ({
+export const orderRelations = relations(order, ({ many, one }) => ({
+    activeInfo: one(activeInfo, {
+        fields: [order.activeInfoId],
+        references: [activeInfo.id],
+        relationName: "activeInfo-order",
+    }),
     orderItems: many(orderItem, {
         relationName: "order-orderItems",
     }),

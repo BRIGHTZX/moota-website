@@ -12,3 +12,19 @@ export type CheckoutInfo = {
     childNumber: number;
     activeInfo: ActiveInfo[];
 };
+
+export type SelectedTable = {
+    activeInfoId: string;
+    tableId: string;
+    tableNumber: string;
+};
+
+export type TotalProduct = {
+    productId: string;
+    productName: string;
+    pricePerUnit: number;
+    quantity: number;
+    totalPrice: number;
+};
+
+export type PaymentMethod = "cash" | "promptpay";
