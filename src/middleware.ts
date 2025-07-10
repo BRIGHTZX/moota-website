@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { checkIfActiveClosed } from "./services/checkIfActiveClosed";
 
 export default async function middleware(req: NextRequest) {
     const response = NextResponse.next();
@@ -50,26 +49,6 @@ export default async function middleware(req: NextRequest) {
         } catch (error) {
             console.error("Error checking roles:", error);
             return NextResponse.redirect(new URL("/", req.url));
-        }
-    }
-
-    // -------ACTIVE ROUTES---------------------------
-    if (req.nextUrl.pathname.startsWith("/admin/actives/checkout")) {
-        console.log("call active checkout");
-        try {
-            const url = req.nextUrl.pathname.split("/");
-            const activeId = url[4];
-
-            const isActiveClosed = await checkIfActiveClosed(activeId);
-
-            if (isActiveClosed) {
-                return NextResponse.redirect(
-                    new URL("/admin/actives", req.url)
-                );
-            }
-        } catch (error) {
-            console.error("Error checking active:", error);
-            return NextResponse.redirect(new URL("/admin/actives", req.url));
         }
     }
 
