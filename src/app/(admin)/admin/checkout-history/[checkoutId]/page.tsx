@@ -9,43 +9,55 @@ import PaymentBadge from "@/features/(admin)/checkout-history/components/Payment
 import { useGetCheckoutId } from "@/features/(admin)/checkout-history/hooks/get-checkoutId";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 
 function CheckoutHistoryDetailPage() {
+    const searchParams = useSearchParams();
+    const returnUrl = searchParams.get("returnUrl");
     const checkoutId = useGetCheckoutId();
     const { data: checkoutHistory } = useGetCheckoutHistory({
         checkoutId,
     });
 
-    console.log(checkoutHistory);
+    const checkoutStatus = checkoutHistory?.active?.status;
+
     return (
         <AdminPageWrapper>
-            <div className="flex itms-center gap-2">
-                <Button asChild variant="outline" size="sm">
-                    <Link href="/admin/checkout-history">
-                        <ArrowLeftIcon className="w-4 h-4" />
-                    </Link>
-                </Button>
-                <TextHeader text="รายละเอียดการชำระเงิน" />
+            <div className="relative">
+                <div className="absolute top-0 left-0">
+                    <Button asChild variant="outline" size="sm">
+                        <Link href={returnUrl ?? "/admin/checkout-history"}>
+                            <ArrowLeftIcon className="w-4 h-4" />
+                        </Link>
+                    </Button>
+                </div>
+                <TextHeader
+                    text="รายละเอียดการชำระเงิน"
+                    className="text-center"
+                />
             </div>
 
             <SeperateLine className="my-4" />
 
             {/* Date */}
-            <div className="flex items-center gap-2 mt-4">
-                <p className="text-xs font-semibold">วันที่ชำระเงิน</p>
-                <p className="text-xs font-light text-gray-500">
-                    {new Date(checkoutHistory?.updatedAt ?? "").toLocaleString(
-                        "th-TH",
-                        {
+            <div className="flex items-center justify-between gap-2 mt-4">
+                <div className="flex items-center gap-2">
+                    <p className="text-xs font-semibold">วันที่ชำระเงิน</p>
+                    <p className="text-xs font-light text-gray-500">
+                        {new Date(
+                            checkoutHistory?.updatedAt ?? ""
+                        ).toLocaleString("th-TH", {
                             year: "numeric",
                             month: "long",
                             day: "numeric",
                             hour: "2-digit",
                             minute: "2-digit",
-                        }
-                    )}
-                </p>
+                        })}
+                    </p>
+                </div>
+                {/* Checkout Status */}
+                <CheckoutStatusBadge status={checkoutStatus ?? ""} />
             </div>
 
             <div className="flex flex-col gap-4 mt-4">
@@ -121,3 +133,25 @@ function CheckoutHistoryDetailPage() {
 }
 
 export default CheckoutHistoryDetailPage;
+
+const CheckoutStatusBadge = ({ status }: { status: string }) => {
+    const statusColor =
+        status === "closed"
+            ? "bg-green-500"
+            : status === "partial"
+            ? "bg-amber-500"
+            : "bg-red-500";
+
+    const statusText =
+        status === "closed"
+            ? "ชำระเงินครบถ้วน"
+            : status === "partial"
+            ? "ชำระเงินบางส่วน"
+            : "ชำระเงินไม่ครบถ้วน";
+
+    return (
+        <div className={`text-xs font-semibold ${statusColor} rounded-md p-1`}>
+            <p className="text-white">{statusText}</p>
+        </div>
+    );
+};

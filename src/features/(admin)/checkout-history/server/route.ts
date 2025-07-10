@@ -101,6 +101,11 @@ const app = new Hono()
                         updatedAt: true,
                     },
                     with: {
+                        active: {
+                            columns: {
+                                status: true,
+                            },
+                        },
                         checkoutInfos: {
                             columns: {
                                 id: true,

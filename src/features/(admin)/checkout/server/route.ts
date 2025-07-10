@@ -194,7 +194,7 @@ const app = new Hono()
                     return c.json({ message: "Invalid status" }, 400);
                 }
 
-                await db.transaction(async (tx) => {
+                const result = await db.transaction(async (tx) => {
                     let checkoutId = "";
                     // have checkout, update checkout
                     const isExistCheckout = await tx.query.checkout.findFirst({
@@ -276,6 +276,8 @@ const app = new Hono()
                             status: status,
                         })
                         .where(eq(ActiveTable.id, activeId));
+
+                    return checkoutId;
                 });
 
                 if (status === "closed") {
@@ -286,14 +288,24 @@ const app = new Hono()
                         })
                         .where(eq(ActiveTable.id, activeId));
 
-                    return c.json({
-                        message: "Checkout successfully closed",
-                    });
+                    return c.json(
+                        {
+                            message: "Checkout successfully closed",
+                            activeSuccess: true,
+                            checkoutId: result,
+                        },
+                        200
+                    );
                 }
 
-                return c.json({
-                    message: "Create checkout successfully",
-                });
+                return c.json(
+                    {
+                        message: "Create checkout successfully",
+                        activeSuccess: true,
+                        checkoutId: result,
+                    },
+                    200
+                );
             } catch (error) {
                 console.log(error);
                 return c.json({ message: "Internal Server Error" }, 500);

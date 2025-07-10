@@ -12,16 +12,18 @@ import {
 type SelectedPaymentMethodProps = {
     placeholder: string;
     setPaymentMethod: (paymentMethod: PaymentMethod) => void;
+    disabled?: boolean;
 };
 
 function SelectedPaymentMethod({
     placeholder,
     setPaymentMethod,
+    disabled = false,
 }: SelectedPaymentMethodProps) {
     const paymentMethodList: PaymentMethod[] = ["cash", "promptpay"];
     return (
         <Select>
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full" disabled={disabled}>
                 <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>

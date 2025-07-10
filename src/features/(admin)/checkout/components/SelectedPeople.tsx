@@ -33,14 +33,14 @@ function SelectedPeople({
                 amount={adultMax}
                 placeholder="จำนวนผู้ใหญ่"
                 setValue={setAdult}
-                disabled={disabled}
+                disabled={disabled || adultMax === 0}
                 value={adult}
             />
             <SelectPeople
                 amount={childMax}
                 placeholder="จำนวนเด็ก"
                 setValue={setChild}
-                disabled={disabled}
+                disabled={disabled || childMax === 0}
                 value={child}
             />
         </div>

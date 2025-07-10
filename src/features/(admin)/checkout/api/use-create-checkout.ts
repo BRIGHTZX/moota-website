@@ -1,11 +1,12 @@
 import { client } from "@/lib/rpc";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 const api = client.api.admin.checkout["checkout"][":activeId"]["$post"];
 type RequestType = InferRequestType<typeof api>;
-type ResponseType = InferResponseType<typeof api>;
+type ResponseType = InferResponseType<typeof api, 200>;
 
 type CreateCheckoutType = {
     activeId: string;
@@ -16,6 +17,7 @@ export const useCreateCheckout = ({
     activeId,
     activeInfoId,
 }: CreateCheckoutType) => {
+    const router = useRouter();
     const queryClient = useQueryClient();
     const mutation = useMutation<ResponseType, Error, RequestType>({
         mutationFn: async ({ param, json }) => {
@@ -35,7 +37,7 @@ export const useCreateCheckout = ({
             return data;
         },
 
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({
                 queryKey: ["checkout-info", activeId],
             });
@@ -43,6 +45,9 @@ export const useCreateCheckout = ({
                 queryKey: ["checkout-order-lists", activeInfoId],
             });
             toast.success("สร้างรายการชำระเงินสำเร็จ");
+            if (data.activeSuccess) {
+                router.push(`/admin/checkout-history/${data.checkoutId}`);
+            }
         },
         onError: (error) => {
             console.log(error);

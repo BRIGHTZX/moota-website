@@ -43,8 +43,6 @@ function CheckoutPage() {
     const { data: checkoutInfo, isLoading: isLoadingCheckoutInfo } =
         useGetCheckoutInfo(activeId);
 
-    console.log(checkoutInfo);
-
     const calcualteAdultNumber = useMemo(() => {
         return (
             (checkoutInfo?.adultNumber ?? 0) -
@@ -89,7 +87,9 @@ function CheckoutPage() {
     const priceChild = useMemo(() => child * CHILD_PRICE, [child]);
 
     const discount = useMemo(() => {
-        return birthDate ? (priceAdult + priceChild) * 0.1 : 0;
+        return birthDate
+            ? Number(((priceAdult + priceChild) * 0.1).toFixed(2))
+            : 0;
     }, [priceAdult, priceChild, birthDate]);
 
     const orderPrice = useMemo(() => {
@@ -100,7 +100,9 @@ function CheckoutPage() {
     }, [orderList]);
 
     const totalPrice = useMemo(() => {
-        return priceAdult + priceChild + orderPrice - discount;
+        return Number(
+            (priceAdult + priceChild + orderPrice - discount).toFixed(2)
+        );
     }, [priceAdult, priceChild, orderPrice, discount]);
 
     // submit checkout
@@ -113,10 +115,10 @@ function CheckoutPage() {
 
     useEffect(() => {
         if (isAllTablesSelected) {
-            setAdult(checkoutInfo?.adultNumber ?? 0);
-            setChild(checkoutInfo?.childNumber ?? 0);
+            setAdult(calcualteAdultNumber);
+            setChild(calcualteChildNumber);
         }
-    }, [isAllTablesSelected, checkoutInfo]);
+    }, [isAllTablesSelected, calcualteAdultNumber, calcualteChildNumber]);
 
     const handleSetActiveStatus = () => {
         if (selectedTable.length === (checkoutInfo?.activeInfos?.length ?? 0)) {
@@ -130,8 +132,8 @@ function CheckoutPage() {
     const validateCheckout = () => {
         if (
             checkoutInfo &&
-            adult === checkoutInfo.adultNumber &&
-            child === checkoutInfo.childNumber
+            adult === calcualteAdultNumber &&
+            child === calcualteChildNumber
         ) {
             const totalTables = checkoutInfo.activeInfos?.length ?? 0;
             if (selectedTable.length !== totalTables) {
@@ -173,12 +175,23 @@ function CheckoutPage() {
             status: activeStatus,
             orderList: orderList ?? [],
         };
-        createCheckout({
-            param: {
-                activeId: activeId,
+        createCheckout(
+            {
+                param: {
+                    activeId: activeId,
+                },
+                json: finalValue,
             },
-            json: finalValue,
-        });
+            {
+                onSuccess: () => {
+                    setSelectedTable([]);
+                    setAdult(0);
+                    setChild(0);
+                    setBirthDate(false);
+                    setPaymentMethod(null);
+                },
+            }
+        );
     };
 
     const isLoading =
@@ -288,6 +301,7 @@ function CheckoutPage() {
                         <p className="text-sm text-gray-500">วันเกิด</p>
                         <Switch
                             checked={birthDate}
+                            disabled={isLoading}
                             onCheckedChange={setBirthDate}
                         />
                     </div>
@@ -301,7 +315,7 @@ function CheckoutPage() {
                             childMax={calcualteChildNumber}
                             setAdult={setAdult}
                             setChild={setChild}
-                            disabled={isAllTablesSelected}
+                            disabled={isAllTablesSelected || isLoading}
                         />
                     </div>
                 </div>
@@ -378,6 +392,7 @@ function CheckoutPage() {
 
                 <div className="mt-4">
                     <SelectedPaymentMethod
+                        disabled={isLoading}
                         placeholder="เลือกช่องทางชำระเงิน"
                         setPaymentMethod={setPaymentMethod}
                     />
@@ -398,7 +413,9 @@ function CheckoutPage() {
                 />
 
                 <Button
+                    key="checkout-button-submit"
                     variant="coffeePrimary"
+                    type="button"
                     className="w-full mt-4"
                     onClick={() => validateCheckout()}
                     disabled={isLoading}
@@ -406,20 +423,25 @@ function CheckoutPage() {
                     ชำระเงิน
                 </Button>
 
-                <Button
-                    asChild
-                    variant="outline"
-                    className="w-full mt-4"
-                    onClick={() => validateCheckout()}
-                    disabled={isLoading}
-                >
-                    <Link
-                        href={`/admin/checkout-history/${checkoutInfo?.checkoutHistory?.id}`}
+                {checkoutInfo?.checkoutHistory?.id && (
+                    <Button
+                        key="checkout-history"
+                        asChild
+                        type="button"
+                        variant="outline"
+                        className="w-full mt-4"
+                        disabled={
+                            isLoading || !checkoutInfo?.checkoutHistory?.id
+                        }
                     >
-                        <HistoryIcon />
-                        ประวัติการชำระเงิน
-                    </Link>
-                </Button>
+                        <Link
+                            href={`/admin/checkout-history/${checkoutInfo?.checkoutHistory?.id}?returnUrl=${window.location.pathname}`}
+                        >
+                            <HistoryIcon />
+                            ประวัติการชำระเงิน
+                        </Link>
+                    </Button>
+                )}
             </div>
         </AdminPageWrapper>
     );
