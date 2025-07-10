@@ -1,30 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { withAuth } from "@kinde-oss/kinde-auth-nextjs/server";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { checkIfActiveClosed } from "./services/checkIfActiveClosed";
 
 export default async function middleware(req: NextRequest) {
-    let response = NextResponse.next();
-
-    const authConfig = {
-        loginPage: "/signin",
-        isReturnToCurrentPage: true,
-    };
-
-    try {
-        const authMiddleware = withAuth(authConfig);
-        if (typeof authMiddleware === "function") {
-            response = await authMiddleware(req);
-
-            if (response.status !== 200 && response.headers.has("Location")) {
-                return response;
-            }
-        }
-    } catch (error) {
-        console.error("Auth middleware error:", error);
-    }
-
+    const response = NextResponse.next();
     const { getUser, getRoles } = getKindeServerSession();
 
+    // -------LOGIN & SIGNUP---------------------------
     const isAuthPage =
         req.nextUrl.pathname === "/signin" ||
         req.nextUrl.pathname === "/signup";
@@ -34,14 +16,14 @@ export default async function middleware(req: NextRequest) {
             const user = await getUser();
 
             if (user) {
-                return NextResponse.redirect(new URL("/profile", req.url));
+                return NextResponse.redirect(new URL("/", req.url));
             }
         } catch (error) {
             console.error("Error checking auth page access:", error);
         }
     }
 
-    // ✅ กำหนดว่า route อื่น ๆ ต้อง login
+    // -------PROTECTED ROUTES---------------------------
     if (req.nextUrl) {
         try {
             const user = await getUser();
@@ -55,7 +37,7 @@ export default async function middleware(req: NextRequest) {
         }
     }
 
-    // ✅ เฉพาะ /admin ต้องมี role เป็น admin
+    // -------ADMIN ROUTES---------------------------
     if (req.nextUrl.pathname.startsWith("/admin")) {
         try {
             const roles = await getRoles();
@@ -71,17 +53,29 @@ export default async function middleware(req: NextRequest) {
         }
     }
 
+    // -------ACTIVE ROUTES---------------------------
+    if (req.nextUrl.pathname.startsWith("/admin/actives/checkout")) {
+        console.log("call active checkout");
+        try {
+            const url = req.nextUrl.pathname.split("/");
+            const activeId = url[4];
+
+            const isActiveClosed = await checkIfActiveClosed(activeId);
+
+            if (isActiveClosed) {
+                return NextResponse.redirect(
+                    new URL("/admin/actives", req.url)
+                );
+            }
+        } catch (error) {
+            console.error("Error checking active:", error);
+            return NextResponse.redirect(new URL("/admin/actives", req.url));
+        }
+    }
+
     return response;
 }
 
 export const config = {
-    matcher: [
-        "/cart",
-        "/admin/:path*",
-        "/profile",
-        "/orders",
-        "/checkout",
-        "/signin",
-        "/signup",
-    ],
+    matcher: ["/admin/:path*", "/reservation/:path*", "/signin", "/signup"],
 };

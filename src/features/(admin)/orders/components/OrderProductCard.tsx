@@ -98,7 +98,9 @@ function OrderProductCard({
                                 onClick={() => handleQuantityChange("sub")}
                                 className={cn(
                                     "border border-red-400 text-red-400 rounded-sm size-7 flex items-center justify-center",
-                                    quantity === 0 || product.stock === 0
+                                    quantity === 0 ||
+                                        product.stock === 0 ||
+                                        disabled
                                         ? "opacity-40 cursor-not-allowed"
                                         : ""
                                 )}
@@ -119,8 +121,9 @@ function OrderProductCard({
                                 onClick={() => handleQuantityChange("add")}
                                 className={cn(
                                     "border border-emerald-500 text-emerald-500 rounded-sm size-7 flex items-center justify-center",
-                                    product.stock === 0 &&
-                                        "opacity-40 cursor-not-allowed"
+                                    product.stock === 0 || disabled
+                                        ? "opacity-40 cursor-not-allowed"
+                                        : ""
                                 )}
                                 disabled={product.stock === 0 || disabled}
                             >

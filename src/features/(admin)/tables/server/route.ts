@@ -6,7 +6,7 @@ import {
     activeInfo as ActiveInfoTable,
 } from "@/database/schema//active";
 import { insertTalblesSchema, selectTablesSchemaType } from "../schema";
-import { eq } from "drizzle-orm";
+import { asc, eq, sql } from "drizzle-orm";
 import { getCurrentUser } from "@/services/middleware-hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
@@ -28,7 +28,9 @@ const app = new Hono()
                     isAvailable: DiningTable.isAvailable,
                 })
                 .from(DiningTable)
+                .orderBy(asc(sql`CAST(${DiningTable.tableNumber} AS INTEGER)`))
                 .where(eq(DiningTable.isAvailable, true));
+
             return c.json(
                 { message: "Tables fetched successfully", tables },
                 200

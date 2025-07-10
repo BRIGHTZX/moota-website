@@ -25,7 +25,7 @@ export const useCreateActiveFromOrder = () => {
         },
 
         onSuccess: () => {
-            toast.success("สร้างการเปิดโต๊ะสำkเร็จ");
+            toast.success("สร้างการเปิดโต๊ะสำเร็จ");
             queryClient.invalidateQueries({ queryKey: ["admin-pre-orders"] });
             queryClient.invalidateQueries({ queryKey: ["admin-actives"] });
         },

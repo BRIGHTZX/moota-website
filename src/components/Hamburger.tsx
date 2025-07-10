@@ -32,6 +32,7 @@ type HamburgerType = {
 };
 
 function Hamburger({ currentUser, isAdmin }: HamburgerType) {
+    console.log(isAdmin);
     const arrayLink = [
         {
             name: "Home",
@@ -69,6 +70,12 @@ function Hamburger({ currentUser, isAdmin }: HamburgerType) {
                         {arrayLink.map((item) => (
                             <HamburgerLink key={item.name} {...item} />
                         ))}
+                        {isAdmin && (
+                            <HamburgerLink
+                                name="Admin"
+                                href="/admin/pre-orders"
+                            />
+                        )}
                     </div>
 
                     <div className="flex items-center justify-center">

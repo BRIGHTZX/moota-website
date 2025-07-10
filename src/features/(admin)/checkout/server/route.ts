@@ -181,7 +181,7 @@ const app = new Hono()
                     return c.json({ message: "Invalid status" }, 400);
                 }
 
-                const result = await db.transaction(async (tx) => {
+                await db.transaction(async (tx) => {
                     const [checkout] = await tx
                         .insert(CheckoutTable)
                         .values({
@@ -225,9 +225,21 @@ const app = new Hono()
                         .where(eq(ActiveTable.id, activeId));
                 });
 
+                if (status === "closed") {
+                    await db
+                        .update(ActiveTable)
+                        .set({
+                            status: "closed",
+                        })
+                        .where(eq(ActiveTable.id, activeId));
+
+                    return c.json({
+                        message: "Checkout successfully closed",
+                    });
+                }
+
                 return c.json({
                     message: "Create checkout successfully",
-                    result: result,
                 });
             } catch (error) {
                 console.log(error);

@@ -37,7 +37,7 @@ export const getCurrentUser = createMiddleware<UserType>(
             }
 
             const roleHasAdmin = roles.find((role) => role.key === "admin");
-            const isAdmin = roleHasAdmin?.name === "admin" ? true : false;
+            const isAdmin = roleHasAdmin?.name === "Admin" ? true : false;
             c.set("user", user);
             c.set("roles", roles);
             c.set("isAdmin", isAdmin);
