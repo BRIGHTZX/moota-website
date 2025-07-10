@@ -8,6 +8,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import AddTableForm from "@/features/(admin)/tables/components/AddTableForm";
 import { TableStateType } from "@/features/(admin)/tables/type";
+import AdminPageWrapper from "@/components/AdminPageWrapper";
 
 function TablesPage() {
     const [selectedTables, setSelectedTables] = useState<TableStateType[]>([]);
@@ -20,7 +21,7 @@ function TablesPage() {
     if (isError) return <div>Error</div>;
 
     return (
-        <div className="p-4 pt-20 pb-8 relative h-[calc(100vh-5rem)]  overflow-y-auto">
+        <AdminPageWrapper>
             <div className="flex items-center gap-2">
                 <TextHeader text="ระบบโต๊ะ" />
             </div>
@@ -85,7 +86,7 @@ function TablesPage() {
                 isOpen={isOpenAddTableForm}
                 setIsOpen={setIsOpenAddTableForm}
             />
-        </div>
+        </AdminPageWrapper>
     );
 }
 

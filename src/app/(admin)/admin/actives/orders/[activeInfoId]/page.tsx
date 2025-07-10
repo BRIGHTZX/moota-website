@@ -8,6 +8,7 @@ import React, { useEffect } from "react";
 import { ArrowLeftIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import AdminPageWrapper from "@/components/AdminPageWrapper";
 
 function OrdersPage() {
     const activeInfoId = useGetActiveInfoIdTableId();
@@ -24,7 +25,7 @@ function OrdersPage() {
     if (isErrorActiveInfo) return <div>Error</div>;
 
     return (
-        <div className="p-4 pt-20 pb-8 relative h-[calc(100vh-5rem)]  overflow-y-auto">
+        <AdminPageWrapper>
             <div className="flex items-center gap-4">
                 <Button asChild variant="outline" className="size-8">
                     <Link href="/admin/actives">
@@ -41,7 +42,7 @@ function OrdersPage() {
             <div className="mt-4">
                 <OrderProductSection activeInfoId={activeInfoId} />
             </div>
-        </div>
+        </AdminPageWrapper>
     );
 }
 

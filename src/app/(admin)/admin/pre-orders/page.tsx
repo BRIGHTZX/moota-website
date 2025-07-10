@@ -1,4 +1,5 @@
 "use client";
+import AdminPageWrapper from "@/components/AdminPageWrapper";
 import PageLoader from "@/components/PageLoader";
 import TextHeader from "@/components/TextHeader";
 import { useGetOrders } from "@/features/(admin)/pre-orders/api/use-get-admin-preOrders";
@@ -16,7 +17,7 @@ function OrderPage() {
     }
 
     return (
-        <div className="p-4 mt-14 mb-20">
+        <AdminPageWrapper>
             <div className="flex items-center gap-2">
                 <TextHeader text="ออเดอร์จองทั้งหมด" />
             </div>
@@ -39,7 +40,7 @@ function OrderPage() {
                     )}
                 </div>
             )}
-        </div>
+        </AdminPageWrapper>
     );
 }
 

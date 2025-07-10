@@ -1,4 +1,5 @@
 "use client";
+import AdminPageWrapper from "@/components/AdminPageWrapper";
 import PageLoader from "@/components/PageLoader";
 import SeperateLine from "@/components/SeperateLine";
 import { TextCardInfo } from "@/components/TextCardInfo";
@@ -24,7 +25,7 @@ function OrderDetailPage() {
         return <div>Error</div>;
     }
     return (
-        <div className="p-4 mt-14 mb-20">
+        <AdminPageWrapper>
             <div className="flex items-center gap-2">
                 <Button
                     variant="coffeeOutline"
@@ -104,7 +105,7 @@ function OrderDetailPage() {
             <div className="mt-4">
                 <ConfirmOrder orderId={preOrderId} />
             </div>
-        </div>
+        </AdminPageWrapper>
     );
 }
 

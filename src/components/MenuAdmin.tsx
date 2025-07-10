@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import {
-    HomeIcon,
+    HistoryIcon,
     PackageIcon,
     ShoppingCartIcon,
     Table2Icon,
@@ -11,41 +11,48 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
+const menuItems = [
+    {
+        icon: <ShoppingCartIcon />,
+        text: "Pre-Order",
+        href: "/admin/pre-orders",
+    },
+    {
+        icon: <TableIcon />,
+        text: "Table",
+        href: "/admin/tables",
+    },
+    {
+        icon: <Table2Icon />,
+        text: "Active",
+        href: "/admin/actives",
+    },
+    {
+        icon: <HistoryIcon />,
+        text: "History",
+        href: "/admin/checkout-history",
+    },
+    {
+        icon: <PackageIcon />,
+        text: "Stock",
+        href: "/admin/stocks",
+    },
+];
+
 function MenuAdmin() {
     const pathname = usePathname();
     return (
         <div className="fixed bottom-0 left-0 w-full h-20 bg-white p-2 rounded-t-md shadow-lg border-t border-gray-200">
             <ul className="flex items-center justify-center overflow-hidden bg-coffee-light rounded-md w-full h-full">
-                <MenuItem
-                    icon={<HomeIcon />}
-                    text="Home"
-                    active={pathname.startsWith("/admin/dashboard")}
-                    href="/admin/dashboard"
-                />
-                <MenuItem
-                    icon={<ShoppingCartIcon />}
-                    text="Pre-Order"
-                    active={pathname.startsWith("/admin/pre-orders")}
-                    href="/admin/pre-orders"
-                />
-                <MenuItem
-                    icon={<TableIcon />}
-                    text="Table"
-                    active={pathname.startsWith("/admin/tables")}
-                    href="/admin/tables"
-                />
-                <MenuItem
-                    icon={<Table2Icon />}
-                    text="Active"
-                    active={pathname.startsWith("/admin/actives")}
-                    href="/admin/actives"
-                />
-                <MenuItem
-                    icon={<PackageIcon />}
-                    text="Stock"
-                    active={pathname.startsWith("/admin/stocks")}
-                    href="/admin/stocks"
-                />
+                {menuItems.map((item) => (
+                    <MenuItem
+                        key={item.href}
+                        icon={item.icon}
+                        text={item.text}
+                        active={pathname.startsWith(item.href)}
+                        href={item.href}
+                    />
+                ))}
             </ul>
         </div>
     );

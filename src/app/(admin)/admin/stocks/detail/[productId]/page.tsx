@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { useUpdateProductStock } from "@/features/(admin)/stocks/api/use-update-product-stock";
 import PageLoader from "@/components/PageLoader";
 import { Loader2 } from "lucide-react";
+import AdminPageWrapper from "@/components/AdminPageWrapper";
 
 function StockDetailPage() {
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -77,7 +78,7 @@ function StockDetailPage() {
     const isLoading = isLoadingProductStock || isUpdatingProductStock;
 
     return (
-        <div className="p-4 pt-20 relative h-[calc(100vh-5rem)]  overflow-y-auto">
+        <AdminPageWrapper>
             <TextHeader text="รายละเอียดสินค้า" />
 
             {isLoadingProductStock ? (
@@ -181,7 +182,7 @@ function StockDetailPage() {
                     </form>
                 </FormProvider>
             )}
-        </div>
+        </AdminPageWrapper>
     );
 }
 

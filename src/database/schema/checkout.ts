@@ -8,6 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { active } from "./active";
 import { product } from "./product";
+import { relations } from "drizzle-orm";
 
 export const checkout = pgTable("checkout", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -28,6 +29,13 @@ export const checkout = pgTable("checkout", {
         .$onUpdate(() => new Date()),
 });
 
+export const checkoutRelations = relations(checkout, ({ one }) => ({
+    active: one(active, {
+        fields: [checkout.activeId],
+        references: [active.id],
+    }),
+}));
+
 export const checkoutInfos = pgTable("checkout_infos", {
     id: uuid("id").primaryKey().defaultRandom(),
     checkoutId: uuid("checkout_id")
@@ -45,3 +53,14 @@ export const checkoutInfos = pgTable("checkout_infos", {
         .notNull()
         .$onUpdate(() => new Date()),
 });
+
+export const checkoutInfosRelations = relations(checkoutInfos, ({ one }) => ({
+    checkout: one(checkout, {
+        fields: [checkoutInfos.checkoutId],
+        references: [checkout.id],
+    }),
+    product: one(product, {
+        fields: [checkoutInfos.productId],
+        references: [product.id],
+    }),
+}));

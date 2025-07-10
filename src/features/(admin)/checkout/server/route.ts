@@ -182,23 +182,52 @@ const app = new Hono()
                 }
 
                 await db.transaction(async (tx) => {
-                    const [checkout] = await tx
-                        .insert(CheckoutTable)
-                        .values({
-                            activeId,
-                            customerName,
-                            paidAdultNumber: Number(paidAdultNumber),
-                            paidChildNumber: Number(paidChildNumber),
-                            totalOrderPrice: Number(totalOrderPrice),
-                            totalDiscount: Number(totalDiscount),
-                            totalAmount: Number(totalAmount),
-                            paymentMethod,
-                        })
-                        .returning({ id: CheckoutTable.id });
+                    let checkoutId = "";
+                    // have checkout, update checkout
+                    const isExistCheckout = await tx.query.checkout.findFirst({
+                        where: eq(CheckoutTable.activeId, activeId),
+                        columns: {
+                            id: true,
+                        },
+                    });
+
+                    if (isExistCheckout) {
+                        checkoutId = isExistCheckout.id;
+
+                        await tx
+                            .update(CheckoutTable)
+                            .set({
+                                customerName,
+                                paidAdultNumber: Number(paidAdultNumber),
+                                paidChildNumber: Number(paidChildNumber),
+                                totalOrderPrice: Number(totalOrderPrice),
+                                totalDiscount: Number(totalDiscount),
+                                totalAmount: Number(totalAmount),
+                                paymentMethod,
+                            })
+                            .where(eq(CheckoutTable.id, checkoutId));
+                    } else {
+                        // If didn't have checkout, create checkout
+                        const [newCheckout] = await tx
+                            .insert(CheckoutTable)
+                            .values({
+                                activeId,
+                                customerName,
+                                paidAdultNumber: Number(paidAdultNumber),
+                                paidChildNumber: Number(paidChildNumber),
+                                totalOrderPrice: Number(totalOrderPrice),
+                                totalDiscount: Number(totalDiscount),
+                                totalAmount: Number(totalAmount),
+                                paymentMethod,
+                            })
+                            .returning({ id: CheckoutTable.id });
+
+                        checkoutId = newCheckout.id;
+                    }
 
                     await tx.insert(CheckoutInfosTable).values(
                         orderList.map((item) => ({
-                            checkoutId: checkout.id,
+                            checkoutId: checkoutId,
                             productId: item.productId,
                             quantity: Number(item.quantity),
                             pricePerUnit: Number(item.pricePerUnit),

@@ -1,4 +1,5 @@
 "use client";
+import AdminPageWrapper from "@/components/AdminPageWrapper";
 import AlertDialogCustom from "@/components/AlertDialogCustom";
 import PageLoader from "@/components/PageLoader";
 import TextHeader from "@/components/TextHeader";
@@ -21,7 +22,7 @@ function ActivePage() {
     };
 
     return (
-        <div className="p-4 pt-20 pb-8 relative h-[calc(100vh-5rem)]  overflow-y-auto">
+        <AdminPageWrapper>
             <TextHeader text="โต๊ะที่กำลังทำงาน" />
             <div className="mt-4 flex flex-col gap-2">
                 {activesData?.length === 0 ? (
@@ -50,7 +51,7 @@ function ActivePage() {
                 description={"คุณต้องการปิดโต๊ะนี้หรือไม่"}
                 buttonActionText={"ยืนยัน"}
             />
-        </div>
+        </AdminPageWrapper>
     );
 }
 

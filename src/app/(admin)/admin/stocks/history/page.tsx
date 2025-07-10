@@ -1,4 +1,5 @@
 "use client";
+import AdminPageWrapper from "@/components/AdminPageWrapper";
 import { CalendarRange } from "@/components/inputs/CalendarRange";
 import PageLoader from "@/components/PageLoader";
 import TextHeader from "@/components/TextHeader";
@@ -33,7 +34,7 @@ function StockHistoryPage() {
     }
 
     return (
-        <div className="p-4 pt-20 relative h-[calc(100vh-5rem)] w-full overflow-y-auto">
+        <AdminPageWrapper>
             <TextHeader text="ประวัติการนำเข้า/ออก" />
 
             <div className="w-full mt-4 relative">
@@ -81,7 +82,7 @@ function StockHistoryPage() {
                     )}
                 </div>
             )}
-        </div>
+        </AdminPageWrapper>
     );
 }
 

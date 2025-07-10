@@ -25,6 +25,7 @@ import SelectedPaymentMethod from "@/features/(admin)/checkout/components/Select
 import AlertDialogCustom from "@/components/AlertDialogCustom";
 import { toast } from "sonner";
 import { useCreateCheckout } from "@/features/(admin)/checkout/api/use-create-checkout";
+import AdminPageWrapper from "@/components/AdminPageWrapper";
 
 function CheckoutPage() {
     const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false);
@@ -171,7 +172,7 @@ function CheckoutPage() {
         isLoadingOrderList || isLoadingCheckoutInfo || isLoadingCreateCheckout;
 
     return (
-        <div className="p-4 pt-20 pb-8 relative h-[calc(100vh-5rem)]  overflow-y-auto">
+        <AdminPageWrapper>
             <div className="flex items-center gap-4">
                 <Button asChild variant="outline" className="size-8">
                     <Link href="/admin/actives">
@@ -370,7 +371,7 @@ function CheckoutPage() {
                     ชำระเงิน
                 </Button>
             </div>
-        </div>
+        </AdminPageWrapper>
     );
 }
 
