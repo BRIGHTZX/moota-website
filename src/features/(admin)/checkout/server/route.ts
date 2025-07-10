@@ -2,7 +2,7 @@ import { getCurrentUser } from "@/services/middleware-hono";
 import { Hono } from "hono";
 
 import { db } from "@/database/db";
-import { and, eq, inArray, or } from "drizzle-orm";
+import { and, eq, inArray, or, sql } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator";
 import { getOrderListSchema, insertCheckoutSchema } from "../schemas";
 
@@ -36,6 +36,7 @@ const app = new Hono()
                     customerPhone: true,
                     adultNumber: true,
                     childNumber: true,
+                    status: true,
                     openTime: true,
                     updatedAt: true,
                 },
@@ -56,6 +57,19 @@ const app = new Hono()
                 },
             });
 
+            if (!active) {
+                return c.json({ message: "Active not found" }, 404);
+            }
+
+            const checkoutHistory = await db.query.checkout.findFirst({
+                where: eq(CheckoutTable.activeId, activeId),
+                columns: {
+                    id: true,
+                    paidAdultNumber: true,
+                    paidChildNumber: true,
+                },
+            });
+
             const formattedActives = {
                 ...active,
                 activeInfos: active?.activeInfos.map((info) => ({
@@ -63,9 +77,8 @@ const app = new Hono()
                     tableId: info.tableId,
                     tableNumber: info.diningTable.tableNumber,
                 })),
+                checkoutHistory: checkoutHistory ? checkoutHistory : null,
             };
-
-            console.log(formattedActives);
 
             return c.json({
                 message: "Fetch checkout info successfully",
@@ -197,12 +210,21 @@ const app = new Hono()
                         await tx
                             .update(CheckoutTable)
                             .set({
-                                customerName,
-                                paidAdultNumber: Number(paidAdultNumber),
-                                paidChildNumber: Number(paidChildNumber),
-                                totalOrderPrice: Number(totalOrderPrice),
-                                totalDiscount: Number(totalDiscount),
-                                totalAmount: Number(totalAmount),
+                                paidAdultNumber: sql`${
+                                    CheckoutTable.paidAdultNumber
+                                } + ${Number(paidAdultNumber)}`,
+                                paidChildNumber: sql`${
+                                    CheckoutTable.paidChildNumber
+                                } + ${Number(paidChildNumber)}`,
+                                totalOrderPrice: sql`${
+                                    CheckoutTable.totalOrderPrice
+                                } + ${Number(totalOrderPrice)}`,
+                                totalDiscount: sql`${
+                                    CheckoutTable.totalDiscount
+                                } + ${Number(totalDiscount)}`,
+                                totalAmount: sql`${
+                                    CheckoutTable.totalAmount
+                                } + ${Number(totalAmount)}`,
                                 paymentMethod,
                             })
                             .where(eq(CheckoutTable.id, checkoutId));
@@ -225,15 +247,17 @@ const app = new Hono()
                         checkoutId = newCheckout.id;
                     }
 
-                    await tx.insert(CheckoutInfosTable).values(
-                        orderList.map((item) => ({
-                            checkoutId: checkoutId,
-                            productId: item.productId,
-                            quantity: Number(item.quantity),
-                            pricePerUnit: Number(item.pricePerUnit),
-                            totalPrice: Number(item.totalPrice),
-                        }))
-                    );
+                    if (orderList.length !== 0) {
+                        await tx.insert(CheckoutInfosTable).values(
+                            orderList.map((item) => ({
+                                checkoutId: checkoutId,
+                                productId: item.productId,
+                                quantity: Number(item.quantity),
+                                pricePerUnit: Number(item.pricePerUnit),
+                                totalPrice: Number(item.totalPrice),
+                            }))
+                        );
+                    }
 
                     await tx
                         .update(DiningTable)

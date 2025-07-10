@@ -27,6 +27,10 @@ export type TotalProduct = {
     totalPrice: number;
 };
 
-export const checkoutStatus = ["partial", "closed"] as const;
-export type CheckoutStatus = (typeof checkoutStatus)[number];
+export const AllCheckoutStatus = ["open", "partial", "closed"] as const;
+export type AllCheckoutStatusType = (typeof AllCheckoutStatus)[number];
+
+export const CheckoutStatus = ["partial", "closed"] as const;
+
+export type CheckoutStatusType = (typeof CheckoutStatus)[number];
 export type PaymentMethod = "cash" | "promptpay";

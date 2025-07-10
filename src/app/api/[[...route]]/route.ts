@@ -13,6 +13,7 @@ import ordersRoute from "@/features/(admin)/orders/server/route";
 import stocksRoute from "@/features/(admin)/stocks/server/route";
 import importExportRoute from "@/features/(admin)/import-export/server/route";
 import checkoutRoute from "@/features/(admin)/checkout/server/route";
+import checkoutHistoryRoute from "@/features/(admin)/checkout-history/server/route";
 
 const app = new Hono().basePath("/api");
 
@@ -30,7 +31,8 @@ const routes = app
     .route("/admin/orders", ordersRoute)
     .route("/admin/stocks", stocksRoute)
     .route("/admin/import-export", importExportRoute)
-    .route("/admin/checkout", checkoutRoute);
+    .route("/admin/checkout", checkoutRoute)
+    .route("/admin/checkout-history", checkoutHistoryRoute);
 
 // Handle all HTTP methods
 export const GET = handle(app);

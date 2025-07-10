@@ -29,11 +29,12 @@ export const checkout = pgTable("checkout", {
         .$onUpdate(() => new Date()),
 });
 
-export const checkoutRelations = relations(checkout, ({ one }) => ({
+export const checkoutRelations = relations(checkout, ({ many, one }) => ({
     active: one(active, {
         fields: [checkout.activeId],
         references: [active.id],
     }),
+    checkoutInfos: many(checkoutInfos),
 }));
 
 export const checkoutInfos = pgTable("checkout_infos", {

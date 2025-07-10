@@ -12,12 +12,13 @@ import TotalProductCard from "@/features/(admin)/checkout/components/TotalProduc
 import { useGetActiveId } from "@/features/(admin)/checkout/hooks/use-getActiveId";
 import {
     ActiveInfo,
-    CheckoutStatus,
+    AllCheckoutStatusType,
+    CheckoutStatusType,
     PaymentMethod,
     SelectedTable,
 } from "@/features/(admin)/checkout/types";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, HistoryIcon } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 import SeperateLine from "@/components/SeperateLine";
@@ -26,6 +27,7 @@ import AlertDialogCustom from "@/components/AlertDialogCustom";
 import { toast } from "sonner";
 import { useCreateCheckout } from "@/features/(admin)/checkout/api/use-create-checkout";
 import AdminPageWrapper from "@/components/AdminPageWrapper";
+import CheckoutStatusBadge from "@/features/(admin)/checkout/components/CheckoutStatusBadge";
 
 function CheckoutPage() {
     const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false);
@@ -40,6 +42,22 @@ function CheckoutPage() {
     // Customer Info and Table Selector
     const { data: checkoutInfo, isLoading: isLoadingCheckoutInfo } =
         useGetCheckoutInfo(activeId);
+
+    console.log(checkoutInfo);
+
+    const calcualteAdultNumber = useMemo(() => {
+        return (
+            (checkoutInfo?.adultNumber ?? 0) -
+            (checkoutInfo?.checkoutHistory?.paidAdultNumber ?? 0)
+        );
+    }, [checkoutInfo]);
+
+    const calcualteChildNumber = useMemo(() => {
+        return (
+            (checkoutInfo?.childNumber ?? 0) -
+            (checkoutInfo?.checkoutHistory?.paidChildNumber ?? 0)
+        );
+    }, [checkoutInfo]);
 
     const activeInfoIds = useMemo(() => {
         return selectedTable?.map((info) => info.activeInfoId) ?? [];
@@ -110,10 +128,6 @@ function CheckoutPage() {
     };
 
     const validateCheckout = () => {
-        if (selectedTable.length === 0) {
-            toast.error("กรุณาเลือกโต๊ะ");
-            return;
-        }
         if (
             checkoutInfo &&
             adult === checkoutInfo.adultNumber &&
@@ -144,7 +158,7 @@ function CheckoutPage() {
             return;
         }
 
-        const activeStatus = handleSetActiveStatus() as CheckoutStatus;
+        const activeStatus = handleSetActiveStatus() as CheckoutStatusType;
 
         const finalValue = {
             activeInfoId: activeInfoIds,
@@ -159,7 +173,6 @@ function CheckoutPage() {
             status: activeStatus,
             orderList: orderList ?? [],
         };
-        console.log(finalValue);
         createCheckout({
             param: {
                 activeId: activeId,
@@ -173,14 +186,20 @@ function CheckoutPage() {
 
     return (
         <AdminPageWrapper>
-            <div className="flex items-center gap-4">
-                <Button asChild variant="outline" className="size-8">
-                    <Link href="/admin/actives">
-                        <ArrowLeftIcon className="w-6 h-6" />
-                    </Link>
-                </Button>
+            <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                    <Button asChild variant="outline" className="size-8">
+                        <Link href="/admin/actives">
+                            <ArrowLeftIcon className="w-6 h-6" />
+                        </Link>
+                    </Button>
 
-                <TextHeader text={`คิดเงิน`} />
+                    <TextHeader text={`คิดเงิน`} />
+                </div>
+
+                <CheckoutStatusBadge
+                    status={checkoutInfo?.status as AllCheckoutStatusType}
+                />
             </div>
 
             {/* Customer Info */}
@@ -192,11 +211,27 @@ function CheckoutPage() {
                     />
                     <TextCardInfo
                         text="จำนวนผู้ใหญ่"
-                        value={checkoutInfo?.adultNumber?.toString() ?? ""}
+                        value={
+                            <>
+                                <span className="text-gray-500 mr-1">
+                                    {checkoutInfo?.checkoutHistory?.paidAdultNumber.toString() ??
+                                        0}
+                                </span>
+                                / {checkoutInfo?.adultNumber.toString() ?? 0}
+                            </>
+                        }
                     />
                     <TextCardInfo
                         text="จำนวนเด็ก"
-                        value={checkoutInfo?.childNumber?.toString() ?? ""}
+                        value={
+                            <>
+                                <span className="text-gray-500 mr-1">
+                                    {checkoutInfo?.checkoutHistory?.paidChildNumber.toString() ??
+                                        0}
+                                </span>
+                                / {checkoutInfo?.childNumber.toString() ?? 0}
+                            </>
+                        }
                     />
                 </div>
             </div>
@@ -261,9 +296,9 @@ function CheckoutPage() {
                     <div className="w-full">
                         <SelectedPeople
                             adult={adult}
-                            adultMax={checkoutInfo?.adultNumber ?? 0}
+                            adultMax={calcualteAdultNumber}
                             child={child}
-                            childMax={checkoutInfo?.childNumber ?? 0}
+                            childMax={calcualteChildNumber}
                             setAdult={setAdult}
                             setChild={setChild}
                             disabled={isAllTablesSelected}
@@ -369,6 +404,21 @@ function CheckoutPage() {
                     disabled={isLoading}
                 >
                     ชำระเงิน
+                </Button>
+
+                <Button
+                    asChild
+                    variant="outline"
+                    className="w-full mt-4"
+                    onClick={() => validateCheckout()}
+                    disabled={isLoading}
+                >
+                    <Link
+                        href={`/admin/checkout-history/${checkoutInfo?.checkoutHistory?.id}`}
+                    >
+                        <HistoryIcon />
+                        ประวัติการชำระเงิน
+                    </Link>
                 </Button>
             </div>
         </AdminPageWrapper>
