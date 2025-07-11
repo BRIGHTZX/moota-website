@@ -25,7 +25,7 @@ function OrdersPage() {
             {isLoadingPreOrders ? (
                 <PageLoader className="h-[400px]" />
             ) : preOrdersData?.length ? (
-                <div className="mt-10 flex flex-col gap-4">
+                <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                     {preOrdersData?.map((preOrder) => (
                         <PreOrderCard key={preOrder.id} preOrder={preOrder} />
                     ))}
@@ -35,11 +35,6 @@ function OrdersPage() {
                     <p className="text-gray-500">ไม่มีรายการจอง</p>
                 </div>
             )}
-            <div className="mt-10 flex flex-col gap-4">
-                {preOrdersData?.map((preOrder) => (
-                    <PreOrderCard key={preOrder.id} preOrder={preOrder} />
-                ))}
-            </div>
         </PageWrapper>
     );
 }

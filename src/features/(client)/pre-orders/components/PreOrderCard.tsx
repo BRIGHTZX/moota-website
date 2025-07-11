@@ -8,11 +8,13 @@ import { TextCardInfo } from "@/components/TextCardInfo";
 function PreOrderCard({ preOrder }: { preOrder: PreOrderType }) {
     return (
         <div className="rounded-md border border-coffee-dark p-4">
-            <div className="flex items-center justify-between">
-                <h1 className="text-xl">Order ID: {preOrder.preOrderNumber}</h1>
+            <div className="flex flex-col sm:flex-row items-center justify-between">
+                <p className="text-xl text-nowrap font-bold">
+                    รหัสการจอง: {preOrder.preOrderNumber}
+                </p>
                 <div className="flex items-center gap-10">
-                    <p className="text-sm text-gray-500">
-                        Order Date:{" "}
+                    <p className="text-sm text-nowrap text-gray-500 ">
+                        วันที่จอง:{" "}
                         {new Date(
                             preOrder.reservationDate
                         ).toLocaleDateString()}
@@ -23,36 +25,28 @@ function PreOrderCard({ preOrder }: { preOrder: PreOrderType }) {
             <div className="mt-4 flex flex-col sm:flex-row">
                 <div className="flex-1 px-4 flex flex-col gap-2">
                     <TextCardInfo
-                        text="Order ID: "
+                        text="รหัสการจอง: "
                         value={preOrder.preOrderNumber}
-                        textClassName="text-lg text-nowrap"
-                        valueClassName="text-lg"
                     />
                     <TextCardInfo
-                        text="Order Date: "
+                        text="วันที่จอง: "
                         value={new Date(
                             preOrder.reservationDate
                         ).toLocaleDateString()}
-                        textClassName="text-lg text-nowrap"
-                        valueClassName="text-lg"
                     />
                     <TextCardInfo
-                        text="Order Time: "
+                        text="เวลาจอง: "
                         value={preOrder.reservationTime}
-                        textClassName="text-lg text-nowrap"
-                        valueClassName="text-lg"
                     />
                     <TextCardInfo
-                        text="Order Status : "
-                        value={preOrder.status}
-                        textClassName="text-lg text-nowrap"
-                        valueClassName="text-lg"
+                        text="สถานะการชำระเงิน : "
+                        value={""}
+                        status={preOrder.paymentStatus}
                     />
                     <TextCardInfo
-                        text="Payment Status: "
-                        value={preOrder.paymentStatus}
-                        textClassName="text-lg text-nowrap"
-                        valueClassName="text-lg"
+                        text="สถานะการจอง : "
+                        value={""}
+                        status={preOrder.status}
                     />
                 </div>
 
@@ -60,43 +54,33 @@ function PreOrderCard({ preOrder }: { preOrder: PreOrderType }) {
 
                 <div className="flex-1 px-4 flex flex-col gap-2">
                     <TextCardInfo
-                        text="Name : "
+                        text="ชื่อผู้จอง : "
                         value={preOrder.customerName}
-                        textClassName="text-lg"
-                        valueClassName="text-lg"
                     />
                     <TextCardInfo
-                        text="Phone : "
+                        text="เบอร์โทรศัพท์ : "
                         value={preOrder.phoneNumber}
-                        textClassName="text-lg"
-                        valueClassName="text-lg"
                     />
                     <TextCardInfo
-                        text="Adult : "
+                        text="จำนวนผู้ใหญ่ : "
                         value={preOrder.adultNumber.toString()}
-                        textClassName="text-lg"
-                        valueClassName="text-lg"
                     />
                     <TextCardInfo
-                        text="Child : "
+                        text="จำนวนเด็ก : "
                         value={preOrder.childNumber.toString()}
-                        textClassName="text-lg"
-                        valueClassName="text-lg"
                     />
                     <TextCardInfo
-                        text="Table : "
+                        text="ที่นั่ง : "
                         value={preOrder.tables
                             .map((table) => table.tableNumber)
                             .join(", ")}
-                        textClassName="text-lg"
-                        valueClassName="text-lg"
                     />
                 </div>
             </div>
-            <div className="flex items-center justify-end gap-2">
+            <div className="flex mt-4 items-center justify-end gap-2">
                 <Button asChild variant="coffeePrimary">
                     <Link href={`/reservation/info/${preOrder.id}`}>
-                        More Detail
+                        รายละเอียดการจอง
                     </Link>
                 </Button>
             </div>
