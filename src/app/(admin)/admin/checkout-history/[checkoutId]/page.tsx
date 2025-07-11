@@ -6,16 +6,19 @@ import TextHeader from "@/components/TextHeader";
 import { Button } from "@/components/ui/button";
 import { useGetCheckoutHistory } from "@/features/(admin)/checkout-history/api/use-get-checkout-history";
 import PaymentBadge from "@/features/(admin)/checkout-history/components/PaymentMethodBadge";
-import { useGetCheckoutId } from "@/features/(admin)/checkout-history/hooks/get-checkoutId";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import React from "react";
+import React, { use } from "react";
 
-function CheckoutHistoryDetailPage() {
+function CheckoutHistoryDetailPage({
+    params,
+}: {
+    params: Promise<{ checkoutId: string }>;
+}) {
+    const { checkoutId } = use(params);
     const searchParams = useSearchParams();
     const returnUrl = searchParams.get("returnUrl");
-    const checkoutId = useGetCheckoutId();
     const { data: checkoutHistory } = useGetCheckoutHistory({
         checkoutId,
     });

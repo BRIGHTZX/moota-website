@@ -9,7 +9,6 @@ import { useGetCheckoutInfo } from "@/features/(admin)/checkout/api/use-get-chec
 import SelectedPeople from "@/features/(admin)/checkout/components/SelectedPeople";
 import TableSelector from "@/features/(admin)/checkout/components/SelectedTable";
 import TotalProductCard from "@/features/(admin)/checkout/components/TotalProductCard";
-import { useGetActiveId } from "@/features/(admin)/checkout/hooks/use-getActiveId";
 import {
     ActiveInfo,
     AllCheckoutStatusType,
@@ -20,7 +19,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { ArrowLeftIcon, HistoryIcon } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
 import SeperateLine from "@/components/SeperateLine";
 import SelectedPaymentMethod from "@/features/(admin)/checkout/components/SelectedPaymentMethod";
 import AlertDialogCustom from "@/components/AlertDialogCustom";
@@ -29,9 +28,9 @@ import { useCreateCheckout } from "@/features/(admin)/checkout/api/use-create-ch
 import AdminPageWrapper from "@/components/AdminPageWrapper";
 import CheckoutStatusBadge from "@/features/(admin)/checkout/components/CheckoutStatusBadge";
 
-function CheckoutPage() {
+function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
+    const { activeId } = use(params);
     const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false);
-    const activeId = useGetActiveId();
     const [adult, setAdult] = useState<number>(0);
     const [child, setChild] = useState<number>(0);
     const [selectedTable, setSelectedTable] = useState<SelectedTable[]>([]);

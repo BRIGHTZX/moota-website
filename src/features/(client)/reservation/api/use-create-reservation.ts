@@ -15,7 +15,6 @@ export const useCreateReservation = () => {
             const response = await api({
                 json: {
                     ...json,
-                    email: json.email ?? "",
                 },
             });
 

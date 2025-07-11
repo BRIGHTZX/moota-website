@@ -12,19 +12,22 @@ import InputWithLabel from "@/components/inputs/InputWithLabel";
 import SelectWithLabel from "@/components/inputs/SelectWithLabel";
 import { StockProductCategory } from "@/features/(admin)/stocks/types";
 import { Button } from "@/components/ui/button";
-import { useGetProductId } from "@/features/(admin)/stocks/hooks/get-productId";
 import { useGetProductStock } from "@/features/(admin)/stocks/api/use-get-product-stock";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useUpdateProductStock } from "@/features/(admin)/stocks/api/use-update-product-stock";
 import PageLoader from "@/components/PageLoader";
 import { Loader2 } from "lucide-react";
 import AdminPageWrapper from "@/components/AdminPageWrapper";
 
-function StockDetailPage() {
+function StockDetailPage({
+    params,
+}: {
+    params: Promise<{ productId: string }>;
+}) {
+    const { productId } = use(params);
     const [isEditing, setIsEditing] = useState<boolean>(false);
-    const productId = useGetProductId();
     const { data: productStockData, isLoading: isLoadingProductStock } =
-        useGetProductStock(productId);
+        useGetProductStock(productId as string);
     const { mutate: updateProductStock, isPending: isUpdatingProductStock } =
         useUpdateProductStock({
             productId,

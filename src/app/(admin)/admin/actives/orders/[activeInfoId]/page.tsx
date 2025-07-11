@@ -2,16 +2,15 @@
 import PageLoader from "@/components/PageLoader";
 import TextHeader from "@/components/TextHeader";
 import { useGetActiveInfoTableNumber } from "@/features/(admin)/orders/api/use-get-activeInfo-tableNumber";
-import { useGetActiveInfoIdTableId } from "@/features/(admin)/orders/hooks/get-activeInfoId-tableId";
 import OrderProductSection from "@/features/(admin)/orders/components/OrderProductSection";
-import React, { useEffect } from "react";
+import React, { use, useEffect } from "react";
 import { ArrowLeftIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import AdminPageWrapper from "@/components/AdminPageWrapper";
 
-function OrdersPage() {
-    const activeInfoId = useGetActiveInfoIdTableId();
+function OrdersPage({ params }: { params: Promise<{ activeInfoId: string }> }) {
+    const { activeInfoId } = use(params);
 
     const {
         data: activeInfo,
