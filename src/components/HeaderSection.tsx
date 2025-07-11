@@ -5,7 +5,6 @@ type HeaderSectionProps = {
     title: string;
     header: string;
     description: string;
-    id: string;
 };
 
 function HeaderSection({
@@ -13,10 +12,9 @@ function HeaderSection({
     title,
     header,
     description,
-    id,
 }: HeaderSectionProps) {
     return (
-        <div id={id} className="container mx-auto px-4 py-16">
+        <div className="container mx-auto px-4 py-16">
             <div className="mb-10 flex items-center justify-center">
                 <div className="flex w-fit items-center gap-2 rounded-full bg-gradient-to-r from-[#4A2C2A] to-[#776054] px-10 py-2 text-white">
                     {icon}

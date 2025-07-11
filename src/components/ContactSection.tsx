@@ -6,9 +6,11 @@ import Link from "next/link";
 
 function ContactSection() {
     return (
-        <div className="bg-gradient-to-t from-[#E7DED0] to-[#ffffff] py-10 md:py-20 shadow-lg">
+        <div
+            id="contact"
+            className="bg-gradient-to-t from-[#E7DED0] to-[#ffffff] py-10 md:py-20 shadow-lg"
+        >
             <HeaderSection
-                id="contact"
                 icon={<PhoneIcon className="size-6" />}
                 title="Contact Us"
                 header="Get in Touch"

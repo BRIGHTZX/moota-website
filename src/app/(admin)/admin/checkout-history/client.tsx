@@ -55,7 +55,7 @@ function CheckoutHistoryClient() {
             ) : (
                 <div className="flex flex-col gap-4 mt-4">
                     {Object.entries(checkoutsHistory ?? {}).length === 0 ? (
-                        <p className="text-gray-500 text-lg font-bold text-center">
+                        <p className="text-gray-400 text-lg font-bold text-center">
                             ไม่มีประวัติการชำระเงิน
                         </p>
                     ) : (

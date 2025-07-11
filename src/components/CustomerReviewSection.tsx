@@ -8,9 +8,11 @@ import { Button } from "./ui/button";
 function CustomerReviewSection() {
     const [comments, setComments] = useState(1);
     return (
-        <div className="bg-gradient-to-b from-[#E7DED0] to-[#ffffff] py-20 shadow-lg">
+        <div
+            id="review"
+            className="bg-gradient-to-b from-[#E7DED0] to-[#ffffff] py-20 shadow-lg"
+        >
             <HeaderSection
-                id="review"
                 icon={<Star className="size-6" />}
                 title="Customer Reviews"
                 header="What Our Guests Say"

@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { USER_IMG } from "@/constant";
+import { cn } from "@/lib/utils";
 
 type ProfileType = {
     currentUser: {
@@ -19,11 +20,21 @@ type ProfileType = {
         picture: string | null;
     };
     isAdmin: boolean;
+    className?: string;
 };
-export function ProfileNavbar({ currentUser, isAdmin }: ProfileType) {
+export function ProfileNavbar({
+    currentUser,
+    isAdmin,
+    className,
+}: ProfileType) {
     return (
         <DropdownMenu modal={false}>
-            <DropdownMenuTrigger className="rounded-full border border-gray-200 focus-visible:ring-0 max-sm:hidden">
+            <DropdownMenuTrigger
+                className={cn(
+                    "rounded-full border border-gray-200 focus-visible:ring-0 max-sm:hidden",
+                    className
+                )}
+            >
                 <div className="size-10 cursor-pointer overflow-hidden rounded-full">
                     <Image
                         width={40}

@@ -75,14 +75,14 @@ const MenuItem = ({
         <Link
             href={href}
             className={cn(
-                " cursor-pointer flex-1 size-full overflow-hidden  bg-coffee-light",
+                " cursor-pointer flex-1 size-full overflow-hidden group  bg-coffee-light hover:bg-coffee-brown transition-all duration-300 rounded-md",
                 active && "bg-coffee-brown  rounded-md"
             )}
         >
             <li className="flex flex-col items-center justify-center">
                 <button
                     className={cn(
-                        "p-2 rounded-md hover:bg-coffee-brown text-coffee-dark",
+                        "p-2 rounded-md  text-coffee-dark group-hover:text-coffee-light transition-all duration-300",
                         active && "text-coffee-light"
                     )}
                 >
@@ -90,7 +90,7 @@ const MenuItem = ({
                 </button>
                 <span
                     className={cn(
-                        "text-sm font-medium text-coffee-dark",
+                        "text-sm font-medium text-coffee-dark group-hover:text-coffee-light transition-all duration-300",
                         active && "text-coffee-light"
                     )}
                 >

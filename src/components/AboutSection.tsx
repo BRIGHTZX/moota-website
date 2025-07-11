@@ -19,9 +19,8 @@ function AboutSection() {
         },
     ];
     return (
-        <div className="bg-white">
+        <div id="about" className="bg-white pt-10">
             <HeaderSection
-                id="about"
                 icon={<ChefHat className="size-6 text-coffee-light" />}
                 title="About Us"
                 header="Taste the Tradition"
