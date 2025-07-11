@@ -38,7 +38,7 @@ function TableCard({
             onClick={handleSelectTable}
             className={cn(
                 "bg-green-500 size-full border border-black rounded-md p-4 flex items-center justify-center",
-                isSelected && "bg-coffee-dark text-coffee-light",
+                isSelected && "bg-green-700 text-white",
                 !isAvailable &&
                     "bg-red-500 border-black text-white cursor-not-allowed"
             )}

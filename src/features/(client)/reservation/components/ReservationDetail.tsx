@@ -25,7 +25,7 @@ function ReservationDetail({ reservation }: ReservationDetailProps) {
         <div className="flex h-fit rounded-xl w-full">
             <div className="w-full overflow-hidden rounded-xl border border-gray-300">
                 <div className="flex items-center justify-center bg-gray-300 p-4">
-                    <p className="text-2xl font-bold">
+                    <p className="text-lg md:text-2xl font-bold">
                         ข้อมูลรายละเอียดการจอง{" "}
                     </p>
                     <span className="ml-2">
@@ -43,15 +43,11 @@ function ReservationDetail({ reservation }: ReservationDetailProps) {
                                   ).toLocaleDateString()
                                 : "วันที่ไม่ระบุ"
                         }
-                        textClassName="text-lg"
-                        valueClassName="text-lg"
                     />
 
                     <TextCardInfo
                         text="เวลาที่ทำการจอง :"
                         value={reservation?.reservationTime}
-                        textClassName="text-lg"
-                        valueClassName="text-lg"
                     />
 
                     <TextCardInfo
@@ -61,8 +57,6 @@ function ReservationDetail({ reservation }: ReservationDetailProps) {
                                 ? String(reservation.adultNumber)
                                 : "จำนวนไม่ระบุ"
                         }
-                        textClassName="text-lg"
-                        valueClassName="text-lg"
                     />
 
                     <TextCardInfo
@@ -70,10 +64,8 @@ function ReservationDetail({ reservation }: ReservationDetailProps) {
                         value={
                             reservation?.childNumber
                                 ? String(reservation.childNumber)
-                                : "จำนวนไม่ระบุ"
+                                : "0"
                         }
-                        textClassName="text-lg"
-                        valueClassName="text-lg"
                     />
 
                     <TextCardInfo
@@ -85,8 +77,6 @@ function ReservationDetail({ reservation }: ReservationDetailProps) {
                                       .join(", ")
                                 : "โต๊ะไม่ระบุ"
                         }
-                        textClassName="text-lg"
-                        valueClassName="text-lg"
                     />
 
                     <TextCardInfo
@@ -96,8 +86,6 @@ function ReservationDetail({ reservation }: ReservationDetailProps) {
                                 ? reservation.customerName
                                 : "ชื่อไม่ระบุ"
                         }
-                        textClassName="text-lg"
-                        valueClassName="text-lg"
                     />
 
                     <TextCardInfo
@@ -107,8 +95,8 @@ function ReservationDetail({ reservation }: ReservationDetailProps) {
                                 ? reservation.phoneNumber
                                 : "เบอร์โทรศัพท์ไม่ระบุ"
                         }
-                        textClassName="text-lg"
-                        valueClassName="text-lg"
+                        textClassName="text-sm md:text-lg"
+                        valueClassName="text-sm md:text-lg"
                     />
                 </div>
             </div>

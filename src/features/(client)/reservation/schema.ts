@@ -8,15 +8,16 @@ export const insertPreOrderWithoutTableIdSchema = z.object({
     adultNumber: z.coerce
         .number({
             required_error: "กรุณากรอกจำนวนผู้ใหญ่",
-            invalid_type_error: "กรุณากรอกจำนวนผู้ใหญ่เป็นตัวเลข",
+            invalid_type_error: "กรุณากรอกจำนวนผู้ใหญ่",
         })
         .min(0, "จำนวนผู้ใหญ่ต้องไม่น้อยกว่า 0"),
 
     childNumber: z.coerce
         .number({
-            invalid_type_error: "กรุณากรอกจำนวนเด็กเป็นตัวเลข",
+            invalid_type_error: "กรุณากรอกจำนวนเด็ก",
         })
-        .min(0, "จำนวนเด็กต้องไม่น้อยกว่า 0"),
+        .min(0, "จำนวนเด็กต้องไม่น้อยกว่า 0")
+        .optional(),
     reservationDate: z.union([
         z.string().refine((val) => !isNaN(Date.parse(val)), {
             message: "กรุณากรอกวันที่ให้ถูกต้อง",

@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { USER_IMG } from "@/constant";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type HamburgerType = {
     currentUser: {
@@ -32,26 +32,28 @@ type HamburgerType = {
     isAdmin: boolean;
 };
 
+const arrayLink = [
+    {
+        name: "Home",
+        href: "/",
+    },
+    {
+        name: "About",
+        href: "/#about",
+    },
+    {
+        name: "Review",
+        href: "/#review",
+    },
+    {
+        name: "Contact",
+        href: "/#contact",
+    },
+];
+
 function Hamburger({ currentUser, isAdmin }: HamburgerType) {
     const [isOpen, setIsOpen] = useState(false);
-    const arrayLink = [
-        {
-            name: "Home",
-            href: "/",
-        },
-        {
-            name: "About",
-            href: "#about",
-        },
-        {
-            name: "Review",
-            href: "#review",
-        },
-        {
-            name: "Contact",
-            href: "#contact",
-        },
-    ];
+
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger>
@@ -107,18 +109,35 @@ const HamburgerLink = ({
     href: string;
     setIsOpen: (isOpen: boolean) => void;
 }) => {
-    const pathname = usePathname();
+    const pathname = usePathname(); // จะได้ "/" เสมอ (ไม่รวม hash)
+    const [hash, setHash] = useState("");
+
+    useEffect(() => {
+        const updateHash = () => {
+            setHash(window.location.hash);
+        };
+
+        updateHash(); // Init on mount
+        window.addEventListener("hashchange", updateHash);
+        return () => window.removeEventListener("hashchange", updateHash);
+    }, []);
+
+    const currentFullPath = `${pathname}${hash}`;
+    const isActive =
+        href === currentFullPath || // ex: "/#about" === "/#about"
+        (href === "/" && pathname === "/" && hash === ""); // หน้า Home
+
     return (
-        <div
-            className={cn(
-                "flex items-center justify-start px-4 py-4 rounded-md hover:bg-coffee-light transition-all duration-200",
-                pathname.startsWith(href) && "bg-coffee-light"
-            )}
-        >
-            <Link href={href} onClick={() => setIsOpen(false)}>
+        <Link href={href} onClick={() => setIsOpen(false)}>
+            <div
+                className={cn(
+                    "flex items-center justify-start px-4 py-4 rounded-md hover:bg-coffee-light transition-all duration-200",
+                    isActive && "bg-coffee-light"
+                )}
+            >
                 <h1 className="text-coffee-dark text-xl font-bold">{name}</h1>
-            </Link>
-        </div>
+            </div>
+        </Link>
     );
 };
 

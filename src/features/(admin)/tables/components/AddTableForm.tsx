@@ -35,8 +35,8 @@ function AddTableForm({
         defaultValues: {
             customerName: "",
             customerPhone: "",
-            adultNumber: 0,
-            childNumber: 0,
+            adultNumber: undefined,
+            childNumber: undefined,
         },
     });
 

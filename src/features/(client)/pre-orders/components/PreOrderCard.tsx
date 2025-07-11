@@ -8,7 +8,7 @@ import { TextCardInfo } from "@/components/TextCardInfo";
 function PreOrderCard({ preOrder }: { preOrder: PreOrderType }) {
     return (
         <div className="rounded-md border border-coffee-dark p-4">
-            <div className="flex flex-col sm:flex-row items-center justify-between">
+            <div className="flex flex-col items-center justify-between">
                 <p className="text-xl text-nowrap font-bold">
                     รหัสการจอง: {preOrder.preOrderNumber}
                 </p>
@@ -22,7 +22,7 @@ function PreOrderCard({ preOrder }: { preOrder: PreOrderType }) {
                 </div>
             </div>
 
-            <div className="mt-4 flex flex-col sm:flex-row">
+            <div className="mt-4 flex flex-col">
                 <div className="flex-1 px-4 flex flex-col gap-2">
                     <TextCardInfo
                         text="รหัสการจอง: "
@@ -50,7 +50,7 @@ function PreOrderCard({ preOrder }: { preOrder: PreOrderType }) {
                     />
                 </div>
 
-                <SeperateLine className="sm:hidden max-sm:my-4 w-full h-[1px] bg-gray-300" />
+                <SeperateLine className="my-4 w-full h-[1px] bg-gray-300" />
 
                 <div className="flex-1 px-4 flex flex-col gap-2">
                     <TextCardInfo

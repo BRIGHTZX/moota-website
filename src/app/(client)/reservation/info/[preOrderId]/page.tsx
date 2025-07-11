@@ -1,4 +1,5 @@
 "use client";
+import PageWrapper from "@/components/PageWrapper";
 import { TextCardInfo } from "@/components/TextCardInfo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -78,189 +79,187 @@ function ReservationInfoPage() {
         });
     };
     return (
-        <div className="w-full overflow-x-hidden px-4 md:px-0">
-            <div className="container mx-auto py-30">
-                <div className="flex items-center justify-between gap-10">
-                    <Button
-                        asChild
-                        variant="outline"
-                        className="flex items-center gap-2 py-6 text-sm md:text-lg"
-                        disabled={isLoading}
-                    >
-                        <Link href="/pre-orders">
-                            <ArrowLeftIcon className="size-4" />
-                            ย้อนกลับ
-                        </Link>
-                    </Button>
-                    {/* {!isPaid && ( */}
-                    {paymentImage && reservationData?.paymentImage === null && (
-                        <div>
-                            <Button
-                                variant="coffeePrimary"
-                                className="py-6"
-                                disabled={isLoading}
-                                onClick={handleConfirmPayment}
-                            >
-                                <CheckIcon className="size-4" />
-                                <span className="text-xl">
-                                    ยืนยันการจ่ายเงิน
-                                </span>
-                            </Button>
-                        </div>
-                    )}
-                    {/* )} */}
-                </div>
-                <div className="mt-4 flex items-center gap-10">
-                    <div className="flex items-center gap-2">
-                        <h1 className="text-2xl md:text-5xl">Order : </h1>
-                        <p className="text-2xl md:text-5xl">
-                            {reservationData?.preOrderNumber}
-                        </p>
-                    </div>
-
-                    <ReservationStatus
-                        status={reservationData?.status as PreOrderStatus}
-                        paymentStatus={
-                            reservationData?.paymentStatus as PreOrderPaymentStatus
-                        }
-                    />
-                </div>
-
-                <div className="mt-4 flex items-center gap-4">
-                    <p className="text-sm md:text-lg">สั่งจองวันที่ : </p>
-                    <p>
-                        {reservationData?.createdAt
-                            ? new Date(
-                                  reservationData.createdAt
-                              ).toLocaleString()
-                            : "วันที่ไม่ระบุ"}
+        <PageWrapper>
+            <div className="flex items-center justify-between gap-10">
+                <Button
+                    asChild
+                    variant="outline"
+                    className="flex items-center gap-2 text-sm md:text-lg"
+                    disabled={isLoading}
+                >
+                    <Link href="/pre-orders">
+                        <ArrowLeftIcon className="size-4" />
+                    </Link>
+                </Button>
+                {/* )} */}
+            </div>
+            <div className="mt-4 flex items-center max-sm:justify-center flex-wrap gap-4">
+                <div className="flex items-center gap-2">
+                    <h1 className="text-2xl md:text-5xl text-nowrap">
+                        Order :{" "}
+                    </h1>
+                    <p className="text-2xl md:text-5xl text-nowrap">
+                        {reservationData?.preOrderNumber}
                     </p>
                 </div>
 
-                <div className="mt-10 flex flex-col md:flex-row gap-10">
-                    <div className="flex-1">
-                        <ReservationDetail
-                            reservation={{
-                                id: reservationData?.id ?? "-",
-                                preOrderNumber:
-                                    reservationData?.preOrderNumber ?? "-",
-                                customerName:
-                                    reservationData?.customerName ?? "-",
-                                phoneNumber:
-                                    reservationData?.phoneNumber ?? "-",
-                                adultNumber: reservationData?.adultNumber ?? 0,
-                                childNumber: reservationData?.childNumber ?? 0,
-                                reservationDate:
-                                    reservationData?.reservationDate ?? "-",
-                                reservationTime:
-                                    reservationData?.reservationTime ?? "-",
-                                table: reservationData?.table ?? [],
-                                paymentImage:
-                                    reservationData?.paymentImage ?? "-",
-                            }}
-                        />
-                    </div>
-                    <div className="flex-1">
-                        <div className="flex size-full h-full  flex-col  overflow-hidden rounded-xl border border-gray-300">
-                            <div className="bg-gray-300 p-4">
-                                <h1 className="text-center text-2xl font-bold">
-                                    ยอดการชำระ
-                                </h1>
+                <ReservationStatus
+                    status={reservationData?.status as PreOrderStatus}
+                    paymentStatus={
+                        reservationData?.paymentStatus as PreOrderPaymentStatus
+                    }
+                />
+            </div>
+
+            <div className="mt-4 flex items-center gap-4 max-sm:justify-center">
+                <p className="text-sm md:text-lg text-nowrap">
+                    สั่งจองวันที่ :{" "}
+                </p>
+                <p className="text-nowrap">
+                    {reservationData?.createdAt
+                        ? new Date(reservationData.createdAt).toLocaleString()
+                        : "วันที่ไม่ระบุ"}
+                </p>
+            </div>
+
+            <div className="mt-10 flex flex-col md:flex-row gap-10">
+                <div className="flex-1">
+                    <ReservationDetail
+                        reservation={{
+                            id: reservationData?.id ?? "-",
+                            preOrderNumber:
+                                reservationData?.preOrderNumber ?? "-",
+                            customerName: reservationData?.customerName ?? "-",
+                            phoneNumber: reservationData?.phoneNumber ?? "-",
+                            adultNumber: reservationData?.adultNumber ?? 0,
+                            childNumber: reservationData?.childNumber ?? 0,
+                            reservationDate:
+                                reservationData?.reservationDate ?? "-",
+                            reservationTime:
+                                reservationData?.reservationTime ?? "-",
+                            table: reservationData?.table ?? [],
+                            paymentImage: reservationData?.paymentImage ?? "-",
+                        }}
+                    />
+                </div>
+                <div className="flex-1">
+                    <div className="flex size-full h-full  flex-col  overflow-hidden rounded-xl border border-gray-300">
+                        <div className="bg-gray-300 p-4">
+                            <p className="text-center text-lg md:text-2xl font-bold">
+                                ยอดการชำระ
+                            </p>
+                        </div>
+                        <div className="flex h-fit justify-center">
+                            <div className="mb-4 h-[300px] w-full border-b border-gray-300 p-4">
+                                <Image
+                                    src="/qr-payment.jpg"
+                                    alt="qr-payment"
+                                    width={1000}
+                                    height={1000}
+                                    className="h-full w-full object-contain"
+                                />
                             </div>
-                            <div className="flex h-fit justify-center">
-                                <div className="mb-4 h-[300px] w-full border-b border-gray-300 p-4">
+                        </div>
+                        <div className="flex flex-col gap-4 rounded-xl p-4">
+                            <TextCardInfo
+                                text="ค่าจองโต๊ะ :"
+                                value={
+                                    reservationData?.totalPrice
+                                        ? reservationData.totalPrice.toString()
+                                        : "ค่าจองไม่ระบุ"
+                                }
+                            />
+
+                            {!paymentImage &&
+                                !reservationData?.paymentImage && (
+                                    <Button
+                                        variant="coffeePrimary"
+                                        className="w-full text-sm md:text-md"
+                                        onClick={handleUploadPaymentImage}
+                                        disabled={isLoading}
+                                    >
+                                        Upload หลักฐานการชำระเงิน
+                                    </Button>
+                                )}
+
+                            <Input
+                                ref={fileInputRef}
+                                type="file"
+                                hidden
+                                onChange={handleFileChange}
+                            />
+
+                            {/* Section show payment image */}
+                            {paymentImage && !reservationData?.paymentImage && (
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex items-center justify-between">
+                                        <p className="text-lg font-bold">
+                                            หลักฐานการชำระเงิน
+                                        </p>
+                                        {/* {!isPaid && ( */}
+                                        {paymentImage &&
+                                            reservationData?.paymentImage ===
+                                                null && (
+                                                <div>
+                                                    <Button
+                                                        variant="coffeePrimary"
+                                                        disabled={isLoading}
+                                                        onClick={
+                                                            handleConfirmPayment
+                                                        }
+                                                    >
+                                                        <CheckIcon className="size-4" />
+                                                        <span className="hidden md:block">
+                                                            ยืนยันการจ่ายเงิน
+                                                        </span>
+                                                        <span className="block md:hidden">
+                                                            ยืนยัน
+                                                        </span>
+                                                    </Button>
+                                                </div>
+                                            )}
+                                    </div>
+
+                                    <div className="relative border overflow-hidden rounded-lg h-[500px] w-full flex flex-col gap-2">
+                                        <Image
+                                            fill
+                                            className={cn("object-cover")}
+                                            src={URL.createObjectURL(
+                                                paymentImage
+                                            )}
+                                            alt="payment-image"
+                                        />
+
+                                        <Button
+                                            disabled={isLoading}
+                                            onClick={handleDeletePaymentImage}
+                                            className="absolute top-4 hover:bg-gray-100 right-4 border w-fit rounded-lg bg-white"
+                                        >
+                                            <XIcon className="size-6 text-red-500" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {reservationData?.paymentImage && (
+                                <div className="flex flex-col h-[500px] gap-4">
+                                    <p className="text-lg font-bold">
+                                        หลักฐานการชำระเงิน
+                                    </p>
                                     <Image
-                                        src="/qr-payment.jpg"
-                                        alt="qr-payment"
+                                        src={reservationData.paymentImage}
+                                        alt="payment-image"
                                         width={1000}
                                         height={1000}
                                         className="h-full w-full object-contain"
                                     />
                                 </div>
-                            </div>
-                            <div className="flex flex-col gap-4 rounded-xl p-4">
-                                <TextCardInfo
-                                    text="ค่าจองโต๊ะ :"
-                                    value={
-                                        reservationData?.totalPrice
-                                            ? reservationData.totalPrice.toString()
-                                            : "ค่าจองไม่ระบุ"
-                                    }
-                                    textClassName="text-lg"
-                                    valueClassName="text-lg"
-                                />
-
-                                {!paymentImage &&
-                                    !reservationData?.paymentImage && (
-                                        <Button
-                                            variant="coffeePrimary"
-                                            className="w-full"
-                                            onClick={handleUploadPaymentImage}
-                                            disabled={isLoading}
-                                        >
-                                            Upload หลักฐานการชำระเงิน
-                                        </Button>
-                                    )}
-
-                                <Input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    hidden
-                                    onChange={handleFileChange}
-                                />
-
-                                {/* Section show payment image */}
-                                {paymentImage &&
-                                    !reservationData?.paymentImage && (
-                                        <div className="flex flex-col gap-4">
-                                            <p className="text-lg font-bold">
-                                                หลักฐานการชำระเงิน
-                                            </p>
-                                            <div className="relative border overflow-hidden rounded-lg h-[300px] w-full flex flex-col gap-2">
-                                                <Image
-                                                    fill
-                                                    className={cn(
-                                                        "object-cover"
-                                                    )}
-                                                    src={URL.createObjectURL(
-                                                        paymentImage
-                                                    )}
-                                                    alt="payment-image"
-                                                />
-
-                                                <Button
-                                                    disabled={isLoading}
-                                                    onClick={
-                                                        handleDeletePaymentImage
-                                                    }
-                                                    className="absolute top-4 hover:bg-gray-100 right-4 border w-fit rounded-lg bg-white"
-                                                >
-                                                    <XIcon className="size-6 text-red-500" />
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                {reservationData?.paymentImage && (
-                                    <div className="flex flex-col gap-4">
-                                        <p className="text-lg font-bold">
-                                            หลักฐานการชำระเงิน
-                                        </p>
-                                        <Image
-                                            src={reservationData.paymentImage}
-                                            alt="payment-image"
-                                            width={1000}
-                                            height={1000}
-                                            className="h-full w-full object-contain"
-                                        />
-                                    </div>
-                                )}
-                            </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </PageWrapper>
     );
 }
 

@@ -35,7 +35,7 @@ export const TextCardInfo = ({
         >
             <p
                 className={cn(
-                    "font-semibold text-sm sm:text-base text-nowrap",
+                    "font-semibold text-sm sm:text-md md:text-lg text-nowrap",
                     textClassName
                 )}
             >
@@ -44,7 +44,7 @@ export const TextCardInfo = ({
             {value && (
                 <p
                     className={cn(
-                        "text-xs sm:text-sm text-nowrap",
+                        "text-xs sm:text-md md:text-lg text-nowrap",
                         valueClassName
                     )}
                 >
@@ -59,7 +59,7 @@ export const TextCardInfo = ({
                             statusColor[status as keyof typeof statusColor]
                         )}
                     />
-                    <p className="text-xs sm:text-md text-nowrap">
+                    <p className="text-xs sm:text-md md:text-lg text-nowrap">
                         {statusText[status as keyof typeof statusText]}
                     </p>
                 </div>

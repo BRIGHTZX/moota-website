@@ -32,8 +32,8 @@ function ReservationPage() {
         defaultValues: {
             customerName: "",
             phoneNumber: "",
-            adultNumber: 0,
-            childNumber: 0,
+            adultNumber: undefined,
+            childNumber: undefined,
             reservationDate: new Date().toISOString(),
             reservationTime: "16:00",
         },
@@ -42,6 +42,7 @@ function ReservationPage() {
     const handleSubmit = (data: insertPreOrderSchemaType) => {
         const finalValue = {
             ...data,
+            childNumber: data.childNumber ?? 0,
             tableId: arrayTable,
         };
 
@@ -132,6 +133,7 @@ function ReservationPage() {
                                         nameInSchema="adultNumber"
                                         placeholder="กรุณากรอกจำนวนผู้ใหญ่"
                                         type="number"
+                                        errorClassName="right-0"
                                     />
                                 </div>
                                 <div className="col-span-1">
@@ -140,6 +142,7 @@ function ReservationPage() {
                                         nameInSchema="childNumber"
                                         placeholder="กรุณากรอกจำนวนเด็ก"
                                         type="number"
+                                        errorClassName="right-0"
                                     />
                                 </div>
                                 <div className="col-span-1">
@@ -149,6 +152,7 @@ function ReservationPage() {
                                         placeholder="กรุณากรอกชื่อผู้จอง"
                                         type="text"
                                         inputClassName="w-full"
+                                        errorClassName="right-0"
                                     />
                                 </div>
                                 <div className="col-span-1">
@@ -157,6 +161,7 @@ function ReservationPage() {
                                         nameInSchema="phoneNumber"
                                         placeholder="กรุณากรอกเบอร์โทรศัพท์"
                                         type="number"
+                                        errorClassName="right-0"
                                     />
                                 </div>
                             </div>

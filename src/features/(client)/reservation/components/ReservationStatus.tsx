@@ -57,7 +57,7 @@ function ReservationStatus({
                         paymentStatusBgColor[paymentStatus]
                     )}
                 />
-                <p className="text-xs md:text-sm">
+                <p className="text-xs md:text-sm text-nowrap">
                     {paymentStatusText[paymentStatus]}
                 </p>
             </div>
@@ -70,7 +70,9 @@ function ReservationStatus({
                 <div
                     className={cn("size-2 rounded-full", statusBgColor[status])}
                 />
-                <p className="text-xs md:text-sm">{statusText[status]}</p>
+                <p className="text-xs md:text-sm text-nowrap">
+                    {statusText[status]}
+                </p>
             </div>
         </div>
     );

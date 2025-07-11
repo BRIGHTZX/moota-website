@@ -30,7 +30,12 @@ export const useUpdatePaymentImage = (preOrderId: string) => {
         onSuccess: () => {
             toast.success("อัพเดตหลักฐานการชำระเงินสำเร็จ");
             queryClient.invalidateQueries({
-                queryKey: ["reservation", preOrderId],
+                queryKey: [
+                    "reservation",
+                    "admin-pre-orders",
+                    "pre-orders",
+                    preOrderId,
+                ],
             });
         },
         onError: (error) => {

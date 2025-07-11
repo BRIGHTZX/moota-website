@@ -32,7 +32,7 @@ function TablesPage() {
             </div>
 
             <div className="mt-4">
-                <p className="text-coffee-dark text-center text-lg font-bold">
+                <p className="text-black text-center text-lg font-bold">
                     โซนใน
                 </p>
                 <div className="mt-4 grid grid-cols-3 justify-items-center gap-4">
@@ -58,7 +58,7 @@ function TablesPage() {
             </div>
 
             <div className="mt-4">
-                <p className="text-coffee-dark text-center text-lg font-bold">
+                <p className="text-black text-center text-lg font-bold">
                     โซนนอก
                 </p>
                 <div className="mt-4 grid grid-cols-3 justify-items-center gap-4">
