@@ -45,6 +45,7 @@ function AddTableForm({
 
         const finalValues = {
             ...data,
+            childNumber: data.childNumber ?? 0,
             tableNumber: tableIdArray,
         };
 

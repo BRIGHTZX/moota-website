@@ -28,7 +28,8 @@ export const insertTalblesSchema = z.object({
         .number({
             invalid_type_error: "กรุณากรอกจำนวนเด็ก",
         })
-        .min(0, "จำนวนเด็กต้องไม่น้อยกว่า 0"),
+        .min(0, "จำนวนเด็กต้องไม่น้อยกว่า 0")
+        .optional(),
 });
 
 export type insertTalblesSchemaType = z.infer<typeof insertTalblesSchema>;
