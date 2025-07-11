@@ -22,8 +22,12 @@ export default async function middleware(req: NextRequest) {
         }
     }
 
-    // -------PROTECTED ROUTES---------------------------
-    if (req.nextUrl) {
+    const isClientPage =
+        req.nextUrl.pathname.startsWith("/reservation") ||
+        req.nextUrl.pathname.startsWith("/checkout");
+
+    // -------CLIENT ROUTES---------------------------
+    if (isClientPage) {
         try {
             const user = await getUser();
 
@@ -31,8 +35,7 @@ export default async function middleware(req: NextRequest) {
                 return NextResponse.redirect(new URL("/signin", req.url));
             }
         } catch (error) {
-            console.error("Error checking user:", error);
-            return NextResponse.redirect(new URL("/signin", req.url));
+            console.error("Error checking client page access:", error);
         }
     }
 
