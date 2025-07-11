@@ -34,7 +34,7 @@ export default async function middleware(req: NextRequest) {
             if (!user) {
                 return NextResponse.redirect(
                     new URL(
-                        `/signin?post_login_redirect=${req.nextUrl.pathname}`,
+                        `/signin?post_login_redirect_url=${req.nextUrl.pathname}`,
                         req.url
                     )
                 );
