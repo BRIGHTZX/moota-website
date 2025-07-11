@@ -51,7 +51,10 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
             .orderBy(desc(PreOrderTable.createdAt));
 
         if (!preOrders.length) {
-            return c.json({ message: "Reservation not found" }, 404);
+            return c.json(
+                { message: "Reservation not found", result: [] },
+                200
+            );
         }
 
         const preOrderMap = new Map();

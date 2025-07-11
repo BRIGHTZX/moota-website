@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { UserIcon } from "lucide-react";
 import Link from "next/link";
 import { LoginLink } from "@kinde-oss/kinde-auth-nextjs";
@@ -25,6 +25,7 @@ const formSchema = z.object({
 });
 
 function SignInForm() {
+    const loginButtonRef = useRef<HTMLButtonElement>(null);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -40,6 +41,11 @@ function SignInForm() {
         setEmail(e.target.value);
         form.setValue("email", e.target.value);
     };
+
+    const handleSubmit = () => {
+        loginButtonRef.current?.click();
+    };
+
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-coffee-light">
             <div className="flex size-full flex-col items-center justify-center">
@@ -58,7 +64,10 @@ function SignInForm() {
 
                     <div className="mt-8">
                         <Form {...form}>
-                            <form className="mt-10 space-y-4">
+                            <form
+                                className="mt-10 space-y-4"
+                                onSubmit={form.handleSubmit(handleSubmit)}
+                            >
                                 <FormField
                                     control={form.control}
                                     name="email"
@@ -90,6 +99,7 @@ function SignInForm() {
 
                                 <div className="flex items-center gap-4">
                                     <Button
+                                        ref={loginButtonRef}
                                         asChild
                                         type="submit"
                                         variant="coffeePrimary"

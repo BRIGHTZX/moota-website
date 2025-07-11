@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { USER_IMG } from "@/constant";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
+import { useState } from "react";
 
 type HamburgerType = {
     currentUser: {
@@ -32,7 +33,7 @@ type HamburgerType = {
 };
 
 function Hamburger({ currentUser, isAdmin }: HamburgerType) {
-    console.log(isAdmin);
+    const [isOpen, setIsOpen] = useState(false);
     const arrayLink = [
         {
             name: "Home",
@@ -40,19 +41,19 @@ function Hamburger({ currentUser, isAdmin }: HamburgerType) {
         },
         {
             name: "About",
-            href: "/about",
+            href: "#about",
         },
         {
             name: "Review",
-            href: "/review",
+            href: "#review",
         },
         {
             name: "Contact",
-            href: "/contact",
+            href: "#contact",
         },
     ];
     return (
-        <Sheet>
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger>
                 <div className="w-12 bg-coffee-light h-8 rounded-md flex items-center sm:hidden justify-center cursor-pointer ">
                     <MenuIcon className="size-7 p-1 text-coffee-dark" />
@@ -68,12 +69,17 @@ function Hamburger({ currentUser, isAdmin }: HamburgerType) {
                 <div className="flex flex-col justify-between h-full">
                     <div className="flex flex-col px-2">
                         {arrayLink.map((item) => (
-                            <HamburgerLink key={item.name} {...item} />
+                            <HamburgerLink
+                                key={item.name}
+                                {...item}
+                                setIsOpen={setIsOpen}
+                            />
                         ))}
                         {isAdmin && (
                             <HamburgerLink
                                 name="Admin"
                                 href="/admin/pre-orders"
+                                setIsOpen={setIsOpen}
                             />
                         )}
                     </div>
@@ -92,7 +98,15 @@ function Hamburger({ currentUser, isAdmin }: HamburgerType) {
 
 export default Hamburger;
 
-const HamburgerLink = ({ name, href }: { name: string; href: string }) => {
+const HamburgerLink = ({
+    name,
+    href,
+    setIsOpen,
+}: {
+    name: string;
+    href: string;
+    setIsOpen: (isOpen: boolean) => void;
+}) => {
     const pathname = usePathname();
     return (
         <div
@@ -101,7 +115,7 @@ const HamburgerLink = ({ name, href }: { name: string; href: string }) => {
                 pathname.startsWith(href) && "bg-coffee-light"
             )}
         >
-            <Link href={href}>
+            <Link href={href} onClick={() => setIsOpen(false)}>
                 <h1 className="text-coffee-dark text-xl font-bold">{name}</h1>
             </Link>
         </div>
@@ -143,38 +157,29 @@ const ProfilDropdown = ({ currentUser, isAdmin }: HamburgerType) => {
                 {currentUser ? (
                     <>
                         {isAdmin && (
-                            <div>
-                                <DropdownMenuItem asChild>
-                                    <Link href={"/admin/products"}>
-                                        Only Admin
-                                    </Link>
-                                </DropdownMenuItem>
-                            </div>
-                        )}
-                        {isAdmin && (
                             <>
                                 <DropdownMenuItem asChild>
-                                    <Link href={"/admin/products"}>
-                                        Only Admin
+                                    <Link href={"/admin/pre-orders"}>
+                                        เฉพาะผู้ดูแลระบบ
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                             </>
                         )}
                         <DropdownMenuItem asChild>
-                            <Link href={"/orders"}>My Orders</Link>
+                            <Link href={"/pre-orders"}>ประวัติการจอง</Link>
                         </DropdownMenuItem>
 
                         <DropdownMenuItem asChild>
                             <LogoutLink postLogoutRedirectURL="/">
-                                Log out
+                                ออกจากระบบ
                             </LogoutLink>
                         </DropdownMenuItem>
                     </>
                 ) : (
                     <div>
                         <DropdownMenuItem asChild>
-                            <Link href={"/login"}>Login</Link>
+                            <Link href={"/login"}>เข้าสู่ระบบ</Link>
                         </DropdownMenuItem>
                     </div>
                 )}

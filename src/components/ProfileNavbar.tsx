@@ -42,17 +42,21 @@ export function ProfileNavbar({ currentUser, isAdmin }: ProfileType) {
                 {isAdmin && (
                     <>
                         <DropdownMenuItem asChild>
-                            <Link href={"/admin/products"}>Only Admin</Link>
+                            <Link href={"/admin/pre-orders"}>
+                                เฉพาะผู้ดูแลระบบ
+                            </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                     </>
                 )}
                 <DropdownMenuItem asChild>
-                    <Link href={"/pre-orders"}>My Orders</Link>
+                    <Link href={"/pre-orders"}>ประวัติการจอง</Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
-                    <LogoutLink postLogoutRedirectURL="/">Log out</LogoutLink>
+                    <LogoutLink postLogoutRedirectURL="/">
+                        ออกจากระบบ
+                    </LogoutLink>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

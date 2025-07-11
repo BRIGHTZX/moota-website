@@ -2,6 +2,7 @@ import React from "react";
 import HeaderSection from "./HeaderSection";
 import { CarIcon, ClockIcon, MapPinIcon, PhoneIcon } from "lucide-react";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 function ContactSection() {
     return (
@@ -60,12 +61,16 @@ function ContactSection() {
 
                             <div className="flex flex-col gap-4">
                                 <Button
+                                    asChild
                                     className="w-full rounded-full py-6"
                                     variant="coffeePrimary"
                                 >
-                                    <h1 className="text-lg md:text-2xl font-bold">
+                                    <Link
+                                        href="/reservation"
+                                        className="text-lg md:text-2xl font-bold"
+                                    >
                                         Reservation Now
-                                    </h1>
+                                    </Link>
                                 </Button>
                                 <Button
                                     className="w-full rounded-full py-6"
