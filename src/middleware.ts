@@ -32,7 +32,12 @@ export default async function middleware(req: NextRequest) {
             const user = await getUser();
 
             if (!user) {
-                return NextResponse.redirect(new URL("/signin", req.url));
+                return NextResponse.redirect(
+                    new URL(
+                        `/signin?post_login_redirect=${req.nextUrl.pathname}`,
+                        req.url
+                    )
+                );
             }
         } catch (error) {
             console.error("Error checking client page access:", error);
