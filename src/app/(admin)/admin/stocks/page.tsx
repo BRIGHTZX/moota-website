@@ -9,6 +9,7 @@ import StockProductTable from "@/features/(admin)/stocks/components/StockProduct
 import { HistoryIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import AdminPageWrapper from "@/components/AdminPageWrapper";
 
 function StockPage() {
     const [isAddStockProductFormOpen, setIsAddStockProductFormOpen] =
@@ -25,26 +26,38 @@ function StockPage() {
     }
 
     return (
-        <div className="p-4 pt-20 pb-8 relative h-[calc(100vh-5rem)]  overflow-y-auto">
+        <AdminPageWrapper>
             {/* Button Section */}
             <TextHeader text="รายการสต๊อค" />
-            <div className="flex items-center  gap-2 mt-4">
+            <div className="flex items-center gap-1 mt-4">
                 <Button
                     variant="coffeePrimary"
                     onClick={() => setIsAddStockProductFormOpen(true)}
-                    className="w-1/2"
+                    className="flex-[1_1_0] flex items-center justify-center gap-1"
+                    size="sm"
                 >
-                    <PlusIcon className="w-4 h-4" />
-                    เพิ่มสินค้าใหม่
+                    <PlusIcon className="w-4 h-4 shrink-0" />
+                    <span className="text-xs whitespace-nowrap">
+                        เพิ่มสินค้าใหม่
+                    </span>
                 </Button>
-                <Button asChild variant="outline" className="w-1/2">
-                    <Link href="/admin/stocks/history">
-                        <HistoryIcon className="w-4 h-4" />
-                        ประวัติการนำเข้า/ออก
+                <Button
+                    asChild
+                    variant="outline"
+                    className="flex-[1_1_0] flex items-center justify-center gap-1"
+                    size="sm"
+                >
+                    <Link
+                        href="/admin/stocks/history"
+                        className="text-xs flex items-center gap-1"
+                    >
+                        <HistoryIcon className="w-4 h-4 shrink-0" />
+                        <span className="whitespace-nowrap">
+                            ประวัติการนำเข้า/ออก
+                        </span>
                     </Link>
                 </Button>
             </div>
-
             <div className="mt-4">
                 <StockProductTable
                     products={
@@ -69,7 +82,7 @@ function StockPage() {
                 isOpen={isImportProductFormOpen}
                 setIsOpen={setIsImportProductFormOpen}
             />
-        </div>
+        </AdminPageWrapper>
     );
 }
 

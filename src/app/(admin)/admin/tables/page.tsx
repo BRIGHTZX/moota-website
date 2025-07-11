@@ -50,6 +50,7 @@ function TablesPage() {
                                 tableNumber={t.tableNumber}
                                 selectedTables={selectedTables}
                                 setSelectedTables={setSelectedTables}
+                                isAvailable={t.isAvailable}
                             />
                         ))
                     )}
@@ -76,6 +77,7 @@ function TablesPage() {
                                     tableNumber={t.tableNumber}
                                     selectedTables={selectedTables}
                                     setSelectedTables={setSelectedTables}
+                                    isAvailable={t.isAvailable}
                                 />
                             ))}
                         </>

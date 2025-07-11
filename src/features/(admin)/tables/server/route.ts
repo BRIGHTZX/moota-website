@@ -28,8 +28,7 @@ const app = new Hono()
                     isAvailable: DiningTable.isAvailable,
                 })
                 .from(DiningTable)
-                .orderBy(asc(sql`CAST(${DiningTable.tableNumber} AS INTEGER)`))
-                .where(eq(DiningTable.isAvailable, true));
+                .orderBy(asc(sql`CAST(${DiningTable.tableNumber} AS INTEGER)`));
 
             return c.json(
                 { message: "Tables fetched successfully", tables },

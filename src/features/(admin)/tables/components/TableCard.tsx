@@ -7,6 +7,7 @@ type TableCardProps = {
     tableNumber: string;
     selectedTables: TableStateType[];
     setSelectedTables: React.Dispatch<React.SetStateAction<TableStateType[]>>;
+    isAvailable: boolean;
 };
 
 function TableCard({
@@ -14,6 +15,7 @@ function TableCard({
     tableNumber,
     selectedTables,
     setSelectedTables,
+    isAvailable,
 }: TableCardProps) {
     const isSelected = selectedTables.some((t) => t.tableId === tableId);
     const handleSelectTable = () => {
@@ -32,10 +34,13 @@ function TableCard({
     };
     return (
         <button
+            disabled={!isAvailable}
             onClick={handleSelectTable}
             className={cn(
-                "bg-coffee-light size-full border border-coffee-dark rounded-md p-4 flex items-center justify-center",
-                isSelected && "bg-coffee-dark text-coffee-light"
+                "bg-green-500 size-full border border-black rounded-md p-4 flex items-center justify-center",
+                isSelected && "bg-coffee-dark text-coffee-light",
+                !isAvailable &&
+                    "bg-red-500 border-black text-white cursor-not-allowed"
             )}
         >
             {tableNumber}
