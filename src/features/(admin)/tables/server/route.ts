@@ -89,6 +89,13 @@ const app = new Hono()
                             activeId: active.id,
                             tableId: tableId,
                         });
+
+                        await tx
+                            .update(DiningTable)
+                            .set({
+                                isAvailable: false,
+                            })
+                            .where(eq(DiningTable.id, tableId));
                     }
                 });
 

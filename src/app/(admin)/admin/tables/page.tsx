@@ -17,6 +17,11 @@ function TablesPage() {
 
     const { data: tables, isLoading, isError } = useGetAdminTables();
 
+    const tablesInside = tables?.tables.filter((t) => t.tableType === "inside");
+    const tablesOutside = tables?.tables.filter(
+        (t) => t.tableType === "outside"
+    );
+
     if (isLoading) return <PageLoader />;
     if (isError) return <div>Error</div>;
 
@@ -28,12 +33,17 @@ function TablesPage() {
 
             <div className="mt-4">
                 <p className="text-coffee-dark text-center text-lg font-bold">
-                    โซนนอก
+                    โซนใน
                 </p>
                 <div className="mt-4 grid grid-cols-3 justify-items-center gap-4">
-                    {tables?.tables
-                        .filter((t) => t.tableType === "inside")
-                        .map((t) => (
+                    {tablesInside?.length === 0 ? (
+                        <div className="col-span-3">
+                            <p className="text-gray-500 text-center text-md">
+                                ไม่มีโต๊ะที่พร้อมใช้งานในโซนนี้
+                            </p>
+                        </div>
+                    ) : (
+                        tablesInside?.map((t) => (
                             <TableCard
                                 key={t.id}
                                 tableId={t.id}
@@ -41,7 +51,8 @@ function TablesPage() {
                                 selectedTables={selectedTables}
                                 setSelectedTables={setSelectedTables}
                             />
-                        ))}
+                        ))
+                    )}
                 </div>
             </div>
 
@@ -50,17 +61,25 @@ function TablesPage() {
                     โซนนอก
                 </p>
                 <div className="mt-4 grid grid-cols-3 justify-items-center gap-4">
-                    {tables?.tables
-                        .filter((t) => t.tableType === "outside")
-                        .map((t) => (
-                            <TableCard
-                                key={t.id}
-                                tableId={t.id}
-                                tableNumber={t.tableNumber}
-                                selectedTables={selectedTables}
-                                setSelectedTables={setSelectedTables}
-                            />
-                        ))}
+                    {tablesOutside?.length === 0 ? (
+                        <div className="col-span-3">
+                            <p className="text-gray-500 text-center text-md">
+                                ไม่มีโต๊ะที่พร้อมใช้งานในโซนนี้
+                            </p>
+                        </div>
+                    ) : (
+                        <>
+                            {tablesOutside?.map((t) => (
+                                <TableCard
+                                    key={t.id}
+                                    tableId={t.id}
+                                    tableNumber={t.tableNumber}
+                                    selectedTables={selectedTables}
+                                    setSelectedTables={setSelectedTables}
+                                />
+                            ))}
+                        </>
+                    )}
                 </div>
             </div>
 
@@ -83,6 +102,7 @@ function TablesPage() {
 
             <AddTableForm
                 selectedTables={selectedTables}
+                setSelectedTables={setSelectedTables}
                 isOpen={isOpenAddTableForm}
                 setIsOpen={setIsOpenAddTableForm}
             />

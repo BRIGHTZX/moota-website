@@ -1,6 +1,5 @@
 "use client";
 
-import { USER_IMG } from "@/constant";
 import { cn } from "@/lib/utils";
 import {
     ChevronFirstIcon,

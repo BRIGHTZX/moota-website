@@ -24,12 +24,12 @@ export const useCreateAdminTables = () => {
             return data;
         },
         onSuccess: () => {
-            toast.success("Create Open Table Successfully");
+            toast.success("เปิดโต๊ะสำเร็จ");
             queryClient.invalidateQueries({ queryKey: ["admin-tables"] });
         },
         onError: (error) => {
             console.log(error.message);
-            toast.error("Create Open Table Failed");
+            toast.error("เปิดโต๊ะไม่สำเร็จ");
         },
     });
 

@@ -16,16 +16,20 @@ import { TableStateType } from "../type";
 
 type AddTableFormProps = {
     selectedTables: TableStateType[];
+    setSelectedTables: (selectedTables: TableStateType[]) => void;
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
 };
 
 function AddTableForm({
     selectedTables,
+    setSelectedTables,
     isOpen,
     setIsOpen,
 }: AddTableFormProps) {
-    const { mutate: createOpenTable } = useCreateAdminTables();
+    const { mutate: createOpenTable, isPending: isLoadingCreateOpenTable } =
+        useCreateAdminTables();
+
     const form = useForm<insertTalblesSchemaType>({
         resolver: zodResolver(insertTalblesSchema),
         defaultValues: {
@@ -44,10 +48,21 @@ function AddTableForm({
             tableNumber: tableIdArray,
         };
 
-        createOpenTable({
-            json: finalValues,
-        });
+        createOpenTable(
+            {
+                json: finalValues,
+            },
+            {
+                onSuccess: () => {
+                    setIsOpen(false);
+                    form.reset();
+                    setSelectedTables([]);
+                },
+            }
+        );
     };
+
+    const isLoading = isLoadingCreateOpenTable;
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -73,6 +88,7 @@ function AddTableForm({
                                 labelClassName="text-sm font-medium text-coffee-dark"
                                 inputClassName="text-sm bg-white border border-coffee-dark"
                                 errorClassName="right-0"
+                                disabled={isLoading}
                             />
                             <InputWithLabel
                                 fieldTitle="เบอร์โทรศัพท์"
@@ -82,6 +98,7 @@ function AddTableForm({
                                 labelClassName="text-sm font-medium text-coffee-dark"
                                 inputClassName="text-sm bg-white border border-coffee-dark"
                                 errorClassName="right-0"
+                                disabled={isLoading}
                             />
                             <InputWithLabel
                                 fieldTitle="จำนวนผู้ใหญ่"
@@ -91,6 +108,7 @@ function AddTableForm({
                                 labelClassName="text-sm font-medium text-coffee-dark"
                                 inputClassName="text-sm bg-white border border-coffee-dark"
                                 errorClassName="right-0"
+                                disabled={isLoading}
                             />
                             <InputWithLabel
                                 fieldTitle="จำนวนเด็ก"
@@ -100,12 +118,13 @@ function AddTableForm({
                                 labelClassName="text-sm font-medium text-coffee-dark"
                                 inputClassName="text-sm bg-white border border-coffee-dark"
                                 errorClassName="right-0"
+                                disabled={isLoading}
                             />
-                            <div className="flex items-center justify-between mt-4">
-                                <p className="text-sm font-medium text-coffee-dark">
+                            <div className="flex justify-between mt-4">
+                                <p className="text-sm font-medium text-nowrap w-[100px] text-coffee-dark">
                                     โต๊ะที่เลือก
                                 </p>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center justify-end w-[185px] gap-2 flex-wrap">
                                     {selectedTables.map((table) => (
                                         <BadgeTable
                                             key={table.tableId}
@@ -117,7 +136,12 @@ function AddTableForm({
                         </div>
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button type="button" variant="coffeeOutline">
+                                <Button
+                                    disabled={isLoading}
+                                    type="button"
+                                    variant="coffeeOutline"
+                                    className="w-full"
+                                >
                                     ยกเลิก
                                 </Button>
                             </DialogClose>
@@ -125,6 +149,10 @@ function AddTableForm({
                                 form="add-table-form"
                                 type="submit"
                                 variant="coffeePrimary"
+                                disabled={
+                                    isLoading || selectedTables.length === 0
+                                }
+                                className="w-full"
                             >
                                 เปิดโต๊ะ
                             </Button>
@@ -140,8 +168,8 @@ export default AddTableForm;
 
 const BadgeTable = ({ tableNumber }: { tableNumber: string }) => {
     return (
-        <div className="bg-coffee-dark text-coffee-light rounded-md px-4 py-1 text-sm">
-            {tableNumber}
+        <div className="bg-coffee-dark text-coffee-light rounded-md w-[2.5rem] h-[1.5rem] text-sm flex items-center justify-center">
+            <p className="text-sm font-semibold">{tableNumber}</p>
         </div>
     );
 };
