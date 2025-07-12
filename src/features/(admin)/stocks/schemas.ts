@@ -6,6 +6,10 @@ export const insertStockProductSchema = z.object({
     unit: z.string().min(1, "กรุณากรอกหน่วยสินค้า"),
     category: z.string().min(1, "กรุณากรอกหมวดหมู่"),
     price: z.coerce.number().min(0, "กรุณากรอกราคาสินค้า"),
+    limitAlert: z.coerce
+        .number()
+        .min(0, "กรุณากรอกจำนวนสินค้าที่ต้องการแจ้งเตือน")
+        .optional(),
 });
 
 export type insertStockProductSchemaType = z.infer<
@@ -35,6 +39,10 @@ export const updateStockProductSchema = z.object({
     unit: z.string().min(1, "กรุณากรอกหน่วยสินค้า"),
     category: z.string().min(1, "กรุณากรอกหมวดหมู่"),
     price: z.coerce.number().min(0, "กรุณากรอกราคาสินค้า"),
+    limitAlert: z.coerce
+        .number()
+        .min(0, "กรุณากรอกจำนวนสินค้าที่ต้องการแจ้งเตือน")
+        .optional(),
 });
 
 export type updateStockProductSchemaType = z.infer<

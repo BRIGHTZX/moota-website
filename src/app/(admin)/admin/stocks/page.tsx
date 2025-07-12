@@ -10,6 +10,7 @@ import { HistoryIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import AdminPageWrapper from "@/components/AdminPageWrapper";
+import LimitNotification from "@/features/(admin)/stocks/components/LimitNotification";
 
 function StockPage() {
     const [isAddStockProductFormOpen, setIsAddStockProductFormOpen] =
@@ -27,8 +28,11 @@ function StockPage() {
 
     return (
         <AdminPageWrapper>
+            <div className="flex justify-between items-center">
+                <TextHeader text="รายการสต๊อค" />
+                <LimitNotification />
+            </div>
             {/* Button Section */}
-            <TextHeader text="รายการสต๊อค" />
             <div className="flex items-center gap-1 mt-4">
                 <Button
                     variant="coffeePrimary"

@@ -40,6 +40,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
             image: undefined,
             category: "",
             price: 0,
+            limitAlert: 0,
         },
     });
 
@@ -54,6 +55,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
         const finalValues = {
             ...data,
             price: String(data.price),
+            limitAlert: String(data.limitAlert),
         };
         addProductStock({ form: finalValues });
     };
@@ -84,6 +86,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                 nameInSchema="image"
                                 errorClassName="right-0"
                                 handleImageChange={handleFileChange}
+                                disabled={isAddingProductStock}
                             />
                             <InputWithLabel<insertStockProductSchemaType>
                                 fieldTitle="ชื่อสินค้า"
@@ -93,6 +96,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                 labelClassName="text-sm font-medium text-coffee-dark"
                                 inputClassName="text-sm bg-white border border-coffee-dark"
                                 errorClassName="right-0"
+                                disabled={isAddingProductStock}
                             />
                             <InputWithLabel<insertStockProductSchemaType>
                                 fieldTitle="หน่วย"
@@ -102,6 +106,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                 labelClassName="text-sm font-medium text-coffee-dark"
                                 inputClassName="text-sm bg-white border  border-coffee-dark"
                                 errorClassName="right-0"
+                                disabled={isAddingProductStock}
                             />
                             <div className="flex items-center gap-2">
                                 <div className="w-full">
@@ -113,6 +118,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                         labelClassName="text-sm font-medium text-coffee-dark"
                                         inputClassName="text-sm bg-white border border-coffee-dark"
                                         errorClassName="right-0"
+                                        disabled={isAddingProductStock}
                                     />
                                 </div>
                                 <SelectWithLabel<insertStockProductSchemaType>
@@ -123,8 +129,19 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                     inputClassName="text-sm bg-white border w-full border-coffee-dark"
                                     errorClassName="right-0"
                                     options={StockProductCategory}
+                                    disabled={isAddingProductStock}
                                 />
                             </div>
+                            <InputWithLabel<insertStockProductSchemaType>
+                                fieldTitle="จำนวนสินค้าที่ต้องการแจ้งเตือน"
+                                nameInSchema="limitAlert"
+                                placeholder="จำนวนสินค้าที่ต้องการแจ้งเตือน"
+                                type="number"
+                                labelClassName="text-sm font-medium text-coffee-dark"
+                                inputClassName="text-sm bg-white border  border-coffee-dark"
+                                errorClassName="right-0"
+                                disabled={isAddingProductStock}
+                            />
                         </div>
                         <DialogFooter>
                             <div className="flex mt-4 items-center justify-between gap-2">

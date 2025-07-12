@@ -41,6 +41,7 @@ function StockDetailPage({
             unit: "",
             category: "",
             price: 0,
+            limitAlert: 0,
         },
     });
 
@@ -59,6 +60,7 @@ function StockDetailPage({
                 unit: productStockData.unit,
                 category: productStockData.category,
                 price: productStockData.price,
+                limitAlert: productStockData.limitAlert,
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,6 +70,7 @@ function StockDetailPage({
         const finalValues = {
             ...data,
             price: String(data.price),
+            limitAlert: String(data.limitAlert),
         };
 
         updateProductStock({
@@ -139,6 +142,16 @@ function StockDetailPage({
                                         disabled={!isEditing || isLoading}
                                     />
                                 </div>
+
+                                <InputWithLabel
+                                    fieldTitle="จำนวนสินค้าที่ต้องการแจ้งเตือน"
+                                    nameInSchema="limitAlert"
+                                    placeholder="จำนวนสินค้าที่ต้องการแจ้งเตือน"
+                                    type="number"
+                                    inputClassName="text-sm bg-white  w-full "
+                                    labelClassName="text-sm font-medium text-coffee-dark"
+                                    disabled={!isEditing || isLoading}
+                                />
 
                                 <div className="mt-4 flex flex-col gap-2">
                                     {isEditing && (

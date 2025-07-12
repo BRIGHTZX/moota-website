@@ -11,7 +11,7 @@ import {
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputWithLabel from "@/components/inputs/InputWithLabel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -49,17 +49,18 @@ function ImportProduct({
         setIsOpen,
     });
 
-    const form = useForm<Omit<importExportProductSchemaType, "type">>({
-        resolver: zodResolver(importExportProductSchema.omit({ type: true })),
+    const form = useForm<importExportProductSchemaType>({
+        resolver: zodResolver(importExportProductSchema),
         defaultValues: {
             stock: 0,
             totalPrice: 0,
+            type: importType,
         },
     });
 
-    const handleSubmit = (
-        data: Omit<importExportProductSchemaType, "type">
-    ) => {
+    console.log(form.formState.errors);
+
+    const handleSubmit = (data: importExportProductSchemaType) => {
         if (importType === "export" && data.stock > (productData?.stock ?? 0)) {
             toast.error("จำนวนสินค้าที่นำออกเกินจำนวนสินค้าที่มี");
             form.setError("stock", {
@@ -89,6 +90,21 @@ function ImportProduct({
             }
         );
     };
+
+    useEffect(() => {
+        form.setValue("type", importType);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [importType]);
+
+    useEffect(() => {
+        setImportType("import");
+        form.reset({
+            stock: 0,
+            totalPrice: 0,
+            type: importType,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [productData]);
 
     const isError = isErrorAddImportExportProduct || isErrorProduct;
     const isLoading = isLoadingProduct || isLoadingAddImportExportProduct;
@@ -181,15 +197,17 @@ function ImportProduct({
                                             disabled={isLoading}
                                             errorClassName="right-0"
                                         />
-                                        <InputWithLabel
-                                            fieldTitle="ราคารวม"
-                                            nameInSchema="totalPrice"
-                                            placeholder="กรุณากรอกราคารวม"
-                                            type="number"
-                                            inputClassName="text-center border border-coffee-dark"
-                                            disabled={isLoading}
-                                            errorClassName="right-0"
-                                        />
+                                        {importType === "import" && (
+                                            <InputWithLabel
+                                                fieldTitle="ราคารวม"
+                                                nameInSchema="totalPrice"
+                                                placeholder="กรุณากรอกราคารวม"
+                                                type="number"
+                                                inputClassName="text-center border border-coffee-dark"
+                                                disabled={isLoading}
+                                                errorClassName="right-0"
+                                            />
+                                        )}
                                     </div>
                                 </div>
                                 <DialogFooter>

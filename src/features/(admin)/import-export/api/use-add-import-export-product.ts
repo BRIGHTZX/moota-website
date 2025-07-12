@@ -38,6 +38,9 @@ export const useAddImportExportProduct = ({
             queryClient.invalidateQueries({
                 queryKey: ["products-stock"],
             });
+            queryClient.invalidateQueries({
+                queryKey: ["limit-notification"],
+            });
             setIsOpen(false);
         },
         onError: (error) => {

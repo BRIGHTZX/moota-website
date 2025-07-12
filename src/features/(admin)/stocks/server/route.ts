@@ -4,7 +4,7 @@ import { Hono } from "hono";
 import { insertStockProductSchema, updateStockProductSchema } from "../schemas";
 import { db } from "@/database/db";
 import { product as ProductTable } from "@/database/schema/product";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, lte } from "drizzle-orm";
 import { connectCloudinary } from "@/lib/cloudinary";
 
 const app = new Hono()
@@ -68,6 +68,7 @@ const app = new Hono()
                     unit: ProductTable.unit,
                     price: ProductTable.price,
                     category: ProductTable.category,
+                    limitAlert: ProductTable.limitAlert,
                 })
                 .from(ProductTable)
                 .where(eq(ProductTable.id, productId))
@@ -78,6 +79,40 @@ const app = new Hono()
             }
 
             return c.json({ product: product }, 200);
+        } catch (error) {
+            console.log(error);
+            return c.json({ error: "Internal Server Error" }, 500);
+        }
+    })
+    .get("/limit-notification", getCurrentUser, async (c) => {
+        const user = c.get("user");
+        if (!user) {
+            return c.json({ error: "Unauthorized" }, 401);
+        }
+
+        try {
+            const products = await db
+                .select({
+                    id: ProductTable.id,
+                    name: ProductTable.name,
+                    stocks: ProductTable.stock,
+                    unit: ProductTable.unit,
+                    limitAlert: ProductTable.limitAlert,
+                })
+                .from(ProductTable)
+                .where(lte(ProductTable.stock, ProductTable.limitAlert));
+
+            if (products.length === 0) {
+                return c.json(
+                    { message: "No products found", result: [] },
+                    200
+                );
+            }
+
+            return c.json(
+                { message: "Products fetched successfully", result: products },
+                200
+            );
         } catch (error) {
             console.log(error);
             return c.json({ error: "Internal Server Error" }, 500);
@@ -94,7 +129,7 @@ const app = new Hono()
             }
 
             try {
-                const { name, image, unit, category, price } =
+                const { name, image, unit, category, price, limitAlert } =
                     c.req.valid("form");
 
                 const cloudinaryInstance = await connectCloudinary();
@@ -128,6 +163,7 @@ const app = new Hono()
                     unit,
                     category,
                     price,
+                    limitAlert,
                 });
 
                 return c.json(
