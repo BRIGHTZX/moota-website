@@ -9,7 +9,7 @@ import { ProfileNavbar } from "./ProfileNavbar";
 import Hamburger from "./Hamburger";
 
 function Navbar() {
-    const { user, isAdmin, isLoading } = useContext(NavbarContext);
+    const { user, isAdmin, isLoading, isOwner } = useContext(NavbarContext);
     return (
         <nav className="fixed top-0 z-50 w-full bg-coffee-brown h-16 md:h-20">
             <div className="relative container px-8 md:px-0 mx-auto flex size-full items-center justify-between">
@@ -42,8 +42,16 @@ function Navbar() {
                     <ProfileSkeleton />
                 ) : user ? (
                     <div>
-                        <Hamburger currentUser={user} isAdmin={isAdmin} />
-                        <ProfileNavbar currentUser={user} isAdmin={isAdmin} />
+                        <Hamburger
+                            currentUser={user}
+                            isAdmin={isAdmin}
+                            isOwner={isOwner}
+                        />
+                        <ProfileNavbar
+                            currentUser={user}
+                            isAdmin={isAdmin}
+                            isOwner={isOwner}
+                        />
                     </div>
                 ) : (
                     <ul className="flex items-center gap-2 md:gap-4 text-black">

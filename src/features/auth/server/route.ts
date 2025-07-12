@@ -5,10 +5,16 @@ const app = new Hono().get("/user-current", getCurrentUser, async (c) => {
     try {
         const user = c.get("user");
         const isAdmin = c.get("isAdmin") as boolean;
+        const isOwner = c.get("isOwner") as boolean;
 
         if (!user) {
             return c.json(
-                { message: "Unauthorized", user: null, isAdmin: false },
+                {
+                    message: "Unauthorized",
+                    user: null,
+                    isAdmin: false,
+                    isOwner: false,
+                },
                 403
             );
         }
@@ -22,15 +28,16 @@ const app = new Hono().get("/user-current", getCurrentUser, async (c) => {
                 picture: user.picture,
             },
             isAdmin,
+            isOwner,
         };
 
         return c.json(
-            { data: formattedUser, message: "fetch user current" },
+            { result: formattedUser, message: "fetch user current" },
             200
         );
     } catch (error) {
         console.log("Error during get user current: ", error);
-        return c.json({ message: "Unauthorized" }, 403);
+        return c.json({ message: "Internal server error" }, 500);
     }
 });
 

@@ -31,7 +31,13 @@ export const useCreateReservation = () => {
             toast.success("Reservation created successfully");
             router.push(`/reservation/info/${data.result.id}`);
             queryClient.invalidateQueries({
-                queryKey: ["pre-orders", "reservation", "admin-pre-orders"],
+                queryKey: ["pre-orders"],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ["admin-pre-orders"],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ["reservation"],
             });
         },
         onError: (error) => {

@@ -17,11 +17,15 @@ function HistoryProductCard({ record }: { record: HistoryRecordType }) {
                     <p className={`${textColor} text-md font-bold`}>
                         {record.productName}
                     </p>
+                    <p className={`${textColor} text-md font-bold`}>
+                        <span>x</span> {record.stock} {record.productUnit}
+                    </p>
                 </div>
-
-                <p className={`${textColor} text-md font-bold`}>
-                    {record.stock} {record.productUnit}
-                </p>
+                {record.type === "import" && (
+                    <p className={`${textColor} text-md font-bold`}>
+                        {record.totalPrice.toLocaleString()} บาท
+                    </p>
+                )}
             </div>
         </div>
     );

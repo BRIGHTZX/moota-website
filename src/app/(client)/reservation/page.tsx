@@ -32,8 +32,8 @@ function ReservationPage() {
         defaultValues: {
             customerName: "",
             phoneNumber: "",
-            adultNumber: undefined,
-            childNumber: undefined,
+            adultNumber: 0,
+            childNumber: 0,
             reservationDate: new Date().toISOString(),
             reservationTime: "16:00",
         },

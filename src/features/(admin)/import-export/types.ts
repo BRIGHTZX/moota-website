@@ -4,6 +4,7 @@ export type HistoryRecordType = {
     productName: string;
     productUnit: string;
     stock: number;
+    totalPrice: number;
     type: "import" | "export";
     updatedAt: string;
 };

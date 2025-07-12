@@ -27,6 +27,7 @@ function InputWithLabel<S>({
     ...props
 }: InputWithLabelProps<S>) {
     const form = useFormContext();
+
     return (
         <FormField
             control={form.control}
@@ -46,7 +47,13 @@ function InputWithLabel<S>({
                         placeholder={placeholder}
                         type={type}
                         className={inputClassName}
-                        value={field.value ?? ""}
+                        value={
+                            type === "number"
+                                ? field.value === 0 || field.value == null
+                                    ? ""
+                                    : field.value
+                                : field.value ?? ""
+                        }
                         disabled={disabled}
                     />
                     <FormMessage

@@ -40,6 +40,7 @@ const app = new Hono()
                         productId: true,
                         stock: true,
                         type: true,
+                        totalPrice: true,
                         updatedAt: true,
                     },
                     where: and(
@@ -66,6 +67,7 @@ const app = new Hono()
                     productName: item.product.name,
                     productUnit: item.product.unit,
                     stock: item.stock,
+                    totalPrice: item.totalPrice,
                     type: item.type as "import" | "export",
                     updatedAt: item.updatedAt.toISOString(),
                 }));
@@ -126,7 +128,7 @@ const app = new Hono()
 
             try {
                 const productId = c.req.param("productId");
-                const { stock, type } = await c.req.json();
+                const { stock, totalPrice, type } = await c.req.json();
 
                 await db.transaction(async (tx) => {
                     // ดึงข้อมูลปัจจุบันมาเช็ก ก่อนจะ export
@@ -160,6 +162,7 @@ const app = new Hono()
                     await tx.insert(ImportExportHistoryTable).values({
                         productId,
                         stock,
+                        totalPrice,
                         type,
                     });
                 });

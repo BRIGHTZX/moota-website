@@ -17,6 +17,7 @@ export const useGetOrders = () => {
 
             return data.result;
         },
+        refetchInterval: 20000,
     });
 
     return query;

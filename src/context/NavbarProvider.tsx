@@ -11,6 +11,7 @@ type NavbarContextType = {
         picture: string | null;
     } | null;
     isAdmin: boolean;
+    isOwner: boolean;
     isLoading: boolean;
 };
 
@@ -18,16 +19,19 @@ type NavbarContextType = {
 export const NavbarContext = createContext<NavbarContextType>({
     user: null,
     isAdmin: false,
+    isOwner: false,
     isLoading: false,
 });
 
 export function NavbarProvider({ children }: { children: React.ReactNode }) {
     const { data, isLoading } = useGetCurrentUser();
+
     return (
         <NavbarContext.Provider
             value={{
-                user: data?.data.user ?? null,
-                isAdmin: data?.data.isAdmin ?? false,
+                user: data?.user ?? null,
+                isAdmin: data?.isAdmin ?? false,
+                isOwner: data?.isOwner ?? false,
                 isLoading,
             }}
         >

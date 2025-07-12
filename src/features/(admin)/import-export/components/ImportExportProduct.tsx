@@ -53,6 +53,7 @@ function ImportProduct({
         resolver: zodResolver(importExportProductSchema.omit({ type: true })),
         defaultValues: {
             stock: 0,
+            totalPrice: 0,
         },
     });
 
@@ -138,7 +139,7 @@ function ImportProduct({
                                             }
                                             disabled={isLoading}
                                             className={cn(
-                                                "w-1/2",
+                                                "w-1/2 hover:bg-emerald-600 hover:text-white",
                                                 importType === "import"
                                                     ? "bg-emerald-500"
                                                     : "border border-emerald-500 bg-white text-emerald-500"
@@ -155,7 +156,7 @@ function ImportProduct({
                                             }
                                             disabled={isLoading}
                                             className={cn(
-                                                "w-1/2",
+                                                "w-1/2 hover:bg-red-600 hover:text-white",
                                                 importType === "export"
                                                     ? "bg-red-500"
                                                     : "border border-red-500 bg-white text-red-500"
@@ -166,7 +167,7 @@ function ImportProduct({
                                         </Button>
                                     </div>
 
-                                    <div className="mt-4">
+                                    <div className=" flex flex-col gap-2 mt-4">
                                         <InputWithLabel
                                             fieldTitle={`จำนวน (${
                                                 productData?.unit ?? ""
@@ -178,6 +179,16 @@ function ImportProduct({
                                             type="number"
                                             inputClassName="text-center border border-coffee-dark"
                                             disabled={isLoading}
+                                            errorClassName="right-0"
+                                        />
+                                        <InputWithLabel
+                                            fieldTitle="ราคารวม"
+                                            nameInSchema="totalPrice"
+                                            placeholder="กรุณากรอกราคารวม"
+                                            type="number"
+                                            inputClassName="text-center border border-coffee-dark"
+                                            disabled={isLoading}
+                                            errorClassName="right-0"
                                         />
                                     </div>
                                 </div>
@@ -199,7 +210,7 @@ function ImportProduct({
                                             className={cn(
                                                 "bg-coffee-dark text-white",
                                                 importType === "import"
-                                                    ? "bg-emerald-500"
+                                                    ? "bg-emerald-500 hover:bg-emerald-600"
                                                     : "bg-red-500"
                                             )}
                                             disabled={isLoading}

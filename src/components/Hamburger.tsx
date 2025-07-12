@@ -30,6 +30,7 @@ type HamburgerType = {
         picture: string | null;
     };
     isAdmin: boolean;
+    isOwner: boolean;
 };
 
 const arrayLink = [
@@ -51,7 +52,7 @@ const arrayLink = [
     },
 ];
 
-function Hamburger({ currentUser, isAdmin }: HamburgerType) {
+function Hamburger({ currentUser, isAdmin, isOwner }: HamburgerType) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -90,6 +91,7 @@ function Hamburger({ currentUser, isAdmin }: HamburgerType) {
                         <ProfilDropdown
                             currentUser={currentUser}
                             isAdmin={isAdmin}
+                            isOwner={isOwner}
                         />
                     </div>
                 </div>
@@ -141,7 +143,8 @@ const HamburgerLink = ({
     );
 };
 
-const ProfilDropdown = ({ currentUser, isAdmin }: HamburgerType) => {
+const ProfilDropdown = ({ currentUser, isAdmin, isOwner }: HamburgerType) => {
+    console.log("isOwner", isOwner);
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger className="w-full h-full">
@@ -175,6 +178,15 @@ const ProfilDropdown = ({ currentUser, isAdmin }: HamburgerType) => {
             >
                 {currentUser ? (
                     <>
+                        {isOwner && (
+                            <>
+                                <DropdownMenuItem asChild>
+                                    <Link href={"/admin/pre-orders"}>
+                                        เฉพาะเจ้าของร้าน
+                                    </Link>
+                                </DropdownMenuItem>
+                            </>
+                        )}
                         {isAdmin && (
                             <>
                                 <DropdownMenuItem asChild>

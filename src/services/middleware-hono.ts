@@ -8,6 +8,7 @@ type UserType = {
         user: KindeUser;
         roles: KindeRoles;
         isAdmin: boolean;
+        isOwner: boolean;
     };
 };
 
@@ -16,6 +17,7 @@ export const getCurrentUser = createMiddleware<UserType>(
         try {
             const { getUser, getRoles } = getKindeServerSession();
             const user = await getUser();
+            const email = user?.email;
             const roles = await getRoles();
 
             if (!user || user === null || !user.id) {
@@ -38,9 +40,16 @@ export const getCurrentUser = createMiddleware<UserType>(
 
             const roleHasAdmin = roles.find((role) => role.key === "admin");
             const isAdmin = roleHasAdmin?.name === "Admin" ? true : false;
+
+            const isOwner =
+                !!email &&
+                (email === process.env.OWNER_EMAIL ||
+                    email === process.env.DEV_EMAIL);
+
             c.set("user", user);
             c.set("roles", roles);
             c.set("isAdmin", isAdmin);
+            c.set("isOwner", isOwner);
             await next();
         } catch (error) {
             console.log("Error during authentication: ", error);

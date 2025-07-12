@@ -20,13 +20,16 @@ type ProfileType = {
         picture: string | null;
     };
     isAdmin: boolean;
+    isOwner: boolean;
     className?: string;
 };
 export function ProfileNavbar({
     currentUser,
     isAdmin,
+    isOwner,
     className,
 }: ProfileType) {
+    console.log("isOwner", isOwner);
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger
@@ -50,6 +53,11 @@ export function ProfileNavbar({
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent sideOffset={8} className="z-[60]">
+                {isOwner && (
+                    <DropdownMenuItem asChild>
+                        <Link href={"/owner/dashboard"}>เฉพาะเจ้าของร้าน</Link>
+                    </DropdownMenuItem>
+                )}
                 {isAdmin && (
                     <>
                         <DropdownMenuItem asChild>
