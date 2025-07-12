@@ -15,6 +15,9 @@ import importExportRoute from "@/features/(admin)/import-export/server/route";
 import checkoutRoute from "@/features/(admin)/checkout/server/route";
 import checkoutHistoryRoute from "@/features/(admin)/checkout-history/server/route";
 
+//owner
+import dashboardRoute from "@/features/(owner)/dashboard/server/route";
+
 const app = new Hono().basePath("/api");
 
 app.use(logger());
@@ -24,6 +27,7 @@ const routes = app
     .route("/authentication", authRoute)
     .route("/reservation", reservationRoute)
     .route("/pre-orders", preOrderRoute)
+
     //admin
     .route("/admin/tables", tablesRoute)
     .route("/admin/pre-orders", preOrderAdminRoute)
@@ -32,7 +36,10 @@ const routes = app
     .route("/admin/stocks", stocksRoute)
     .route("/admin/import-export", importExportRoute)
     .route("/admin/checkout", checkoutRoute)
-    .route("/admin/checkout-history", checkoutHistoryRoute);
+    .route("/admin/checkout-history", checkoutHistoryRoute)
+
+    //owner
+    .route("/owner/dashboard", dashboardRoute);
 
 // Handle all HTTP methods
 export const GET = handle(app);

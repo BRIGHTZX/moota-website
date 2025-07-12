@@ -38,7 +38,7 @@ export function CalendarRange({
     };
 
     return (
-        <div className="border p-4 rounded-lg">
+        <div className="border p-4  bg-white rounded-lg">
             <div className="flex items-center justify-center gap-2">
                 <div className="flex flex-1 flex-col gap-2">
                     <Label htmlFor="start-date">ตั้งแต่</Label>
