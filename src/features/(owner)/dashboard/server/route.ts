@@ -1,80 +1,236 @@
 import { db } from "@/database/db";
 import { getCurrentUser } from "@/services/middleware-hono";
-import { and, count, eq, gte, lte, sum } from "drizzle-orm";
+import { and, asc, count, eq, gte, lte, sql, sum } from "drizzle-orm";
 import { Hono } from "hono";
 
 // checkout
-import { checkout as CheckoutTable } from "@/database/schema/checkout";
-import { preOrder as PreOrderTable } from "@/database/schema/pre-order";
 import { zValidator } from "@hono/zod-validator";
 import { dateRangeSchema } from "../schemas";
+import { checkout as CheckoutTable } from "@/database/schema/checkout";
+import { preOrder as PreOrderTable } from "@/database/schema/pre-order";
+import { importExportHistory as ImportExportHistoryTable } from "@/database/schema/import-export-history";
+import { groupData } from "@/services/groupData";
+import { DateModeType } from "../types";
 
-const app = new Hono().get(
-    "/total-count-infomation",
+const app = new Hono()
+    .get(
+        "/total-count-infomation",
+        getCurrentUser,
+        zValidator("query", dateRangeSchema),
+        async (c) => {
+            const user = c.get("user");
+            if (!user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
 
-    getCurrentUser,
-    zValidator("query", dateRangeSchema),
-    async (c) => {
-        const user = c.get("user");
-        if (!user) {
-            return c.json({ error: "Unauthorized" }, 401);
+            const { startDate, endDate } = c.req.valid("query");
+            const start = new Date(startDate); // includes all time that day
+            const end = new Date(endDate);
+            end.setDate(end.getDate() + 1); // exclusive upper bound
+
+            try {
+                const [totalCheckout] = await db
+                    .select({
+                        totalAdult: sum(CheckoutTable.paidAdultNumber),
+                        totalChild: sum(CheckoutTable.paidChildNumber),
+                        totalAmount: sum(CheckoutTable.totalAmount),
+                        totalOrder: count(CheckoutTable.id),
+                    })
+                    .from(CheckoutTable)
+                    .where(
+                        and(
+                            gte(CheckoutTable.updatedAt, start),
+                            lte(CheckoutTable.updatedAt, end)
+                        )
+                    );
+
+                const [totalPreOrder] = await db
+                    .select({
+                        totalPreOrder: count(PreOrderTable.id),
+                    })
+                    .from(PreOrderTable)
+                    .where(
+                        and(
+                            eq(PreOrderTable.status, "confirmed"),
+                            eq(PreOrderTable.paymentStatus, "paid"),
+                            gte(PreOrderTable.updatedAt, start),
+                            lte(PreOrderTable.updatedAt, end)
+                        )
+                    );
+
+                const formattedTotal = {
+                    totalAdult: Number(totalCheckout.totalAdult) ?? 0,
+                    totalChild: Number(totalCheckout.totalChild) ?? 0,
+                    totalAmount: Number(totalCheckout.totalAmount) ?? 0,
+                    totalOrder: Number(totalCheckout.totalOrder) ?? 0,
+                    totalPreOrder: Number(totalPreOrder.totalPreOrder) ?? 0,
+                };
+
+                return c.json(
+                    {
+                        message: "Dashboard data fetched successfully",
+                        result: formattedTotal,
+                    },
+                    200
+                );
+            } catch (error) {
+                console.error(error);
+                return c.json({ error: "Internal server error" }, 500);
+            }
         }
+    )
+    .get(
+        "total-income-outcome",
+        getCurrentUser,
+        zValidator("query", dateRangeSchema),
+        async (c) => {
+            const user = c.get("user");
 
-        const { startDate, endDate } = c.req.valid("query");
-        const start = new Date(startDate); // includes all time that day
-        const end = new Date(endDate);
-        end.setDate(end.getDate() + 1); // exclusive upper bound
+            if (!user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
 
-        try {
-            const [totalCheckout] = await db
-                .select({
-                    totalAdult: sum(CheckoutTable.paidAdultNumber),
-                    totalChild: sum(CheckoutTable.paidChildNumber),
-                    totalAmount: sum(CheckoutTable.totalAmount),
-                    totalOrder: count(CheckoutTable.id),
-                })
-                .from(CheckoutTable)
-                .where(
-                    and(
+            const { startDate, endDate, mode } = c.req.valid("query");
+            const start = new Date(startDate); // includes all time that day
+            const end = new Date(endDate);
+            end.setDate(end.getDate() + 1); // exclusive upper bound
+
+            try {
+                const totalIncome = await db.query.checkout.findMany({
+                    where: and(
                         gte(CheckoutTable.updatedAt, start),
                         lte(CheckoutTable.updatedAt, end)
-                    )
+                    ),
+                    columns: {
+                        totalAmount: true,
+                        updatedAt: true,
+                    },
+                    orderBy: [asc(CheckoutTable.updatedAt)],
+                });
+
+                const totalOutcome =
+                    await db.query.importExportHistory.findMany({
+                        extras: {
+                            totalAmount:
+                                sql<number>`${ImportExportHistoryTable.totalPrice}`.as(
+                                    "totalAmount"
+                                ),
+                        },
+                        columns: {
+                            updatedAt: true,
+                        },
+                        where: and(
+                            gte(ImportExportHistoryTable.updatedAt, start),
+                            lte(ImportExportHistoryTable.updatedAt, end)
+                        ),
+                    });
+
+                const groupedIncome = groupData(
+                    totalIncome,
+                    mode as DateModeType
                 );
 
-            const [totalPreOrder] = await db
-                .select({
-                    totalPreOrder: count(PreOrderTable.id),
-                })
-                .from(PreOrderTable)
-                .where(
-                    and(
-                        eq(PreOrderTable.status, "confirmed"),
-                        eq(PreOrderTable.paymentStatus, "paid"),
-                        gte(PreOrderTable.updatedAt, start),
-                        lte(PreOrderTable.updatedAt, end)
-                    )
+                const groupedOutcome = groupData(
+                    totalOutcome,
+                    mode as DateModeType
                 );
 
-            const formattedTotal = {
-                totalAdult: Number(totalCheckout.totalAdult) ?? 0,
-                totalChild: Number(totalCheckout.totalChild) ?? 0,
-                totalAmount: Number(totalCheckout.totalAmount) ?? 0,
-                totalOrder: Number(totalCheckout.totalOrder) ?? 0,
-                totalPreOrder: Number(totalPreOrder.totalPreOrder) ?? 0,
-            };
+                // === Merge income + outcome ===
+                const mergedMap = new Map<
+                    string,
+                    { date: string; income: number; outcome: number }
+                >();
 
-            return c.json(
-                {
-                    message: "Dashboard data fetched successfully",
-                    result: formattedTotal,
-                },
-                200
-            );
-        } catch (error) {
-            console.error(error);
-            return c.json({ error: "Internal server error" }, 500);
+                for (const income of groupedIncome) {
+                    mergedMap.set(income.date, {
+                        date: income.date,
+                        income: income.total,
+                        outcome: 0,
+                    });
+                }
+
+                for (const outcome of groupedOutcome) {
+                    if (mergedMap.has(outcome.date)) {
+                        mergedMap.get(outcome.date)!.outcome = outcome.total;
+                    } else {
+                        mergedMap.set(outcome.date, {
+                            date: outcome.date,
+                            income: 0,
+                            outcome: outcome.total,
+                        });
+                    }
+                }
+
+                const mergedData = Array.from(mergedMap.values()).sort((a, b) =>
+                    a.date.localeCompare(b.date)
+                );
+
+                return c.json(
+                    {
+                        message:
+                            "Total income and outcome fetched successfully",
+                        result: mergedData,
+                    },
+                    200
+                );
+            } catch (error) {
+                console.error(error);
+                return c.json({ error: "Internal server error" }, 500);
+            }
         }
-    }
-);
+    )
+    .get(
+        "/customer-count",
+        getCurrentUser,
+        zValidator("query", dateRangeSchema),
+        async (c) => {
+            const user = c.get("user");
+            if (!user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
+            try {
+                const { startDate, endDate } = c.req.valid("query");
+                const start = new Date(startDate); // includes all time that day
+                const end = new Date(endDate);
+                end.setDate(end.getDate() + 1); // exclusive upper bound
+
+                const customerCount = await db.query.checkout.findMany({
+                    extras: {
+                        totalAmount:
+                            sql<number>`${CheckoutTable.paidAdultNumber} + ${CheckoutTable.paidChildNumber}`.as(
+                                "totalAmount"
+                            ),
+                    },
+                    columns: {
+                        updatedAt: true,
+                    },
+                    where: and(
+                        gte(CheckoutTable.updatedAt, start),
+                        lte(CheckoutTable.updatedAt, end)
+                    ),
+                    orderBy: [asc(CheckoutTable.updatedAt)],
+                });
+
+                console.log("raw", customerCount);
+
+                const groupedCustomer = groupData(
+                    customerCount,
+                    "day" as DateModeType
+                );
+
+                return c.json(
+                    {
+                        message: "Customer count fetched successfully",
+                        result: groupedCustomer,
+                    },
+                    200
+                );
+            } catch (error) {
+                console.log(error);
+                return c.json({ error: "Internal server error" }, 500);
+            }
+        }
+    );
 
 export default app;

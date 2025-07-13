@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { subDays, subMonths } from "date-fns";
 import React, { useState } from "react";
+import { DateModeType } from "../types";
 
 type DateRangeControlProps = {
     today: string;
@@ -10,6 +11,8 @@ type DateRangeControlProps = {
     endDate: string;
     setStartDate: (date: string) => void;
     setEndDate: (date: string) => void;
+    mode: DateModeType;
+    setMode: (mode: DateModeType) => void;
 };
 function DateRangeControl({
     today,
@@ -17,6 +20,8 @@ function DateRangeControl({
     endDate,
     setStartDate,
     setEndDate,
+    mode,
+    setMode,
 }: DateRangeControlProps) {
     const [dateType, setDateType] = useState<
         "today" | "7-days" | "1-month" | "3-months"
@@ -25,6 +30,7 @@ function DateRangeControl({
         setDateType("today");
         setStartDate(today);
         setEndDate(today);
+        setMode("day");
     };
 
     const handle7Days = (today: string) => {
@@ -32,6 +38,7 @@ function DateRangeControl({
         const sevenDaysAgo = subDays(new Date(today), 7);
         setStartDate(sevenDaysAgo.toISOString().split("T")[0]);
         setEndDate(today);
+        setMode("day");
     };
 
     const handle1Month = (today: string) => {
@@ -39,6 +46,7 @@ function DateRangeControl({
         const oneMonthAgo = subMonths(new Date(today), 1);
         setStartDate(oneMonthAgo.toISOString().split("T")[0]);
         setEndDate(today);
+        setMode("month");
     };
 
     const handle3Month = (today: string) => {
@@ -46,6 +54,7 @@ function DateRangeControl({
         const threeMonthsAgo = subMonths(new Date(today), 3);
         setStartDate(threeMonthsAgo.toISOString().split("T")[0]);
         setEndDate(today);
+        setMode("month");
     };
 
     return (
@@ -56,6 +65,7 @@ function DateRangeControl({
                 endDate={endDate}
                 setStartDate={setStartDate}
                 setEndDate={setEndDate}
+                setMode={setMode}
             />
 
             {/* Today Button */}

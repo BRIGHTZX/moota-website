@@ -29,7 +29,6 @@ export function ProfileNavbar({
     isOwner,
     className,
 }: ProfileType) {
-    console.log("isOwner", isOwner);
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger

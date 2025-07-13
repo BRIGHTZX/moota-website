@@ -1,6 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DateModeType } from "@/features/(owner)/dashboard/types";
 import { ChangeEvent } from "react";
 
 type CalendarRangeProps = {
@@ -9,6 +10,7 @@ type CalendarRangeProps = {
     endDate: string;
     setStartDate: (date: string) => void;
     setEndDate: (date: string) => void;
+    setMode: (mode: DateModeType) => void;
 };
 
 export function CalendarRange({
@@ -17,6 +19,7 @@ export function CalendarRange({
     endDate,
     setStartDate,
     setEndDate,
+    setMode,
 }: CalendarRangeProps) {
     // Update start date and ensure end date is not earlier
     const handleStartChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -26,6 +29,7 @@ export function CalendarRange({
         if (value > endDate) {
             setEndDate(value);
         }
+        setMode("custom");
     };
 
     // Update end date but prevent it from being earlier than start date
@@ -35,6 +39,7 @@ export function CalendarRange({
             value = startDate; // enforce constraint
         }
         setEndDate(value);
+        setMode("custom");
     };
 
     return (

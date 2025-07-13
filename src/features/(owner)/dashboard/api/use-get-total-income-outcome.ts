@@ -1,0 +1,35 @@
+import { client } from "@/lib/rpc";
+import { useQuery } from "@tanstack/react-query";
+import { DateModeType } from "../types";
+
+const api = client.api.owner.dashboard["total-income-outcome"]["$get"];
+
+export const useGetTotalIncomeOutcome = (
+    startDate: string,
+    endDate: string,
+    mode: DateModeType
+) => {
+    const query = useQuery({
+        queryKey: ["total-income-outcome", startDate, endDate, mode],
+        queryFn: async () => {
+            const response = await api({
+                query: {
+                    startDate,
+                    endDate,
+                    mode,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch pre-orders");
+            }
+
+            const data = await response.json();
+
+            return data.result;
+        },
+        enabled: !!startDate && !!endDate && !!mode,
+    });
+
+    return query;
+};

@@ -2,13 +2,17 @@
 import AdminPageWrapper from "@/components/AdminPageWrapper";
 import PageLoader from "@/components/PageLoader";
 import TextHeader from "@/components/TextHeader";
-import { useGetTotalCountInfomation } from "@/features/(owner)/dashboard/api/use-get-total-count-infomation";
 import DateRangeControl from "@/features/(owner)/dashboard/components/DateRangeControl";
+import IncomeOutComeSections from "@/features/(owner)/dashboard/components/IncomeOutComeSections";
 import TotalCardSection from "@/features/(owner)/dashboard/components/TotalCardSection";
 import { parseAsString, useQueryState } from "nuqs";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
+import { DateModeType } from "@/features/(owner)/dashboard/types";
+import CustomerSection from "@/features/(owner)/dashboard/components/CustomerSection";
 
 function DashboardPage() {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [mode, setMode] = useState<DateModeType>("day");
     const today = useMemo(() => {
         const d = new Date();
         return d.toISOString().split("T")[0];
@@ -23,14 +27,7 @@ function DashboardPage() {
         parseAsString.withDefault(today)
     );
 
-    const {
-        data: totalCountInfomation,
-        isLoading: isLoadingTotalCountInfomation,
-    } = useGetTotalCountInfomation(startDate, endDate);
-
-    if (isLoadingTotalCountInfomation) {
-        return <PageLoader />;
-    }
+    console.log(startDate, endDate, mode);
 
     return (
         <AdminPageWrapper className="bg-gray-50 h-[100dvh]">
@@ -44,20 +41,32 @@ function DashboardPage() {
                     endDate={endDate}
                     setStartDate={setStartDate}
                     setEndDate={setEndDate}
+                    mode={mode}
+                    setMode={setMode}
                 />
 
-                {/* TOTAL CARD SECTION */}
-                <TotalCardSection
-                    totalCountInfomation={
-                        totalCountInfomation ?? {
-                            totalAdult: 0,
-                            totalChild: 0,
-                            totalAmount: 0,
-                            totalOrder: 0,
-                            totalPreOrder: 0,
-                        }
-                    }
-                />
+                {isLoading ? (
+                    <PageLoader className="h-[50dvh]" />
+                ) : (
+                    <>
+                        <TotalCardSection
+                            startDate={startDate}
+                            endDate={endDate}
+                        />
+
+                        <IncomeOutComeSections
+                            startDate={startDate}
+                            endDate={endDate}
+                            mode={mode}
+                        />
+
+                        <CustomerSection
+                            startDate={startDate}
+                            endDate={endDate}
+                            mode={mode}
+                        />
+                    </>
+                )}
             </div>
         </AdminPageWrapper>
     );

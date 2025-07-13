@@ -1,38 +1,58 @@
 import React from "react";
-import { TotalCountInfomationType } from "../types";
 import { FaCalendarCheck, FaMoneyBillWave, FaUser } from "react-icons/fa";
+import { useGetTotalCountInfomation } from "../api/use-get-total-count-infomation";
+import { TotalCountInfomationType } from "../types";
+import PageLoader from "@/components/PageLoader";
 
 type TotalCardSectionProps = {
-    totalCountInfomation: TotalCountInfomationType;
+    startDate: string;
+    endDate: string;
 };
 
-function TotalCardSection({ totalCountInfomation }: TotalCardSectionProps) {
+function TotalCardSection({ startDate, endDate }: TotalCardSectionProps) {
+    const {
+        data: totalCountInfomation,
+        isLoading: isLoadingTotalCountInfomation,
+    } = useGetTotalCountInfomation(startDate, endDate);
+
+    const { totalAmount, totalAdult, totalChild, totalPreOrder, totalOrder } =
+        (totalCountInfomation as TotalCountInfomationType) ?? {
+            totalAmount: 0,
+            totalAdult: 0,
+            totalChild: 0,
+            totalPreOrder: 0,
+            totalOrder: 0,
+        };
+    const isLoading = isLoadingTotalCountInfomation;
     return (
-        <div className="size-full grid grid-cols-2 gap-4">
-            <TotalCard
-                title="ยอดขาย"
-                value={totalCountInfomation.totalAmount}
-                icon={<FaMoneyBillWave />}
-            />
-            <TotalCard
-                title="จำนวนคน"
-                value={
-                    totalCountInfomation.totalAdult +
-                    totalCountInfomation.totalChild
-                }
-                icon={<FaUser />}
-            />
-            <TotalCard
-                title="จำนวนการจอง"
-                value={totalCountInfomation.totalPreOrder}
-                icon={<FaCalendarCheck />}
-            />
-            <TotalCard
-                title="ออเดอร์ทั้งหมด"
-                value={totalCountInfomation.totalOrder}
-                icon={<FaCalendarCheck />}
-            />
-        </div>
+        <>
+            {isLoading ? (
+                <PageLoader />
+            ) : (
+                <div className="size-full grid grid-cols-2 gap-2">
+                    <TotalCard
+                        title="ยอดขาย"
+                        value={totalAmount}
+                        icon={<FaMoneyBillWave />}
+                    />
+                    <TotalCard
+                        title="จำนวนคน"
+                        value={totalAdult + totalChild}
+                        icon={<FaUser />}
+                    />
+                    <TotalCard
+                        title="จำนวนการจอง"
+                        value={totalPreOrder}
+                        icon={<FaCalendarCheck />}
+                    />
+                    <TotalCard
+                        title="ออเดอร์ทั้งหมด"
+                        value={totalOrder}
+                        icon={<FaCalendarCheck />}
+                    />
+                </div>
+            )}
+        </>
     );
 }
 
