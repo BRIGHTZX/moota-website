@@ -1,6 +1,5 @@
 "use client";
 import AdminPageWrapper from "@/components/AdminPageWrapper";
-import PageLoader from "@/components/PageLoader";
 import TextHeader from "@/components/TextHeader";
 import DateRangeControl from "@/features/(owner)/dashboard/components/DateRangeControl";
 import IncomeOutComeSections from "@/features/(owner)/dashboard/components/IncomeOutComeSections";
@@ -13,7 +12,6 @@ import StockSection from "@/features/(owner)/dashboard/components/StockSection";
 import TopDrinkSection from "@/features/(owner)/dashboard/components/TopDrinkSeciton";
 
 function DashboardPage() {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [mode, setMode] = useState<DateModeType>("day");
     const today = useMemo(() => {
         const d = new Date();
@@ -29,12 +27,10 @@ function DashboardPage() {
         parseAsString.withDefault(today)
     );
 
-    console.log(startDate, endDate, mode);
-
     return (
         <AdminPageWrapper className="bg-gray-50 h-[100dvh]">
             <div className="flex flex-col gap-4">
-                <TextHeader text="Overview" />
+                <TextHeader text="รายงานร้านค้า" />
 
                 {/* Date Range Control */}
                 <DateRangeControl
@@ -47,35 +43,23 @@ function DashboardPage() {
                     setMode={setMode}
                 />
 
-                {isLoading ? (
-                    <PageLoader className="h-[50dvh]" />
-                ) : (
-                    <>
-                        <TotalCardSection
-                            startDate={startDate}
-                            endDate={endDate}
-                        />
+                <TotalCardSection startDate={startDate} endDate={endDate} />
 
-                        <IncomeOutComeSections
-                            startDate={startDate}
-                            endDate={endDate}
-                            mode={mode}
-                        />
+                <IncomeOutComeSections
+                    startDate={startDate}
+                    endDate={endDate}
+                    mode={mode}
+                />
 
-                        <CustomerSection
-                            startDate={startDate}
-                            endDate={endDate}
-                            mode={mode}
-                        />
+                <CustomerSection
+                    startDate={startDate}
+                    endDate={endDate}
+                    mode={mode}
+                />
 
-                        <StockSection startDate={startDate} endDate={endDate} />
+                <StockSection startDate={startDate} endDate={endDate} />
 
-                        <TopDrinkSection
-                            startDate={startDate}
-                            endDate={endDate}
-                        />
-                    </>
-                )}
+                <TopDrinkSection startDate={startDate} endDate={endDate} />
             </div>
         </AdminPageWrapper>
     );

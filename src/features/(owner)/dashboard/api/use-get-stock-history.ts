@@ -3,14 +3,19 @@ import { useQuery } from "@tanstack/react-query";
 
 const api = client.api.owner.dashboard["stock-history"]["$get"];
 
-export const useGetStockHistory = (startDate: string, endDate: string) => {
+export const useGetStockHistory = (
+    startDate: string,
+    endDate: string,
+    category: "วัตถุดิบ" | "เครื่องดื่ม"
+) => {
     const query = useQuery({
-        queryKey: ["stock-history", startDate, endDate],
+        queryKey: ["stock-history", startDate, endDate, category],
         queryFn: async () => {
             const response = await api({
                 query: {
                     startDate,
                     endDate,
+                    category,
                 },
             });
 

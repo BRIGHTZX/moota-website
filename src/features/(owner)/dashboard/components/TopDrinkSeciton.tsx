@@ -10,15 +10,18 @@ import { th } from "date-fns/locale";
 import React from "react";
 import { useGetTopDrinks } from "../api/use-get-top-drinks";
 import TopDrinkTable from "./TopDrinkTable";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type TopDrinkSectionProps = {
     startDate: string;
     endDate: string;
 };
 function TopDrinkSection({ startDate, endDate }: TopDrinkSectionProps) {
-    const { data } = useGetTopDrinks(startDate, endDate);
+    const { data, isLoading: isLoadingTopDrinks } = useGetTopDrinks(
+        startDate,
+        endDate
+    );
 
-    console.log("data", data);
     return (
         <Card>
             <CardHeader>
@@ -35,7 +38,11 @@ function TopDrinkSection({ startDate, endDate }: TopDrinkSectionProps) {
             </CardHeader>
 
             <CardContent>
-                <TopDrinkTable topDrinks={data || []} />
+                {isLoadingTopDrinks ? (
+                    <Skeleton className="rounded-lg w-full h-[30dvh]" />
+                ) : (
+                    <TopDrinkTable topDrinks={data || []} />
+                )}
             </CardContent>
         </Card>
     );

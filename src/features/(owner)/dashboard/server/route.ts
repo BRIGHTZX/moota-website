@@ -11,9 +11,11 @@ import { DateModeType, StockHistoryType } from "../types";
 // checkout
 import { checkout as CheckoutTable } from "@/database/schema/checkout";
 import { preOrder as PreOrderTable } from "@/database/schema/pre-order";
+import { product as ProductTable } from "@/database/schema/product";
 import { importExportHistory as ImportExportHistoryTable } from "@/database/schema/import-export-history";
 import { formatStockHistory } from "@/services/formatStockHistory";
 import { groupTopDrinks } from "@/services/groupTopDrinks";
+import z from "zod";
 
 const app = new Hono()
     .get(
@@ -236,7 +238,12 @@ const app = new Hono()
     .get(
         "/stock-history",
         getCurrentUser,
-        zValidator("query", dateRangeSchema),
+        zValidator(
+            "query",
+            dateRangeSchema.extend({
+                category: z.enum(["วัตถุดิบ", "เครื่องดื่ม"]),
+            })
+        ),
         async (c) => {
             const user = c.get("user");
             if (!user) {
@@ -244,7 +251,7 @@ const app = new Hono()
             }
 
             try {
-                const { startDate, endDate } = c.req.valid("query");
+                const { startDate, endDate, category } = c.req.valid("query");
                 const start = new Date(startDate); // includes all time that day
                 const end = new Date(endDate);
                 end.setDate(end.getDate() + 1); // exclusive upper bound
@@ -255,6 +262,7 @@ const app = new Hono()
                         name: true,
                         stock: true,
                     },
+                    where: eq(ProductTable.category, category),
                 });
 
                 const stockHistory =

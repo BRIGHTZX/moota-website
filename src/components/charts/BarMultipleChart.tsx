@@ -17,6 +17,8 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
+import { Fragment } from "react";
+import { Skeleton } from "../ui/skeleton";
 
 type ChartConfigType = Record<
     string,
@@ -27,12 +29,14 @@ type BarMultipleChartProps<T> = {
     title: string;
     data: T[];
     config: ChartConfigType;
+    isLoading: boolean;
 };
 
 function BarMultipleChart<T>({
     title,
     data,
     config,
+    isLoading,
 }: BarMultipleChartProps<T>) {
     const formatNumber = (value: number) => value.toLocaleString();
     const chartConfig = config;
@@ -43,52 +47,60 @@ function BarMultipleChart<T>({
                 {/* <CardDescription>January - June 2024</CardDescription> */}
             </CardHeader>
             <CardContent>
-                <ChartContainer config={chartConfig}>
-                    <BarChart accessibilityLayer data={data}>
-                        <CartesianGrid vertical={false} />
-                        <XAxis
-                            dataKey="date"
-                            tickLine={false}
-                            tickMargin={20}
-                            axisLine={false}
-                        />
-                        <Bar
-                            dataKey={chartConfig.income.key}
-                            fill={chartConfig.income.color}
-                            fontSize={12}
-                            radius={4}
-                        >
-                            <LabelList
-                                dataKey={chartConfig.income.key}
-                                position="bottom"
-                                className="fill-black"
-                                formatter={(value: number) =>
-                                    formatNumber(value)
-                                }
-                            />
-                        </Bar>
-                        <Bar
-                            dataKey={chartConfig.outcome.key}
-                            fill={chartConfig.outcome.color}
-                            fontSize={12}
-                            radius={4}
-                        >
-                            <LabelList
-                                dataKey={chartConfig.outcome.key}
-                                position="bottom"
-                                className="fill-black"
-                                formatter={(value: number) =>
-                                    formatNumber(value)
-                                }
-                            />
-                        </Bar>
-                        <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent indicator="dashed" />}
-                        />
-                        <ChartLegend content={<ChartLegendContent />} />
-                    </BarChart>
-                </ChartContainer>
+                {isLoading ? (
+                    <Skeleton className="rounded-lg w-full h-[25dvh]" />
+                ) : (
+                    <Fragment>
+                        <ChartContainer config={chartConfig}>
+                            <BarChart accessibilityLayer data={data}>
+                                <CartesianGrid vertical={false} />
+                                <XAxis
+                                    dataKey="date"
+                                    tickLine={false}
+                                    tickMargin={20}
+                                    axisLine={false}
+                                />
+                                <Bar
+                                    dataKey={chartConfig.income.key}
+                                    fill={chartConfig.income.color}
+                                    fontSize={12}
+                                    radius={4}
+                                >
+                                    <LabelList
+                                        dataKey={chartConfig.income.key}
+                                        position="bottom"
+                                        className="fill-black"
+                                        formatter={(value: number) =>
+                                            formatNumber(value)
+                                        }
+                                    />
+                                </Bar>
+                                <Bar
+                                    dataKey={chartConfig.outcome.key}
+                                    fill={chartConfig.outcome.color}
+                                    fontSize={12}
+                                    radius={4}
+                                >
+                                    <LabelList
+                                        dataKey={chartConfig.outcome.key}
+                                        position="bottom"
+                                        className="fill-black"
+                                        formatter={(value: number) =>
+                                            formatNumber(value)
+                                        }
+                                    />
+                                </Bar>
+                                <ChartTooltip
+                                    cursor={false}
+                                    content={
+                                        <ChartTooltipContent indicator="dashed" />
+                                    }
+                                />
+                                <ChartLegend content={<ChartLegendContent />} />
+                            </BarChart>
+                        </ChartContainer>
+                    </Fragment>
+                )}
             </CardContent>
             <CardFooter className="flex-col items-start gap-2 text-sm">
                 <div className="flex gap-2 leading-none font-medium">

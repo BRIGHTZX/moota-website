@@ -12,14 +12,12 @@ function IncomeOutComeSections({
     endDate: string;
     mode: DateModeType;
 }) {
-    const { data, isLoading } = useGetTotalIncomeOutcome(
-        startDate,
-        endDate,
-        mode
-    );
+    const { data, isLoading: isLoadingTotalIncomeOutcome } =
+        useGetTotalIncomeOutcome(startDate, endDate, mode);
 
     return (
         <BarMultipleChart<TotalIncomeOutcomeType>
+            isLoading={isLoadingTotalIncomeOutcome}
             title="รายรับ-รายจ่าย"
             data={data as TotalIncomeOutcomeType[]}
             config={{
