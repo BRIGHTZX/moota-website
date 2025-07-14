@@ -9,6 +9,7 @@ import { parseAsString, useQueryState } from "nuqs";
 import React, { useMemo, useState } from "react";
 import { DateModeType } from "@/features/(owner)/dashboard/types";
 import CustomerSection from "@/features/(owner)/dashboard/components/CustomerSection";
+import StockSection from "@/features/(owner)/dashboard/components/StockSection";
 
 function DashboardPage() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -65,6 +66,8 @@ function DashboardPage() {
                             endDate={endDate}
                             mode={mode}
                         />
+
+                        <StockSection startDate={startDate} endDate={endDate} />
                     </>
                 )}
             </div>

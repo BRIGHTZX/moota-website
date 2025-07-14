@@ -2,15 +2,18 @@ import { db } from "@/database/db";
 import { getCurrentUser } from "@/services/middleware-hono";
 import { and, asc, count, eq, gte, lte, sql, sum } from "drizzle-orm";
 import { Hono } from "hono";
-
-// checkout
 import { zValidator } from "@hono/zod-validator";
 import { dateRangeSchema } from "../schemas";
+
+// service function
+import { groupData } from "@/services/groupData";
+import { DateModeType, StockHistoryType } from "../types";
+// checkout
 import { checkout as CheckoutTable } from "@/database/schema/checkout";
 import { preOrder as PreOrderTable } from "@/database/schema/pre-order";
+import { product as ProductTable } from "@/database/schema/product";
 import { importExportHistory as ImportExportHistoryTable } from "@/database/schema/import-export-history";
-import { groupData } from "@/services/groupData";
-import { DateModeType } from "../types";
+import { formatStockHistory } from "@/services/formatStockHistory";
 
 const app = new Hono()
     .get(
@@ -226,6 +229,110 @@ const app = new Hono()
                     },
                     200
                 );
+            } catch (error) {
+                console.log(error);
+                return c.json({ error: "Internal server error" }, 500);
+            }
+        }
+    )
+    .get(
+        "/stock-history",
+        getCurrentUser,
+        zValidator("query", dateRangeSchema),
+        async (c) => {
+            const user = c.get("user");
+            if (!user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
+            try {
+                const { startDate, endDate } = c.req.valid("query");
+                const start = new Date(startDate); // includes all time that day
+                const end = new Date(endDate);
+                end.setDate(end.getDate() + 1); // exclusive upper bound
+
+                const productRaw = await db.query.product.findMany({
+                    columns: {
+                        id: true,
+                        name: true,
+                        stock: true,
+                    },
+                });
+
+                const stockHistory =
+                    await db.query.importExportHistory.findMany({
+                        columns: {
+                            productId: true,
+                            stock: true,
+                            type: true,
+                        },
+                        where: and(
+                            gte(ImportExportHistoryTable.updatedAt, start),
+                            lte(ImportExportHistoryTable.updatedAt, end)
+                        ),
+                    });
+
+                const formattedStockHistory = formatStockHistory(
+                    stockHistory as StockHistoryType[]
+                );
+
+                console.log("formattedStockHistory", formattedStockHistory);
+
+                const formattedProduct = productRaw.map((item) => {
+                    const stockHistory = formattedStockHistory?.find(
+                        (stock) => stock.productId === item.id
+                    );
+
+                    return {
+                        productId: item.id,
+                        productName: item.name,
+                        total: item.stock,
+                        totalIn: stockHistory?.totalIn ?? 0,
+                        totalOut: stockHistory?.totalOut ?? 0,
+                    };
+                });
+                return c.json({
+                    message: "Stock history fetched successfully",
+                    result: formattedProduct,
+                });
+            } catch (error) {
+                console.log(error);
+                return c.json({ error: "Internal server error" }, 500);
+            }
+        }
+    )
+    .get(
+        "/top-drink",
+        getCurrentUser,
+        zValidator("query", dateRangeSchema),
+        async (c) => {
+            const user = c.get("user");
+            if (!user) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
+            try {
+                const { startDate, endDate } = c.req.valid("query");
+                const start = new Date(startDate); // includes all time that day
+                const end = new Date(endDate);
+                end.setDate(end.getDate() + 1); // exclusive upper bound
+
+                const topDrink = await db.query.checkoutInfos.findMany({
+                    columns: {
+                        productId: true,
+                        quantity: true,
+                        totalPrice: true,
+                    },
+                    where: and(
+                        gte(CheckoutTable.updatedAt, start),
+                        lte(CheckoutTable.updatedAt, end)
+                    ),
+                });
+
+                return c.json({
+                    message: "Top drink fetched successfully",
+                    result: topDrink,
+                });
             } catch (error) {
                 console.log(error);
                 return c.json({ error: "Internal server error" }, 500);

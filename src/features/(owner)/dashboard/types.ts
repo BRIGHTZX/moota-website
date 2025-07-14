@@ -22,3 +22,22 @@ export type TotalCustomerType = {
     date: string;
     total: number;
 };
+
+export type ImportExportStockType = {
+    productName: string;
+    total: number;
+    totalIn: number;
+    totalOut: number;
+};
+
+export type StockHistoryType = {
+    productId: string;
+    stock: number;
+    type: "import" | "export";
+};
+
+export type TopDrinkType = {
+    productName: string;
+    totalAmount: number;
+    totalPrice: number;
+};
