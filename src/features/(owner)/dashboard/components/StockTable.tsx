@@ -45,15 +45,15 @@ function StockTable({ products }: StockTableProps) {
                         }
 
                         if (columnName === "total") {
-                            return <div className="text-start">เหลือ</div>;
+                            return <div className="text-end">เหลือ</div>;
                         }
 
                         if (columnName === "totalIn") {
-                            return <div className="text-start">นำเข้า</div>;
+                            return <div className="text-end">นำเข้า</div>;
                         }
 
                         if (columnName === "totalOut") {
-                            return <div className="text-start">นำออก</div>;
+                            return <div className="text-end">นำออก</div>;
                         }
 
                         return <div className="text-start">{columnName}</div>;
@@ -62,12 +62,12 @@ function StockTable({ products }: StockTableProps) {
                         const value = getValue();
 
                         if (columnName === "total") {
-                            return <div className="text-start">{value}</div>;
+                            return <div className="text-end">{value}</div>;
                         }
 
                         if (columnName === "totalIn") {
                             return (
-                                <div className="text-start text-green-500">
+                                <div className="text-end text-green-500">
                                     +{value}
                                 </div>
                             );
@@ -75,7 +75,7 @@ function StockTable({ products }: StockTableProps) {
 
                         if (columnName === "totalOut") {
                             return (
-                                <div className="text-start text-red-500">
+                                <div className="text-end text-red-500">
                                     -{value}
                                 </div>
                             );

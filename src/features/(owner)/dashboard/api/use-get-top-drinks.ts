@@ -1,11 +1,11 @@
 import { client } from "@/lib/rpc";
 import { useQuery } from "@tanstack/react-query";
 
-const api = client.api.owner.dashboard["stock-history"]["$get"];
+const api = client.api.owner.dashboard["top-drink"]["$get"];
 
-export const useGetStockHistory = (startDate: string, endDate: string) => {
+export const useGetTopDrinks = (startDate: string, endDate: string) => {
     const query = useQuery({
-        queryKey: ["stock-history", startDate, endDate],
+        queryKey: ["top-drinks", startDate, endDate],
         queryFn: async () => {
             const response = await api({
                 query: {

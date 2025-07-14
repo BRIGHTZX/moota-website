@@ -10,6 +10,7 @@ import React, { useMemo, useState } from "react";
 import { DateModeType } from "@/features/(owner)/dashboard/types";
 import CustomerSection from "@/features/(owner)/dashboard/components/CustomerSection";
 import StockSection from "@/features/(owner)/dashboard/components/StockSection";
+import TopDrinkSection from "@/features/(owner)/dashboard/components/TopDrinkSeciton";
 
 function DashboardPage() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -68,6 +69,11 @@ function DashboardPage() {
                         />
 
                         <StockSection startDate={startDate} endDate={endDate} />
+
+                        <TopDrinkSection
+                            startDate={startDate}
+                            endDate={endDate}
+                        />
                     </>
                 )}
             </div>

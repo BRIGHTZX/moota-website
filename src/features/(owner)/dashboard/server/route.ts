@@ -11,9 +11,9 @@ import { DateModeType, StockHistoryType } from "../types";
 // checkout
 import { checkout as CheckoutTable } from "@/database/schema/checkout";
 import { preOrder as PreOrderTable } from "@/database/schema/pre-order";
-import { product as ProductTable } from "@/database/schema/product";
 import { importExportHistory as ImportExportHistoryTable } from "@/database/schema/import-export-history";
 import { formatStockHistory } from "@/services/formatStockHistory";
+import { groupTopDrinks } from "@/services/groupTopDrinks";
 
 const app = new Hono()
     .get(
@@ -215,8 +215,6 @@ const app = new Hono()
                     orderBy: [asc(CheckoutTable.updatedAt)],
                 });
 
-                console.log("raw", customerCount);
-
                 const groupedCustomer = groupData(
                     customerCount,
                     "day" as DateModeType
@@ -276,8 +274,6 @@ const app = new Hono()
                     stockHistory as StockHistoryType[]
                 );
 
-                console.log("formattedStockHistory", formattedStockHistory);
-
                 const formattedProduct = productRaw.map((item) => {
                     const stockHistory = formattedStockHistory?.find(
                         (stock) => stock.productId === item.id
@@ -317,11 +313,19 @@ const app = new Hono()
                 const end = new Date(endDate);
                 end.setDate(end.getDate() + 1); // exclusive upper bound
 
-                const topDrink = await db.query.checkoutInfos.findMany({
+                const topDrinkRaw = await db.query.checkoutInfos.findMany({
                     columns: {
                         productId: true,
                         quantity: true,
                         totalPrice: true,
+                    },
+                    with: {
+                        product: {
+                            columns: {
+                                id: true,
+                                name: true,
+                            },
+                        },
                     },
                     where: and(
                         gte(CheckoutTable.updatedAt, start),
@@ -329,9 +333,15 @@ const app = new Hono()
                     ),
                 });
 
+                console.log("topDrinkRaw", topDrinkRaw);
+
+                const groupedProduct = groupTopDrinks(topDrinkRaw);
+
+                console.log("groupedProduct", groupedProduct);
+
                 return c.json({
                     message: "Top drink fetched successfully",
-                    result: topDrink,
+                    result: groupedProduct,
                 });
             } catch (error) {
                 console.log(error);

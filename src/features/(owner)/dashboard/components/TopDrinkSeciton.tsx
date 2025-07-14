@@ -8,23 +8,37 @@ import {
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
 import React from "react";
-import StockTable from "./StockTable";
-import { useGetStockHistory } from "../api/use-get-stock-history";
+import { useGetTopDrinks } from "../api/use-get-top-drinks";
+import TopDrinkTable from "./TopDrinkTable";
 
-type StockSectionProps = {
+type TopDrinkSectionProps = {
     startDate: string;
     endDate: string;
 };
-function StockSection({ startDate, endDate }: StockSectionProps) {
+function TopDrinkSection({ startDate, endDate }: TopDrinkSectionProps) {
+    const { data } = useGetTopDrinks(startDate, endDate);
+
+    console.log("data", data);
     return (
         <Card>
             <CardHeader>
-                <CardTitle>เครื่องดื่มขายดี</CardTitle>
+                <CardTitle>เครื่องดื่มขายดี 10 อันดับแรก</CardTitle>
+                <CardDescription>
+                    {format(new Date(startDate), "dd MMM yyyy", {
+                        locale: th,
+                    })}
+                    -{" "}
+                    {format(new Date(endDate), "dd MMM yyyy", {
+                        locale: th,
+                    })}
+                </CardDescription>
             </CardHeader>
 
-            <CardContent></CardContent>
+            <CardContent>
+                <TopDrinkTable topDrinks={data || []} />
+            </CardContent>
         </Card>
     );
 }
 
-export default StockSection;
+export default TopDrinkSection;

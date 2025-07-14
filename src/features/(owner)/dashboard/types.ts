@@ -37,7 +37,18 @@ export type StockHistoryType = {
 };
 
 export type TopDrinkType = {
+    productId: string;
     productName: string;
-    totalAmount: number;
+    quantity: number;
     totalPrice: number;
+};
+
+export type TopDrinkRawType = {
+    productId: string;
+    quantity: number;
+    totalPrice: number;
+    product: {
+        id: string;
+        name: string;
+    };
 };

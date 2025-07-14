@@ -24,7 +24,7 @@ type rowType = TopDrinkType;
 function TopDrinkTable({ topDrinks }: TopDrinkTableProps) {
     const columnHeaderArray: Array<keyof rowType> = [
         "productName",
-        "totalAmount",
+        "quantity",
         "totalPrice",
     ];
 
@@ -43,12 +43,12 @@ function TopDrinkTable({ topDrinks }: TopDrinkTableProps) {
                             return <div className="text-start">ชื่อสินค้า</div>;
                         }
 
-                        if (columnName === "totalAmount") {
-                            return <div className="text-start">จำนวน</div>;
+                        if (columnName === "quantity") {
+                            return <div className="text-end">จำนวน</div>;
                         }
 
                         if (columnName === "totalPrice") {
-                            return <div className="text-start">ราคา</div>;
+                            return <div className="text-end">ราคา</div>;
                         }
 
                         return <div className="text-start">{columnName}</div>;
@@ -56,13 +56,13 @@ function TopDrinkTable({ topDrinks }: TopDrinkTableProps) {
                     cell: ({ getValue }) => {
                         const value = getValue();
 
-                        if (columnName === "totalAmount") {
-                            return <div className="text-start">{value}</div>;
+                        if (columnName === "quantity") {
+                            return <div className="text-end">{value}</div>;
                         }
 
                         if (columnName === "totalPrice") {
                             return (
-                                <div className="text-start text-green-500">
+                                <div className="text-end text-green-500">
                                     +{value}
                                 </div>
                             );
