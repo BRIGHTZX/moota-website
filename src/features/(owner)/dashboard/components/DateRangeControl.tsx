@@ -11,7 +11,6 @@ type DateRangeControlProps = {
     endDate: string;
     setStartDate: (date: string) => void;
     setEndDate: (date: string) => void;
-    mode: DateModeType;
     setMode: (mode: DateModeType) => void;
 };
 function DateRangeControl({
@@ -20,7 +19,6 @@ function DateRangeControl({
     endDate,
     setStartDate,
     setEndDate,
-    mode,
     setMode,
 }: DateRangeControlProps) {
     const [dateType, setDateType] = useState<

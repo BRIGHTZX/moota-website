@@ -1,7 +1,6 @@
 import ChartLineLabel from "@/components/charts/LineChartLabel";
 import { useGetTotalCustomer } from "../api/use-get-total-customer";
 import { DateModeType, TotalCustomerType } from "../types";
-import { Skeleton } from "@/components/ui/skeleton";
 
 type CustomerSectionProps = {
     startDate: string;
