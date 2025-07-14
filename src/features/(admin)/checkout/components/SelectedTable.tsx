@@ -37,8 +37,8 @@ const TableSelector = ({
                 handleSelectedTable(tables);
             }}
             className={cn(
-                "border border-coffee-dark rounded-md p-4 bg-coffee-light w-full flex items-center justify-center",
-                isSelected && "bg-coffee-dark text-white"
+                "border border-gray-300 shadow-sm rounded-md p-4 bg-white w-full flex items-center justify-center",
+                isSelected && "bg-blue-500 text-white"
             )}
         >
             <p className="text-sm font-bold">{tables.tableNumber}</p>

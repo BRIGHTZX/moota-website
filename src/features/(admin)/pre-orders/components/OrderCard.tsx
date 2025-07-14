@@ -11,7 +11,7 @@ type OrderCardProps = {
 
 function OrderCard({ order }: OrderCardProps) {
     return (
-        <div className="border mt-4 border-coffee-dark p-4 rounded-md">
+        <div className="border mt-4 border-gray-300 shadow-sm p-4 rounded-md bg-white">
             <div className="">
                 <h1 className="text-lg font-semibold">
                     Order ID : {order.preOrderNumber}
@@ -53,7 +53,7 @@ function OrderCard({ order }: OrderCardProps) {
                 <ConfirmOrder orderId={order.id} />
                 <Button
                     asChild
-                    variant="coffeeOutline"
+                    variant="outline"
                     className="w-full rounded-full"
                 >
                     <Link href={`/admin/orders/${order.id}`}>ดูรายละเอียด</Link>

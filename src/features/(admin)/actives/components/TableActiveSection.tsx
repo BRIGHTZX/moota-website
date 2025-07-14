@@ -25,7 +25,7 @@ function TableActiveSection({
     } = active;
 
     return (
-        <div className="border border-coffee-dark rounded-lg p-4 relative">
+        <div className="border border-gray-300 shadow-sm rounded-lg p-4 relative bg-white">
             {/* Time Info */}
             <div className="text-right">
                 <p className="text-gray-500 text-xs font-bold">
@@ -60,11 +60,10 @@ function TableActiveSection({
                 ))}
             </div>
 
-            <div className="mt-4">
+            <div className="mt-4 flex justify-end">
                 <Button
                     size="sm"
-                    variant="coffeePrimary"
-                    className="w-full"
+                    className="bg-red-500 hover:bg-red-600  px-8"
                     onClick={() => {
                         setOpenAlertDialog(true);
                         setActiveId(active.activeId);
@@ -88,8 +87,8 @@ const HaveTable = ({
 }) => {
     return (
         <Link href={`/admin/actives/orders/${activeInfoId}`}>
-            <div className="bg-coffee-light rounded-lg p-4 border border-coffee-dark cursor-pointer hover:bg-coffee-brown transition-all duration-300">
-                <p className="text-coffee-dark text-xs text-center font-bold">
+            <div className="bg-blue-300 rounded-lg p-4 border border-black cursor-pointer hover:bg-blue-400 transition-all duration-300">
+                <p className="text-black text-xs text-center font-bold">
                     {tableNumber}
                 </p>
             </div>

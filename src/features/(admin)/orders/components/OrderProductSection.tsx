@@ -91,12 +91,12 @@ function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
                 </div>
             )}
             {/* Order List and Send Data */}
-            <div className="flex flex-col gap-2 border border-coffee-dark rounded-md mt-4 p-4">
+            <div className="flex flex-col gap-2 border-2 border-black rounded-md mt-4 p-4">
                 <div className="flex items-center justify-between">
-                    <p className="text-coffee-dark text-lg font-bold">
+                    <p className="text-black text-lg font-bold">
                         รายการสั่งซื้อ
                     </p>
-                    <p className="text-coffee-dark text-sm font-bold">
+                    <p className="text-black text-sm font-bold">
                         รวม{" "}
                         {orderList.reduce(
                             (acc, item) => acc + item.quantity,
@@ -133,7 +133,7 @@ function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
                             disabled={
                                 orderList.length === 0 || isPendingCreateOrder
                             }
-                            variant="coffeePrimary"
+                            variant="default"
                             className="w-full"
                             onClick={() => setOpenAlertDialog(true)}
                         >

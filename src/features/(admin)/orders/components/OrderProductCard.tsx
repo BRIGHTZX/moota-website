@@ -67,27 +67,27 @@ function OrderProductCard({
     }, [orderList, product.id]);
 
     return (
-        <div className="bg-white border border-coffee-dark/50 rounded-lg overflow-hidden w-full relative">
+        <div className="bg-white border border-gray-300 shadow-sm rounded-lg overflow-hidden w-full relative">
             <div className="flex items-stretch h-24">
                 {/* Product Section */}
                 <div className="flex items-center gap-2 size-full">
-                    <div className="min-h-24 min-w-24 size-24 rounded-lg border-r border-coffee-dark/50 overflow-hidden relative">
+                    <div className="min-h-24 min-w-24 size-24 rounded-lg border-r border-gray-300 bg-white overflow-hidden relative">
                         <Image
                             src={product.image || "/product-default.jpg"}
                             alt={product.name}
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            className="object-cover"
+                            className="object-cover bg-white"
                             priority
                         />
                     </div>
 
                     <div className="flex justify-between flex-col w-full h-full gap-2 p-2">
                         <div className="flex flex-col">
-                            <p className="text-coffee-dark text-sm font-bold truncate">
+                            <p className="text-black text-sm font-bold truncate">
                                 {product.name}
                             </p>
-                            <p className="text-coffee-dark text-sm font-bold">
+                            <p className="text-black text-sm font-bold">
                                 {product.price} ฿
                             </p>
                         </div>
@@ -113,7 +113,7 @@ function OrderProductCard({
                                 -
                             </button>
                             <div className="size-8 rounded-md flex items-center justify-center select-none">
-                                <p className="text-coffee-dark text-sm font-bold">
+                                <p className="text-black text-sm font-bold">
                                     {quantity}
                                 </p>
                             </div>
@@ -138,7 +138,7 @@ function OrderProductCard({
             {quantity > 0 && (
                 <div className="absolute bottom-0 right-2 p-2 text-end">
                     <p className="text-xs text-gray-500">รวม</p>
-                    <p className="text-coffee-dark text-sm font-bold">
+                    <p className="text-black text-sm font-bold">
                         {totalPrice} ฿
                     </p>
                 </div>

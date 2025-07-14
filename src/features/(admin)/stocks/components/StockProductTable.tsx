@@ -61,7 +61,7 @@ function StockProductTable({
                 <DropdownMenu>
                     <DropdownMenuTrigger
                         asChild
-                        className="grid place-content-center  bg-coffee-light border border-coffee-dark"
+                        className="grid place-content-center  bg-blue-100 border border-gray-300 shadow-sm"
                     >
                         <Button variant="ghost" className="size-6">
                             <MoreHorizontalIcon className="size-4" />
@@ -120,7 +120,7 @@ function StockProductTable({
 
                         if (columnName === "stocks") {
                             return (
-                                <div className="text-center">
+                                <div className="text-end">
                                     <p>จำนวน</p>
                                 </div>
                             );
@@ -166,7 +166,7 @@ function StockProductTable({
                                 unit: string;
                             };
                             return (
-                                <p>
+                                <p className="text-end">
                                     {stock.stock} {stock.unit}
                                 </p>
                             );

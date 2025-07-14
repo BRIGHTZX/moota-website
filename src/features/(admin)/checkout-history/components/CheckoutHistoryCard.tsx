@@ -11,7 +11,7 @@ function CheckoutHistoryCard({
     checkoutHistory: CheckoutHistoryType;
 }) {
     return (
-        <div className="flex flex-col gap-2 border border-gray-500 rounded-md p-4">
+        <div className="flex flex-col gap-2 border border-gray-300 shadow-sm rounded-md p-4 bg-white">
             <div className="flex items-center justify-end gap-2">
                 <p className="text-xs text-gray-500">
                     {new Date(checkoutHistory.updatedAt).toLocaleDateString(

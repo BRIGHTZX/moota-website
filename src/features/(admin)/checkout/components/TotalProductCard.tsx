@@ -3,7 +3,7 @@ import { TotalProduct } from "../types";
 
 function TotalProductCard({ product }: { product: TotalProduct }) {
     return (
-        <div className="flex items-center justify-between border border-gray-300 bg-gray-50 rounded-md px-4 py-2">
+        <div className="flex items-center justify-between border border-gray-300 shadow-sm bg-white rounded-md px-4 py-2">
             <div className="flex flex-col items-start">
                 <p>{product.productName}</p>
 

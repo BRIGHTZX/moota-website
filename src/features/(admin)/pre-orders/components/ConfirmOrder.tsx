@@ -32,7 +32,7 @@ function ConfirmOrder({ orderId }: ConfirmOrderProps) {
                 onClick={() => {
                     setIsOpen(true);
                 }}
-                variant="coffeePrimary"
+                variant="default"
                 className="rounded-full w-full"
             >
                 ยืนยันการจอง

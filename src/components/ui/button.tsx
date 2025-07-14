@@ -19,10 +19,10 @@ const buttonVariants = cva(
                     "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
                 ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
                 link: "text-primary underline-offset-4 hover:underline",
-                coffeePrimary:
-                    "bg-coffee-dark  text-coffee-light shadow-xs hover:bg-coffee-dark/90 focus-visible:ring-coffee-dark/20 dark:focus-visible:ring-coffee-dark/40 dark:bg-coffee-dark/60",
-                coffeeOutline:
-                    "border bg-coffee-light text-coffee-dark shadow-xs hover:bg-coffee-light/90 focus-visible:ring-coffee-light/20 dark:focus-visible:ring-coffee-light/40 border border-coffee-dark dark:bg-coffee-light/60",
+                // coffeePrimary:
+                //     "bg-coffee-dark  text-coffee-light shadow-xs hover:bg-coffee-dark/90 focus-visible:ring-coffee-dark/20 dark:focus-visible:ring-coffee-dark/40 dark:bg-coffee-dark/60",
+                // coffeeOutline:
+                //     "border bg-coffee-light text-coffee-dark shadow-xs hover:bg-coffee-light/90 focus-visible:ring-coffee-light/20 dark:focus-visible:ring-coffee-light/40 border border-coffee-dark dark:bg-coffee-light/60",
             },
             size: {
                 default: "h-9 px-4 py-2 has-[>svg]:px-3",

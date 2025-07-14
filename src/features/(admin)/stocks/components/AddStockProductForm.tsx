@@ -72,10 +72,10 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                     id="add-stock-product-form"
                     onSubmit={form.handleSubmit(onSubmit)}
                 >
-                    <DialogContent className=" border-coffee-dark sm:max-w-[425px]">
+                    <DialogContent className=" border-gray-300 shadow-sm sm:max-w-[425px]">
                         <DialogHeader>
                             <DialogTitle asChild>
-                                <p className="text-coffee-dark text-lg font-bold">
+                                <p className="text-black text-lg font-bold">
                                     เพิ่มสินค้าใหม่
                                 </p>
                             </DialogTitle>
@@ -93,8 +93,8 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                 nameInSchema="name"
                                 placeholder="ชื่อสินค้า"
                                 type="text"
-                                labelClassName="text-sm font-medium text-coffee-dark"
-                                inputClassName="text-sm bg-white border border-coffee-dark"
+                                labelClassName="text-sm font-medium text-black"
+                                inputClassName="text-sm bg-white border border-gray-300 shadow-sm"
                                 errorClassName="right-0"
                                 disabled={isAddingProductStock}
                             />
@@ -103,8 +103,8 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                 nameInSchema="unit"
                                 placeholder="หน่วย"
                                 type="text"
-                                labelClassName="text-sm font-medium text-coffee-dark"
-                                inputClassName="text-sm bg-white border  border-coffee-dark"
+                                labelClassName="text-sm font-medium text-black"
+                                inputClassName="text-sm bg-white border  border-gray-300 shadow-sm"
                                 errorClassName="right-0"
                                 disabled={isAddingProductStock}
                             />
@@ -115,8 +115,8 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                         nameInSchema="price"
                                         placeholder="ราคา"
                                         type="number"
-                                        labelClassName="text-sm font-medium text-coffee-dark"
-                                        inputClassName="text-sm bg-white border border-coffee-dark"
+                                        labelClassName="text-sm font-medium text-black"
+                                        inputClassName="text-sm bg-white border border-gray-300 shadow-sm"
                                         errorClassName="right-0"
                                         disabled={isAddingProductStock}
                                     />
@@ -125,8 +125,8 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                     fieldTitle="หมวดหมู่"
                                     nameInSchema="category"
                                     placeholder="หมวดหมู่"
-                                    labelClassName="text-sm font-medium text-coffee-dark"
-                                    inputClassName="text-sm bg-white border w-full border-coffee-dark"
+                                    labelClassName="text-sm font-medium text-black"
+                                    inputClassName="text-sm bg-white border w-full border-gray-300 shadow-sm"
                                     errorClassName="right-0"
                                     options={StockProductCategory}
                                     disabled={isAddingProductStock}
@@ -137,8 +137,8 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                 nameInSchema="limitAlert"
                                 placeholder="จำนวนสินค้าที่ต้องการแจ้งเตือน"
                                 type="number"
-                                labelClassName="text-sm font-medium text-coffee-dark"
-                                inputClassName="text-sm bg-white border  border-coffee-dark"
+                                labelClassName="text-sm font-medium text-black"
+                                inputClassName="text-sm bg-white border  border-gray-300 shadow-sm"
                                 errorClassName="right-0"
                                 disabled={isAddingProductStock}
                             />
@@ -148,7 +148,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                 <DialogClose asChild>
                                     <Button
                                         type="button"
-                                        variant="coffeeOutline"
+                                        variant="outline"
                                         disabled={isAddingProductStock}
                                     >
                                         ยกเลิก
@@ -157,7 +157,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                                 <Button
                                     form="add-stock-product-form"
                                     type="submit"
-                                    variant="coffeePrimary"
+                                    variant="default"
                                     disabled={isAddingProductStock}
                                 >
                                     เพิ่มสินค้าใหม่

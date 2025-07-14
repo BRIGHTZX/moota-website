@@ -88,7 +88,7 @@ function StockDetailPage({
             <TextHeader text="รายละเอียดสินค้า" />
 
             {isLoadingProductStock ? (
-                <PageLoader className="h-[400px]" />
+                <PageLoader className="h-[calc(100vh-10rem)]" />
             ) : (
                 <FormProvider {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -121,7 +121,7 @@ function StockDetailPage({
                                     nameInSchema="unit"
                                     placeholder="หน่วยของสินค้า"
                                     inputClassName="text-sm bg-white  w-full "
-                                    labelClassName="text-sm font-medium text-coffee-dark"
+                                    labelClassName="text-sm font-medium text-black"
                                     disabled={!isEditing || isLoading}
                                 />
 
@@ -149,7 +149,7 @@ function StockDetailPage({
                                     placeholder="จำนวนสินค้าที่ต้องการแจ้งเตือน"
                                     type="number"
                                     inputClassName="text-sm bg-white  w-full "
-                                    labelClassName="text-sm font-medium text-coffee-dark"
+                                    labelClassName="text-sm font-medium text-black"
                                     disabled={!isEditing || isLoading}
                                 />
 
@@ -157,7 +157,7 @@ function StockDetailPage({
                                     {isEditing && (
                                         <Button
                                             key="save-button"
-                                            variant="coffeePrimary"
+                                            variant="default"
                                             className="w-full"
                                             type="submit"
                                             disabled={isLoading}
@@ -173,7 +173,7 @@ function StockDetailPage({
                                     {isEditing ? (
                                         <Button
                                             key="edit-button"
-                                            variant="coffeeOutline"
+                                            variant="outline"
                                             className="w-full"
                                             type="button"
                                             onClick={() => setIsEditing(false)}
@@ -184,7 +184,6 @@ function StockDetailPage({
                                     ) : (
                                         <Button
                                             key="cancel-button"
-                                            variant="coffeePrimary"
                                             className="w-full"
                                             type="button"
                                             onClick={() => setIsEditing(true)}

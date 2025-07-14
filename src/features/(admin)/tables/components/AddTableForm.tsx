@@ -72,10 +72,10 @@ function AddTableForm({
                     id="add-table-form"
                     onSubmit={form.handleSubmit(handleSubmit)}
                 >
-                    <DialogContent className=" border-coffee-dark sm:max-w-[425px]">
+                    <DialogContent className="border border-black sm:max-w-[425px]">
                         <DialogHeader>
                             <DialogTitle asChild>
-                                <p className="text-coffee-dark text-lg font-bold">
+                                <p className="text-black text-lg font-bold">
                                     เปิดโต๊ะ
                                 </p>
                             </DialogTitle>
@@ -86,8 +86,8 @@ function AddTableForm({
                                 nameInSchema="customerName"
                                 placeholder="ชื่อลูกค้า"
                                 type="text"
-                                labelClassName="text-sm font-medium text-coffee-dark"
-                                inputClassName="text-sm bg-white border border-coffee-dark"
+                                labelClassName="text-sm font-medium text-black"
+                                inputClassName="text-sm bg-white border border-black"
                                 errorClassName="right-0"
                                 disabled={isLoading}
                             />
@@ -96,8 +96,8 @@ function AddTableForm({
                                 nameInSchema="customerPhone"
                                 placeholder="เบอร์โทรศัพท์"
                                 type="text"
-                                labelClassName="text-sm font-medium text-coffee-dark"
-                                inputClassName="text-sm bg-white border border-coffee-dark"
+                                labelClassName="text-sm font-medium text-black"
+                                inputClassName="text-sm bg-white border border-black"
                                 errorClassName="right-0"
                                 disabled={isLoading}
                             />
@@ -106,8 +106,8 @@ function AddTableForm({
                                 nameInSchema="adultNumber"
                                 placeholder="จำนวนผู้ใหญ่"
                                 type="number"
-                                labelClassName="text-sm font-medium text-coffee-dark"
-                                inputClassName="text-sm bg-white border border-coffee-dark"
+                                labelClassName="text-sm font-medium text-black"
+                                inputClassName="text-sm bg-white border border-black"
                                 errorClassName="right-0"
                                 disabled={isLoading}
                             />
@@ -116,13 +116,13 @@ function AddTableForm({
                                 nameInSchema="childNumber"
                                 placeholder="จำนวนเด็ก"
                                 type="number"
-                                labelClassName="text-sm font-medium text-coffee-dark"
-                                inputClassName="text-sm bg-white border border-coffee-dark"
+                                labelClassName="text-sm font-medium text-black"
+                                inputClassName="text-sm bg-white border border-black"
                                 errorClassName="right-0"
                                 disabled={isLoading}
                             />
                             <div className="flex justify-between mt-4">
-                                <p className="text-sm font-medium text-nowrap w-[100px] text-coffee-dark">
+                                <p className="text-sm font-medium text-nowrap w-[100px] text-black">
                                     โต๊ะที่เลือก
                                 </p>
                                 <div className="flex items-center justify-end w-[185px] gap-2 flex-wrap">
@@ -140,7 +140,7 @@ function AddTableForm({
                                 <Button
                                     disabled={isLoading}
                                     type="button"
-                                    variant="coffeeOutline"
+                                    variant="outline"
                                     className="w-full"
                                 >
                                     ยกเลิก
@@ -149,7 +149,6 @@ function AddTableForm({
                             <Button
                                 form="add-table-form"
                                 type="submit"
-                                variant="coffeePrimary"
                                 disabled={
                                     isLoading || selectedTables.length === 0
                                 }
@@ -169,7 +168,7 @@ export default AddTableForm;
 
 const BadgeTable = ({ tableNumber }: { tableNumber: string }) => {
     return (
-        <div className="bg-coffee-dark text-coffee-light rounded-md w-[2.5rem] h-[1.5rem] text-sm flex items-center justify-center">
+        <div className="bg-blue-500 text-white rounded-md w-[2.5rem] h-[1.5rem] text-sm flex items-center justify-center">
             <p className="text-sm font-semibold">{tableNumber}</p>
         </div>
     );

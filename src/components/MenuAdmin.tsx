@@ -43,7 +43,7 @@ function MenuAdmin() {
     const pathname = usePathname();
     return (
         <div className="fixed bottom-0 left-0 w-full h-20 bg-white p-2 rounded-t-md shadow-lg border-t border-gray-200">
-            <ul className="flex items-center justify-center overflow-hidden bg-coffee-light rounded-md w-full h-full">
+            <ul className="flex items-center justify-center overflow-hidden bg-gray-200 rounded-md w-full h-full">
                 {menuItems.map((item) => (
                     <MenuItem
                         key={item.href}
@@ -75,23 +75,23 @@ const MenuItem = ({
         <Link
             href={href}
             className={cn(
-                " cursor-pointer flex-1 size-full overflow-hidden group  bg-coffee-light hover:bg-coffee-brown transition-all duration-300 rounded-md",
-                active && "bg-coffee-brown  rounded-md"
+                " cursor-pointer flex-1 size-full overflow-hidden group hover:bg-primary/80 transition-all duration-300 rounded-md",
+                active && "bg-primary  rounded-md"
             )}
         >
             <li className="flex flex-col items-center justify-center">
                 <button
                     className={cn(
-                        "p-2 rounded-md  text-coffee-dark group-hover:text-coffee-light transition-all duration-300",
-                        active && "text-coffee-light"
+                        "p-2 rounded-md  text-black group-hover:text-white transition-all duration-300",
+                        active && "text-white"
                     )}
                 >
                     {icon}
                 </button>
                 <span
                     className={cn(
-                        "text-sm font-medium text-coffee-dark group-hover:text-coffee-light transition-all duration-300",
-                        active && "text-coffee-light"
+                        "text-sm font-medium text-black group-hover:text-white transition-all duration-300",
+                        active && "text-white"
                     )}
                 >
                     {text}

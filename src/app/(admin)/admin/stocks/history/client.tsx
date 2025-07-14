@@ -9,13 +9,20 @@ import { parseAsString, useQueryState } from "nuqs";
 import { useMemo } from "react";
 
 function StockHistoryClient() {
-    const today = useMemo(() => {
+    const { today, sevenDaysAgo } = useMemo(() => {
         const d = new Date();
-        return d.toISOString().split("T")[0];
+        const past = new Date();
+
+        past.setDate(past.getDate() - 7);
+
+        return {
+            today: d.toISOString().split("T")[0],
+            sevenDaysAgo: past.toISOString().split("T")[0],
+        };
     }, []);
     const [startDate, setStartDate] = useQueryState(
         "startDate",
-        parseAsString.withDefault(today)
+        parseAsString.withDefault(sevenDaysAgo)
     );
 
     const [endDate, setEndDate] = useQueryState(

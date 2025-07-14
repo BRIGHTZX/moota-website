@@ -69,7 +69,7 @@ const SelectPeople = ({
             onValueChange={(value) => setValue(Number(value))}
             disabled={disabled}
         >
-            <SelectTrigger className="w-full" disabled={disabled}>
+            <SelectTrigger className="w-full bg-white" disabled={disabled}>
                 <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>

@@ -35,7 +35,6 @@ function StockPage() {
             {/* Button Section */}
             <div className="flex items-center gap-1 mt-4">
                 <Button
-                    variant="coffeePrimary"
                     onClick={() => setIsAddStockProductFormOpen(true)}
                     className="flex-[1_1_0] flex items-center justify-center gap-1"
                     size="sm"

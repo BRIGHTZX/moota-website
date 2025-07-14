@@ -88,13 +88,13 @@ function TablesPage() {
             {/* Traslate Button */}
             <div
                 className={cn(
-                    "sticky mt-4 -bottom-4 flex transition-all duration-300 justify-center backdrop-blur-lg border rounded-md p-4",
+                    "sticky mt-4 -bottom-4 flex transition-all duration-300 w-[95%] mx-auto justify-center bg-white border rounded-md p-4",
                     selectedTables.length === 0 &&
                         "opacity-0 translate-y-8 pointer-events-none"
                 )}
             >
                 <Button
-                    variant="coffeePrimary"
+                    variant="default"
                     className="w-full"
                     onClick={() => setIsOpenAddTableForm(true)}
                 >

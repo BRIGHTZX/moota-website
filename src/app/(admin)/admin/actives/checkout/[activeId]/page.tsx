@@ -216,7 +216,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
 
             {/* Customer Info */}
             <div className="flex flex-col gap-2 mt-4">
-                <div className="flex flex-col gap-2 border border-gray-500 rounded-md p-4">
+                <div className="flex flex-col gap-2 border border-gray-300 shadow-sm rounded-md p-4 bg-white">
                     <TextCardInfo
                         text="ชื่อลูกค้า"
                         value={checkoutInfo?.customerName ?? ""}
@@ -330,7 +330,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                         </p>
                     )}
                 </div>
-                <div className="w-full relative border px-4 py-2 rounded-md">
+                <div className="w-full relative border border-gray-300 shadow-sm px-4 py-2 rounded-md bg-white">
                     {adult > 0 && (
                         <TextCardInfo
                             text={
@@ -413,7 +413,6 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
 
                 <Button
                     key="checkout-button-submit"
-                    variant="coffeePrimary"
                     type="button"
                     className="w-full mt-4"
                     onClick={() => validateCheckout()}

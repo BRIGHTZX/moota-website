@@ -30,7 +30,7 @@ function DashboardPage() {
     return (
         <AdminPageWrapper className="bg-gray-50 h-[100dvh]">
             <div className="flex flex-col gap-4">
-                <TextHeader text="รายงานร้านค้า" />
+                <TextHeader text="รายงานร้านค้า" className="text-center" />
 
                 {/* Date Range Control */}
                 <DateRangeControl

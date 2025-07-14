@@ -10,7 +10,7 @@ type CalendarRangeProps = {
     endDate: string;
     setStartDate: (date: string) => void;
     setEndDate: (date: string) => void;
-    setMode: (mode: DateModeType) => void;
+    setMode?: (mode: DateModeType) => void;
 };
 
 export function CalendarRange({
@@ -29,7 +29,7 @@ export function CalendarRange({
         if (value > endDate) {
             setEndDate(value);
         }
-        setMode("custom");
+        setMode?.("custom");
     };
 
     // Update end date but prevent it from being earlier than start date
@@ -39,11 +39,11 @@ export function CalendarRange({
             value = startDate; // enforce constraint
         }
         setEndDate(value);
-        setMode("custom");
+        setMode?.("custom");
     };
 
     return (
-        <div className="border p-4  bg-white rounded-lg">
+        <div className="border border-gray-300 shadow-sm p-4  bg-white rounded-lg">
             <div className="flex items-center justify-center gap-2">
                 <div className="flex flex-1 flex-col gap-2">
                     <Label htmlFor="start-date">ตั้งแต่</Label>
