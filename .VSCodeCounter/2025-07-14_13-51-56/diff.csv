@@ -1,9 +1,0 @@
-"filename", "language", "TypeScript", "TypeScript JSX", "comment", "blank", "total"
-"/Users/akkaracha/Developer/moota-website/src/app/(admin)/owner/dashboard/page.tsx", "TypeScript JSX", 0, 2, 0, 1, 3
-"/Users/akkaracha/Developer/moota-website/src/features/(owner)/dashboard/api/use-get-stock-history.ts", "TypeScript", 23, 0, 0, 7, 30
-"/Users/akkaracha/Developer/moota-website/src/features/(owner)/dashboard/components/StockSection.tsx", "TypeScript JSX", 0, 43, 0, 5, 48
-"/Users/akkaracha/Developer/moota-website/src/features/(owner)/dashboard/components/StockTable.tsx", "TypeScript JSX", 0, 136, 0, 16, 152
-"/Users/akkaracha/Developer/moota-website/src/features/(owner)/dashboard/server/route.ts", "TypeScript", 61, 0, 1, 7, 69
-"/Users/akkaracha/Developer/moota-website/src/features/(owner)/dashboard/types.ts", "TypeScript", 11, 0, 0, 2, 13
-"/Users/akkaracha/Developer/moota-website/src/services/formatStockHistory.ts", "TypeScript", 28, 0, 0, 8, 36
-"Total", "-", 123, 181, 1, 46, 351
