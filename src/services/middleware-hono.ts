@@ -44,6 +44,8 @@ export const getCurrentUser = createMiddleware<UserType>(
             const isOwner =
                 !!email &&
                 (email === process.env.OWNER_EMAIL ||
+                    email === process.env.FRIEND_EMAIL_1 ||
+                    email === process.env.FRIEND_EMAIL_2 ||
                     email === process.env.DEV_EMAIL);
 
             c.set("user", user);
