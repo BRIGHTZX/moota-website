@@ -10,7 +10,7 @@ function AdminPageWrapper({ children, className }: AdminPageWrapperProps) {
     return (
         <div
             className={cn(
-                "p-4 pt-20 pb-8 relative h-[calc(100vh-5rem)]  overflow-y-auto bg-gray-[#FEFDFE]",
+                "p-4 pt-20 pb-8 relative bg-gray-[#FEFDFE] min-h-screen",
                 className
             )}
         >
