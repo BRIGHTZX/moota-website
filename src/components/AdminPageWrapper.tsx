@@ -10,7 +10,7 @@ function AdminPageWrapper({ children, className }: AdminPageWrapperProps) {
     return (
         <div
             className={cn(
-                "p-4 pt-20 pb-8 relative bg-gray-[#FEFDFE] min-h-screen",
+                "p-4 pt-20 pb-24 relative bg-gray-[#FEFDFE] min-h-screen",
                 className
             )}
         >
