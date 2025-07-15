@@ -75,6 +75,7 @@ export default async function middleware(req: NextRequest) {
             }
         } catch (error) {
             console.error("Error checking roles:", error);
+            return NextResponse.redirect(new URL("/", req.url));
         }
     }
 

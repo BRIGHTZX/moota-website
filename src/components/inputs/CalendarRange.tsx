@@ -44,8 +44,8 @@ export function CalendarRange({
 
     return (
         <div className="border border-gray-300 shadow-sm p-4  bg-white rounded-lg">
-            <div className="flex items-center justify-center gap-2">
-                <div className="flex flex-1 flex-col gap-2">
+            <div className="flex items-center  gap-2">
+                <div className="flex w-full flex-col gap-2">
                     <Label htmlFor="start-date">ตั้งแต่</Label>
                     <Input
                         id="start-date"
@@ -53,11 +53,11 @@ export function CalendarRange({
                         value={startDate}
                         onChange={handleStartChange}
                         max={endDate}
-                        className="text-xs"
+                        className="text-xs w-full"
                     />
                 </div>
 
-                <div className="flex flex-1 flex-col gap-2">
+                <div className="flex w-full flex-col gap-2">
                     <Label htmlFor="end-date">ถึง</Label>
                     <Input
                         id="end-date"
@@ -66,7 +66,7 @@ export function CalendarRange({
                         onChange={handleEndChange}
                         min={startDate} // enforce end >= start
                         max={today}
-                        className="text-xs"
+                        className="text-xs w-full"
                     />
                 </div>
             </div>
