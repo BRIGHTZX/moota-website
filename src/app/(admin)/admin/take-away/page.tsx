@@ -5,6 +5,7 @@ import TextHeader from '@/components/TextHeader';
 import { Button } from '@/components/ui/button';
 import TakeAwayForm from '@/features/(admin)/take-away/components/TakeAwayForm';
 import { HistoryIcon } from 'lucide-react';
+import Link from 'next/link';
 
 function TakeAwayPage() {
     return (
@@ -12,9 +13,11 @@ function TakeAwayPage() {
             <div className="flex items-center justify-between">
                 <TextHeader text="สั่งกลับบ้าน" />
 
-                <Button size="sm" variant="outline" className="gap-2">
-                    <HistoryIcon />
-                    <span className="text-xs">ซื้อกลับบ้าน</span>
+                <Button asChild size="sm" variant="outline">
+                    <Link href="/admin/take-away/history">
+                        <HistoryIcon />
+                        <span className="text-xs">ซื้อกลับบ้าน</span>
+                    </Link>
                 </Button>
             </div>
 

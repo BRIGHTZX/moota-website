@@ -1,12 +1,12 @@
-"use client";
-import AdminPageWrapper from "@/components/AdminPageWrapper";
-import { CalendarRange } from "@/components/inputs/CalendarRange";
-import PageLoader from "@/components/PageLoader";
-import TextHeader from "@/components/TextHeader";
-import { useGetCheckoutsHistory } from "@/features/(admin)/checkout-history/api/use-get-checkouts-history";
-import CheckoutHistoryCard from "@/features/(admin)/checkout-history/components/CheckoutHistoryCard";
-import { parseAsString, useQueryState } from "nuqs";
-import { useMemo } from "react";
+'use client';
+import AdminPageWrapper from '@/components/AdminPageWrapper';
+import { CalendarRange } from '@/components/inputs/CalendarRange';
+import PageLoader from '@/components/PageLoader';
+import TextHeader from '@/components/TextHeader';
+import { useGetCheckoutsHistory } from '@/features/(admin)/checkout-history/api/use-get-checkouts-history';
+import CheckoutHistoryCard from '@/features/(admin)/checkout-history/components/CheckoutHistoryCard';
+import { parseAsString, useQueryState } from 'nuqs';
+import { useMemo } from 'react';
 
 function CheckoutHistoryClient() {
     const { today, sevenDaysAgo } = useMemo(() => {
@@ -16,17 +16,17 @@ function CheckoutHistoryClient() {
         past.setDate(past.getDate() - 7);
 
         return {
-            today: d.toISOString().split("T")[0],
-            sevenDaysAgo: past.toISOString().split("T")[0],
+            today: d.toISOString().split('T')[0],
+            sevenDaysAgo: past.toISOString().split('T')[0],
         };
     }, []);
     const [startDate, setStartDate] = useQueryState(
-        "startDate",
+        'startDate',
         parseAsString.withDefault(sevenDaysAgo)
     );
 
     const [endDate, setEndDate] = useQueryState(
-        "endDate",
+        'endDate',
         parseAsString.withDefault(today)
     );
 
@@ -40,7 +40,7 @@ function CheckoutHistoryClient() {
         <AdminPageWrapper>
             <TextHeader text="ประวัติการชำระเงิน" />
 
-            <div className="w-full mt-4 relative">
+            <div className="relative mt-4 w-full">
                 <CalendarRange
                     today={today}
                     startDate={startDate}
@@ -53,27 +53,27 @@ function CheckoutHistoryClient() {
             {isLoading ? (
                 <PageLoader className="h-[300px]" />
             ) : (
-                <div className="flex flex-col gap-4 mt-4">
+                <div className="mt-4 flex flex-col gap-4">
                     {Object.entries(checkoutsHistory ?? {}).length === 0 ? (
-                        <p className="text-gray-400 text-lg font-bold text-center">
+                        <p className="text-center text-lg font-bold text-gray-400">
                             ไม่มีประวัติการชำระเงิน
                         </p>
                     ) : (
                         Object.entries(checkoutsHistory ?? {}).map(
                             ([date, records]) => (
                                 <div key={date}>
-                                    <p className="mt-4 mb-2 text-gray-500 text-md font-bold">
+                                    <p className="text-md mt-4 mb-2 font-bold text-gray-500">
                                         {new Date(date).toLocaleDateString(
-                                            "th-TH",
+                                            'th-TH',
                                             {
-                                                year: "numeric",
-                                                month: "long",
-                                                day: "numeric",
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric',
                                             }
                                         )}
                                     </p>
                                     <div className="flex flex-col gap-2">
-                                        {records.map((checkoutHistory) => (
+                                        {records.map(checkoutHistory => (
                                             <CheckoutHistoryCard
                                                 key={checkoutHistory.id}
                                                 checkoutHistory={

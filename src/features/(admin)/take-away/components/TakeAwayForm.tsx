@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useCreateTakeAway } from '../api/use-create-take-away';
 import { insertTakeAwaySchema, InsertTakeAwaySchemaType } from '../schemas';
 
 function TakeAwayForm() {
@@ -18,8 +19,16 @@ function TakeAwayForm() {
 
     const paymentMethod = form.watch('paymentMethod');
 
+    const { mutate: createTakeAway, isPending: isCreatingTakeAway } =
+        useCreateTakeAway();
+
     const onSubmit = (data: InsertTakeAwaySchemaType) => {
-        console.log(data);
+        createTakeAway({
+            form: {
+                totalPrice: data.totalPrice.toString(),
+                paymentMethod: data.paymentMethod,
+            },
+        });
     };
 
     return (
@@ -41,6 +50,7 @@ function TakeAwayForm() {
                         inputClassName="text-sm"
                         labelClassName="text-sm"
                         errorClassName="right-0"
+                        disabled={isCreatingTakeAway}
                     />
 
                     <SelectWithLabel
@@ -52,6 +62,7 @@ function TakeAwayForm() {
                             { label: 'พร้อมเพย์', value: 'promptpay' },
                         ]}
                         errorClassName="right-0"
+                        disabled={isCreatingTakeAway}
                     />
 
                     {paymentMethod === 'promptpay' && (
@@ -66,7 +77,12 @@ function TakeAwayForm() {
                         </div>
                     )}
 
-                    <Button className="mt-4 w-full">ชำระเงิน</Button>
+                    <Button
+                        className="mt-4 w-full"
+                        disabled={isCreatingTakeAway}
+                    >
+                        ชำระเงิน
+                    </Button>
                 </form>
             </FormProvider>
         </div>

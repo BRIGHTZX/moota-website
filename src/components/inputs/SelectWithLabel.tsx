@@ -47,11 +47,8 @@ function SelectWithLabel<S>({
                         {fieldTitle}
                     </FormLabel>
                     <Select
-                        value={field.value === '' ? undefined : field.value}
+                        value={field.value || ''}
                         onValueChange={value => {
-                            if (value === '') {
-                                return;
-                            }
                             field.onChange(value);
                         }}
                         disabled={disabled}
