@@ -1,16 +1,17 @@
-"use client";
-import AdminPageWrapper from "@/components/AdminPageWrapper";
-import PageLoader from "@/components/PageLoader";
-import SeperateLine from "@/components/SeperateLine";
-import { TextCardInfo } from "@/components/TextCardInfo";
-import TextHeader from "@/components/TextHeader";
-import { Button } from "@/components/ui/button";
-import { useGetCheckoutHistory } from "@/features/(admin)/checkout-history/api/use-get-checkout-history";
-import PaymentBadge from "@/features/(admin)/checkout-history/components/PaymentMethodBadge";
-import { ArrowLeftIcon } from "lucide-react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import React, { use } from "react";
+'use client';
+import AdminPageWrapper from '@/components/AdminPageWrapper';
+import PageLoader from '@/components/PageLoader';
+import SeperateLine from '@/components/SeperateLine';
+import { TextCardInfo } from '@/components/TextCardInfo';
+import TextHeader from '@/components/TextHeader';
+import { Button } from '@/components/ui/button';
+import { ADULT_PRICE, CHILD_PRICE } from '@/constant';
+import { useGetCheckoutHistory } from '@/features/(admin)/checkout-history/api/use-get-checkout-history';
+import PaymentBadge from '@/features/(admin)/checkout-history/components/PaymentMethodBadge';
+import { ArrowLeftIcon } from 'lucide-react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { use } from 'react';
 
 function CheckoutHistoryDetailPage({
     params,
@@ -19,12 +20,24 @@ function CheckoutHistoryDetailPage({
 }) {
     const { checkoutId } = use(params);
     const searchParams = useSearchParams();
-    const returnUrl = searchParams.get("returnUrl");
+    const returnUrl = searchParams.get('returnUrl');
     const { data: checkoutHistory, isLoading } = useGetCheckoutHistory({
         checkoutId,
     });
 
     const checkoutStatus = checkoutHistory?.active?.status;
+    const {
+        customerName,
+        paidAdultNumber,
+        paidChildNumber,
+        totalOrderPrice,
+        totalDiscount,
+        totalAmount,
+        paymentMethod,
+    } = checkoutHistory ?? {};
+
+    const totalAdultPrice = paidAdultNumber ? paidAdultNumber * ADULT_PRICE : 0;
+    const totalChildPrice = paidChildNumber ? paidChildNumber * CHILD_PRICE : 0;
 
     return (
         <AdminPageWrapper>
@@ -37,10 +50,10 @@ function CheckoutHistoryDetailPage({
                             <Button asChild variant="outline" size="sm">
                                 <Link
                                     href={
-                                        returnUrl ?? "/admin/checkout-history"
+                                        returnUrl ?? '/admin/checkout-history'
                                     }
                                 >
-                                    <ArrowLeftIcon className="w-4 h-4" />
+                                    <ArrowLeftIcon className="h-4 w-4" />
                                 </Link>
                             </Button>
                         </div>
@@ -53,89 +66,108 @@ function CheckoutHistoryDetailPage({
                     <SeperateLine className="my-4" />
 
                     {/* Date */}
-                    <div className="flex items-center justify-between gap-2 mt-4">
+                    <div className="mt-4 flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
                             <p className="text-xs font-semibold">
                                 วันที่ชำระเงิน
                             </p>
                             <p className="text-xs font-light text-gray-500">
                                 {new Date(
-                                    checkoutHistory?.updatedAt ?? ""
-                                ).toLocaleString("th-TH", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                    hour: "2-digit",
-                                    minute: "2-digit",
+                                    checkoutHistory?.updatedAt ?? ''
+                                ).toLocaleString('th-TH', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
                                 })}
                             </p>
                         </div>
                         {/* Checkout Status */}
-                        <CheckoutStatusBadge status={checkoutStatus ?? ""} />
+                        <CheckoutStatusBadge status={checkoutStatus ?? ''} />
                     </div>
 
-                    <div className="flex flex-col gap-4 mt-4">
-                        <div className="border border-gray-500 rounded-md relative overfow-hidden">
-                            <p className="text-sm font-semibold bg-gray-100 text-center rounded-t-md border-b p-2">
+                    <div className="mt-4 flex flex-col gap-4">
+                        <div className="overfow-hidden relative rounded-md border border-gray-500">
+                            <p className="rounded-t-md border-b bg-gray-100 p-2 text-center text-sm font-semibold">
                                 ข้อมูลการชำระเงิน
                             </p>
 
                             <div className="flex flex-col gap-2 p-4">
                                 <TextCardInfo
                                     text="ชื่อลูกค้า"
-                                    value={checkoutHistory?.customerName}
+                                    value={customerName}
                                 />
+                                {paidAdultNumber !== 0 && (
+                                    <TextCardInfo
+                                        text="จำนวนผู้ใหญ่"
+                                        subText={`${paidAdultNumber} x ${ADULT_PRICE}`}
+                                        value={`${totalAdultPrice?.toLocaleString()} บาท`}
+                                    />
+                                )}
+                                {paidChildNumber !== 0 && (
+                                    <TextCardInfo
+                                        text="จำนวนผู้เด็ก"
+                                        subText={`${paidChildNumber} x ${CHILD_PRICE}`}
+                                        value={`${totalChildPrice?.toLocaleString()} บาท`}
+                                    />
+                                )}
                                 <TextCardInfo
-                                    text="จำนวนผู้ใหญ่"
-                                    value={`${checkoutHistory?.paidAdultNumber} คน`}
+                                    text="ราคารวมเครื่องดื่ม"
+                                    value={`${totalOrderPrice?.toLocaleString()} บาท`}
                                 />
-                                <TextCardInfo
-                                    text="จำนวนผู้เด็ก"
-                                    value={`${checkoutHistory?.paidChildNumber} คน`}
-                                />
-                                <TextCardInfo
-                                    text="ราคารวมออเดอร์"
-                                    value={`${checkoutHistory?.totalOrderPrice?.toLocaleString()} บาท`}
-                                />
-                                <TextCardInfo
-                                    text="ส่วนลด"
-                                    value={`${checkoutHistory?.totalDiscount?.toLocaleString()} บาท`}
-                                />
+                                {totalDiscount !== 0 && (
+                                    <TextCardInfo
+                                        text="ส่วนลด"
+                                        value={`${totalDiscount?.toLocaleString()} บาท`}
+                                    />
+                                )}
                                 <TextCardInfo
                                     text="ราคารวมทั้งหมด"
-                                    value={`${checkoutHistory?.totalAmount?.toLocaleString()} บาท`}
+                                    value={`${totalAmount?.toLocaleString()} บาท`}
                                 />
                                 <PaymentBadge
-                                    paymentMethod={
-                                        checkoutHistory?.paymentMethod ?? ""
-                                    }
+                                    paymentMethod={paymentMethod ?? ''}
                                 />
                             </div>
                         </div>
 
-                        <div className="border border-gray-500 rounded-md relative overfow-hidden">
-                            <p className="text-sm font-semibold bg-gray-100 text-center rounded-t-md border-b p-2">
-                                ประวัติออเดอร์
+                        <div className="overfow-hidden relative rounded-md border border-gray-500">
+                            <p className="rounded-t-md border-b bg-gray-100 p-2 text-center text-sm font-semibold">
+                                รายการเครื่องดื่ม
                             </p>
 
                             <div className="flex flex-col gap-2 p-4">
-                                {checkoutHistory?.checkoutInfos?.map((item) => (
-                                    <TextCardInfo
-                                        key={item.productId}
-                                        text={
-                                            <>
-                                                <span className="font-semibold">
-                                                    {item.productName}
-                                                </span>
-                                                <span className="text-xs ml-2 font-light text-gray-500">
-                                                    x {item.quantity}
-                                                </span>
-                                            </>
-                                        }
-                                        value={`${item.totalPrice?.toLocaleString()} บาท`}
-                                    />
-                                ))}
+                                {checkoutHistory?.checkoutInfos?.length ===
+                                0 ? (
+                                    <div className="flex h-[100px] items-center justify-center">
+                                        <p className="text-gray-500">
+                                            ไม่มีรายการเครื่องดื่ม
+                                        </p>
+                                    </div>
+                                ) : (
+                                    checkoutHistory?.checkoutInfos?.map(
+                                        item => (
+                                            <TextCardInfo
+                                                key={item.productId}
+                                                text={
+                                                    <>
+                                                        <span className="font-semibold">
+                                                            {item.productName}
+                                                        </span>
+                                                        <span className="ml-2 text-xs font-light text-gray-500">
+                                                            x {item.quantity}
+                                                        </span>
+                                                    </>
+                                                }
+                                                value={`${item.totalPrice?.toLocaleString()} บาท`}
+                                            />
+                                        )
+                                    )
+                                )}
+
                                 <SeperateLine className="my-2" />
+
                                 <TextCardInfo
                                     text="ราคารวมทั้งหมด"
                                     value={`${checkoutHistory?.totalOrderPrice?.toLocaleString()} บาท`}
@@ -154,18 +186,18 @@ export default CheckoutHistoryDetailPage;
 
 const CheckoutStatusBadge = ({ status }: { status: string }) => {
     const statusColor =
-        status === "closed"
-            ? "bg-green-500"
-            : status === "partial"
-            ? "bg-amber-500"
-            : "bg-red-500";
+        status === 'closed'
+            ? 'bg-green-500'
+            : status === 'partial'
+              ? 'bg-amber-500'
+              : 'bg-red-500';
 
     const statusText =
-        status === "closed"
-            ? "ชำระเงินครบถ้วน"
-            : status === "partial"
-            ? "ชำระเงินบางส่วน"
-            : "ชำระเงินไม่ครบถ้วน";
+        status === 'closed'
+            ? 'ชำระเงินครบถ้วน'
+            : status === 'partial'
+              ? 'ชำระเงินบางส่วน'
+              : 'ชำระเงินไม่ครบถ้วน';
 
     return (
         <div className={`text-xs font-semibold ${statusColor} rounded-md p-1`}>

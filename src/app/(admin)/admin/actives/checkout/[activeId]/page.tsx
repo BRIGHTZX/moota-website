@@ -1,32 +1,34 @@
-"use client";
+'use client';
 
-import PageLoader from "@/components/PageLoader";
-import { TextCardInfo } from "@/components/TextCardInfo";
-import TextHeader from "@/components/TextHeader";
-import { Button } from "@/components/ui/button";
-import { useGetCheckoutOrderLists } from "@/features/(admin)/checkout/api/use-get-checkout-orderLists";
-import { useGetCheckoutInfo } from "@/features/(admin)/checkout/api/use-get-checkoutInfo";
-import SelectedPeople from "@/features/(admin)/checkout/components/SelectedPeople";
-import TableSelector from "@/features/(admin)/checkout/components/SelectedTable";
-import TotalProductCard from "@/features/(admin)/checkout/components/TotalProductCard";
+import AdminPageWrapper from '@/components/AdminPageWrapper';
+import AlertDialogCustom from '@/components/AlertDialogCustom';
+import PageLoader from '@/components/PageLoader';
+import SeperateLine from '@/components/SeperateLine';
+import { TextCardInfo } from '@/components/TextCardInfo';
+import TextHeader from '@/components/TextHeader';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { ADULT_PRICE, CHILD_PRICE } from '@/constant';
+import { useCreateCheckout } from '@/features/(admin)/checkout/api/use-create-checkout';
+import { useGetCheckoutOrderLists } from '@/features/(admin)/checkout/api/use-get-checkout-orderLists';
+import { useGetCheckoutInfo } from '@/features/(admin)/checkout/api/use-get-checkoutInfo';
+import CheckoutStatusBadge from '@/features/(admin)/checkout/components/CheckoutStatusBadge';
+import SelectedPaymentMethod from '@/features/(admin)/checkout/components/SelectedPaymentMethod';
+import SelectedPeople from '@/features/(admin)/checkout/components/SelectedPeople';
+import TableSelector from '@/features/(admin)/checkout/components/SelectedTable';
+import TotalProductCard from '@/features/(admin)/checkout/components/TotalProductCard';
 import {
     ActiveInfo,
     AllCheckoutStatusType,
     CheckoutStatusType,
     PaymentMethod,
     SelectedTable,
-} from "@/features/(admin)/checkout/types";
-import { Switch } from "@/components/ui/switch";
-import { ArrowLeftIcon, HistoryIcon } from "lucide-react";
-import Link from "next/link";
-import React, { use, useEffect, useMemo, useState } from "react";
-import SeperateLine from "@/components/SeperateLine";
-import SelectedPaymentMethod from "@/features/(admin)/checkout/components/SelectedPaymentMethod";
-import AlertDialogCustom from "@/components/AlertDialogCustom";
-import { toast } from "sonner";
-import { useCreateCheckout } from "@/features/(admin)/checkout/api/use-create-checkout";
-import AdminPageWrapper from "@/components/AdminPageWrapper";
-import CheckoutStatusBadge from "@/features/(admin)/checkout/components/CheckoutStatusBadge";
+} from '@/features/(admin)/checkout/types';
+import { ArrowLeftIcon, HistoryIcon } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { use, useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
     const { activeId } = use(params);
@@ -57,17 +59,17 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
     }, [checkoutInfo]);
 
     const activeInfoIds = useMemo(() => {
-        return selectedTable?.map((info) => info.activeInfoId) ?? [];
+        return selectedTable?.map(info => info.activeInfoId) ?? [];
     }, [selectedTable]);
 
     const tableIds = useMemo(() => {
-        return selectedTable?.map((info) => info.tableId) ?? [];
+        return selectedTable?.map(info => info.tableId) ?? [];
     }, [selectedTable]);
 
     // Order List
     const { data: orderList, isLoading: isLoadingOrderList } =
         useGetCheckoutOrderLists(
-            selectedTable?.map((info) => info.activeInfoId) ?? []
+            selectedTable?.map(info => info.activeInfoId) ?? []
         );
 
     // Create Checkout
@@ -78,8 +80,6 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
         });
 
     // function calculate
-    const ADULT_PRICE = 199;
-    const CHILD_PRICE = 129;
 
     const priceAdult = useMemo(() => adult * ADULT_PRICE, [adult]);
 
@@ -121,11 +121,11 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
 
     const handleSetActiveStatus = () => {
         if (selectedTable.length === (checkoutInfo?.activeInfos?.length ?? 0)) {
-            return "closed";
+            return 'closed';
         } else if (selectedTable.length > 0) {
-            return "partial";
+            return 'partial';
         }
-        return "partial";
+        return 'partial';
     };
 
     const validateCheckout = () => {
@@ -143,11 +143,11 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
             }
         }
         if (adult === 0 && child === 0) {
-            toast.error("กรุณาเลือกจำนวนคน");
+            toast.error('กรุณาเลือกจำนวนคน');
             return;
         }
         if (!paymentMethod) {
-            toast.error("กรุณาเลือกช่องทางชำระเงิน");
+            toast.error('กรุณาเลือกช่องทางชำระเงิน');
             return;
         }
 
@@ -155,7 +155,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
     };
     const handleSubmitCheckout = () => {
         if (!checkoutInfo?.customerName || !paymentMethod) {
-            toast.error("ข้อมูลไม่ครบถ้วน");
+            toast.error('ข้อมูลไม่ครบถ้วน');
             return;
         }
 
@@ -202,7 +202,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                 <div className="flex items-center gap-2">
                     <Button asChild variant="outline" className="size-8">
                         <Link href="/admin/actives">
-                            <ArrowLeftIcon className="w-6 h-6" />
+                            <ArrowLeftIcon className="h-6 w-6" />
                         </Link>
                     </Button>
 
@@ -215,17 +215,17 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
             </div>
 
             {/* Customer Info */}
-            <div className="flex flex-col gap-2 mt-4">
-                <div className="flex flex-col gap-2 border border-gray-300 shadow-sm rounded-md p-4 bg-white">
+            <div className="mt-4 flex flex-col gap-2">
+                <div className="flex flex-col gap-2 rounded-md border border-gray-300 bg-white p-4 shadow-sm">
                     <TextCardInfo
                         text="ชื่อลูกค้า"
-                        value={checkoutInfo?.customerName ?? ""}
+                        value={checkoutInfo?.customerName ?? ''}
                     />
                     <TextCardInfo
                         text="จำนวนผู้ใหญ่"
                         value={
                             <>
-                                <span className="text-gray-500 mr-1">
+                                <span className="mr-1 text-gray-500">
                                     {checkoutInfo?.checkoutHistory?.paidAdultNumber.toString() ??
                                         0}
                                 </span>
@@ -237,7 +237,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                         text="จำนวนเด็ก"
                         value={
                             <>
-                                <span className="text-gray-500 mr-1">
+                                <span className="mr-1 text-gray-500">
                                     {checkoutInfo?.checkoutHistory?.paidChildNumber.toString() ??
                                         0}
                                 </span>
@@ -249,7 +249,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
             </div>
 
             {/* Table Selector */}
-            <div className="flex flex-col gap-2 mt-4">
+            <div className="mt-4 flex flex-col gap-2">
                 <TextHeader text="โต๊ะที่กำลังทำงาน" className="text-md" />
                 <div className="grid grid-cols-4 gap-2">
                     {checkoutInfo?.activeInfos?.map((info: ActiveInfo) => (
@@ -268,23 +268,23 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                 <PageLoader className="h-[200px]" />
             ) : (
                 <>
-                    <div className="flex flex-col gap-2 mt-4">
+                    <div className="mt-4 flex flex-col gap-2">
                         <TextHeader text="รายการสินค้า" className="text-md" />
                         {orderList && orderList.length > 0 ? (
-                            orderList.map((product) => (
+                            orderList.map(product => (
                                 <TotalProductCard
                                     key={product.productId}
                                     product={product}
                                 />
                             ))
                         ) : selectedTable.length > 0 ? (
-                            <div className="flex items-center justify-center h-[200px]">
+                            <div className="flex h-[200px] items-center justify-center">
                                 <p className="text-gray-500">
                                     ไม่มีรายการออเดอร์
                                 </p>
                             </div>
                         ) : (
-                            <div className="flex items-center justify-center h-[200px]">
+                            <div className="flex h-[200px] items-center justify-center">
                                 <p className="text-gray-500">กรุณาเลือกโต๊ะ</p>
                             </div>
                         )}
@@ -305,7 +305,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                         />
                     </div>
                 </div>
-                <div className="w-full relative">
+                <div className="relative w-full">
                     <div className="w-full">
                         <SelectedPeople
                             adult={adult}
@@ -330,13 +330,13 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                         </p>
                     )}
                 </div>
-                <div className="w-full relative border border-gray-300 shadow-sm px-4 py-2 rounded-md bg-white">
+                <div className="relative w-full rounded-md border border-gray-300 bg-white px-4 py-2 shadow-sm">
                     {adult > 0 && (
                         <TextCardInfo
                             text={
                                 <>
-                                    ผู้ใหญ่{" "}
-                                    <span className="text-sm text-gray-500 font-medium">
+                                    ผู้ใหญ่{' '}
+                                    <span className="text-sm font-medium text-gray-500">
                                         x {adult}
                                     </span>
                                 </>
@@ -350,8 +350,8 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                         <TextCardInfo
                             text={
                                 <>
-                                    เด็ก{" "}
-                                    <span className="text-sm text-gray-500 font-medium">
+                                    เด็ก{' '}
+                                    <span className="text-sm font-medium text-gray-500">
                                         x {child}
                                     </span>
                                 </>
@@ -398,6 +398,17 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                 </div>
             </div>
 
+            {paymentMethod === 'promptpay' && (
+                <div className="mt-4 flex justify-center rounded-md">
+                    <Image
+                        src="/qr-promptpay.jpg"
+                        alt="qr-payment"
+                        width={300}
+                        height={300}
+                        className="rounded-md border"
+                    />
+                </div>
+            )}
             {/* Action Buttons */}
             <div>
                 <AlertDialogCustom
@@ -406,15 +417,15 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                     action={() => {
                         handleSubmitCheckout();
                     }}
-                    title={"ยืนยันการชำระเงิน"}
-                    description={"คุณต้องการยืนยันการชำระเงินหรือไม่?"}
-                    buttonActionText={"ยืนยัน"}
+                    title={'ยืนยันการชำระเงิน'}
+                    description={'คุณต้องการยืนยันการชำระเงินหรือไม่?'}
+                    buttonActionText={'ยืนยัน'}
                 />
 
                 <Button
                     key="checkout-button-submit"
                     type="button"
-                    className="w-full mt-4"
+                    className="mt-4 w-full"
                     onClick={() => validateCheckout()}
                     disabled={isLoading}
                 >
@@ -427,7 +438,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                         asChild
                         type="button"
                         variant="outline"
-                        className="w-full mt-4"
+                        className="mt-4 w-full"
                         disabled={
                             isLoading || !checkoutInfo?.checkoutHistory?.id
                         }

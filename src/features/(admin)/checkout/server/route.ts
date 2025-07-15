@@ -1,33 +1,33 @@
-import { getCurrentUser } from "@/services/middleware-hono";
-import { Hono } from "hono";
+import { getCurrentUser } from '@/services/middleware-hono';
+import { Hono } from 'hono';
 
-import { db } from "@/database/db";
-import { and, eq, inArray, or, sql } from "drizzle-orm";
-import { zValidator } from "@hono/zod-validator";
-import { getOrderListSchema, insertCheckoutSchema } from "../schemas";
+import { db } from '@/database/db';
+import { zValidator } from '@hono/zod-validator';
+import { and, eq, inArray, or, sql } from 'drizzle-orm';
+import { getOrderListSchema, insertCheckoutSchema } from '../schemas';
 
 import {
-    active as ActiveTable,
     activeInfo as ActiveInfoTable,
-} from "@/database/schema/active";
-import { order as OrderTable } from "@/database/schema/order";
+    active as ActiveTable,
+} from '@/database/schema/active';
 import {
-    checkout as CheckoutTable,
     checkoutInfos as CheckoutInfosTable,
-} from "@/database/schema/checkout";
-import { diningTable as DiningTable } from "@/database/schema/diningTable";
+    checkout as CheckoutTable,
+} from '@/database/schema/checkout';
+import { diningTable as DiningTable } from '@/database/schema/diningTable';
+import { order as OrderTable } from '@/database/schema/order';
 
 const app = new Hono()
-    .get("/checkout-info/:activeId", async (c) => {
+    .get('/checkout-info/:activeId', async c => {
         try {
-            const activeId = c.req.param("activeId");
+            const activeId = c.req.param('activeId');
 
             const active = await db.query.active.findFirst({
                 where: and(
                     eq(ActiveTable.id, activeId),
                     or(
-                        eq(ActiveTable.status, "open"),
-                        eq(ActiveTable.status, "partial")
+                        eq(ActiveTable.status, 'open'),
+                        eq(ActiveTable.status, 'partial')
                     )
                 ),
                 columns: {
@@ -58,7 +58,7 @@ const app = new Hono()
             });
 
             if (!active) {
-                return c.json({ message: "Active not found" }, 404);
+                return c.json({ message: 'Active not found' }, 404);
             }
 
             const checkoutHistory = await db.query.checkout.findFirst({
@@ -72,7 +72,7 @@ const app = new Hono()
 
             const formattedActives = {
                 ...active,
-                activeInfos: active?.activeInfos.map((info) => ({
+                activeInfos: active?.activeInfos.map(info => ({
                     activeInfoId: info.id,
                     tableId: info.tableId,
                     tableNumber: info.diningTable.tableNumber,
@@ -81,31 +81,31 @@ const app = new Hono()
             };
 
             return c.json({
-                message: "Fetch checkout info successfully",
+                message: 'Fetch checkout info successfully',
                 result: formattedActives,
             });
         } catch (error) {
             if (error instanceof Error) {
-                console.log("error:", error.message);
+                console.log('error:', error.message);
             } else {
-                console.log("error:", error);
+                console.log('error:', error);
             }
-            return c.json({ message: "Internal Server Error" }, 500);
+            return c.json({ message: 'Internal Server Error' }, 500);
         }
     })
     .post(
-        "/get-order-lists",
+        '/get-order-lists',
         getCurrentUser,
-        zValidator("json", getOrderListSchema),
-        async (c) => {
-            const user = c.get("user");
+        zValidator('json', getOrderListSchema),
+        async c => {
+            const user = c.get('user');
 
             if (!user) {
-                return c.json({ message: "Unauthorized" }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
             }
 
             try {
-                const { activeInfoId } = c.req.valid("json");
+                const { activeInfoId } = c.req.valid('json');
 
                 const orderLists = await db.query.order.findMany({
                     where: inArray(OrderTable.activeInfoId, activeInfoId),
@@ -120,7 +120,7 @@ const app = new Hono()
 
                 if (!orderLists.length) {
                     return c.json(
-                        { message: "Order not found", result: [] },
+                        { message: 'Order not found', result: [] },
                         200
                     );
                 }
@@ -152,26 +152,26 @@ const app = new Hono()
 
                 return c.json(
                     {
-                        message: "Fetch order list successfully",
+                        message: 'Fetch order list successfully',
                         result: groupedProductOrders,
                     },
                     200
                 );
             } catch (error) {
                 console.log(error);
-                return c.json({ message: "Internal Server Error" }, 500);
+                return c.json({ message: 'Internal Server Error' }, 500);
             }
         }
     )
     .post(
-        "/checkout/:activeId",
+        '/checkout/:activeId',
         getCurrentUser,
-        zValidator("json", insertCheckoutSchema),
-        async (c) => {
-            const user = c.get("user");
+        zValidator('json', insertCheckoutSchema),
+        async c => {
+            const user = c.get('user');
 
             if (!user) {
-                return c.json({ message: "Unauthorized" }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
             }
 
             try {
@@ -188,14 +188,14 @@ const app = new Hono()
                     paymentMethod,
                     status,
                     orderList,
-                } = c.req.valid("json");
+                } = c.req.valid('json');
 
-                if (status !== "partial" && status !== "closed") {
-                    return c.json({ message: "Invalid status" }, 400);
+                if (status !== 'partial' && status !== 'closed') {
+                    return c.json({ message: 'Invalid status' }, 400);
                 }
 
-                const result = await db.transaction(async (tx) => {
-                    let checkoutId = "";
+                const result = await db.transaction(async tx => {
+                    let checkoutId = '';
                     // have checkout, update checkout
                     const isExistCheckout = await tx.query.checkout.findFirst({
                         where: eq(CheckoutTable.activeId, activeId),
@@ -249,7 +249,7 @@ const app = new Hono()
 
                     if (orderList.length !== 0) {
                         await tx.insert(CheckoutInfosTable).values(
-                            orderList.map((item) => ({
+                            orderList.map(item => ({
                                 checkoutId: checkoutId,
                                 productId: item.productId,
                                 quantity: Number(item.quantity),
@@ -280,17 +280,17 @@ const app = new Hono()
                     return checkoutId;
                 });
 
-                if (status === "closed") {
+                if (status === 'closed') {
                     await db
                         .update(ActiveTable)
                         .set({
-                            status: "closed",
+                            status: 'closed',
                         })
                         .where(eq(ActiveTable.id, activeId));
 
                     return c.json(
                         {
-                            message: "Checkout successfully closed",
+                            message: 'Checkout successfully closed',
                             activeSuccess: true,
                             checkoutId: result,
                         },
@@ -300,15 +300,15 @@ const app = new Hono()
 
                 return c.json(
                     {
-                        message: "Create checkout successfully",
-                        activeSuccess: true,
+                        message: 'Create checkout successfully',
+                        activeSuccess: false,
                         checkoutId: result,
                     },
                     200
                 );
             } catch (error) {
                 console.log(error);
-                return c.json({ message: "Internal Server Error" }, 500);
+                return c.json({ message: 'Internal Server Error' }, 500);
             }
         }
     );

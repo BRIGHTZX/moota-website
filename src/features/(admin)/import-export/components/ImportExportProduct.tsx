@@ -1,5 +1,7 @@
-"use client";
-import { Button } from "@/components/ui/button";
+'use client';
+import InputWithLabel from '@/components/inputs/InputWithLabel';
+import PageLoader from '@/components/PageLoader';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogClose,
@@ -7,21 +9,19 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog";
-import { FormProvider, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import InputWithLabel from "@/components/inputs/InputWithLabel";
-import { useEffect, useState } from "react";
-import { MinusIcon, PlusIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { MinusIcon, PlusIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { useAddImportExportProduct } from '../api/use-add-import-export-product';
+import { useGetImportExportProduct } from '../api/use-get-import-export-product';
 import {
     importExportProductSchema,
     importExportProductSchemaType,
-} from "../schemas";
-import { useGetImportExportProduct } from "../api/use-get-import-export-product";
-import PageLoader from "@/components/PageLoader";
-import { useAddImportExportProduct } from "../api/use-add-import-export-product";
-import { toast } from "sonner";
+} from '../schemas';
 
 type ImportProductProps = {
     isOpen: boolean;
@@ -34,7 +34,7 @@ function ImportProduct({
     setIsOpen,
     importProductId,
 }: ImportProductProps) {
-    const [importType, setImportType] = useState<"import" | "export">("import");
+    const [importType, setImportType] = useState<'import' | 'export'>('import');
     const {
         data: productData,
         isLoading: isLoadingProduct,
@@ -58,13 +58,11 @@ function ImportProduct({
         },
     });
 
-    console.log(form.formState.errors);
-
     const handleSubmit = (data: importExportProductSchemaType) => {
-        if (importType === "export" && data.stock > (productData?.stock ?? 0)) {
-            toast.error("จำนวนสินค้าที่นำออกเกินจำนวนสินค้าที่มี");
-            form.setError("stock", {
-                message: "จำนวนสินค้าที่นำออกเกินจำนวนสินค้าที่มี",
+        if (importType === 'export' && data.stock > (productData?.stock ?? 0)) {
+            toast.error('จำนวนสินค้าที่นำออกเกินจำนวนสินค้าที่มี');
+            form.setError('stock', {
+                message: 'จำนวนสินค้าที่นำออกเกินจำนวนสินค้าที่มี',
             });
             return;
         }
@@ -77,7 +75,7 @@ function ImportProduct({
         addImportExportProduct(
             {
                 param: {
-                    productId: importProductId ?? "",
+                    productId: importProductId ?? '',
                 },
                 json: finalValues,
             },
@@ -85,19 +83,19 @@ function ImportProduct({
                 onSuccess: () => {
                     form.reset();
                     setIsOpen(false);
-                    setImportType("import");
+                    setImportType('import');
                 },
             }
         );
     };
 
     useEffect(() => {
-        form.setValue("type", importType);
+        form.setValue('type', importType);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [importType]);
 
     useEffect(() => {
-        setImportType("import");
+        setImportType('import');
         form.reset({
             stock: 0,
             totalPrice: 0,
@@ -120,13 +118,13 @@ function ImportProduct({
                     id="import-export-product-form"
                     onSubmit={form.handleSubmit(handleSubmit)}
                 >
-                    <DialogContent className=" border-coffee-dark sm:max-w-[425px]">
+                    <DialogContent className="border-coffee-dark sm:max-w-[425px]">
                         <DialogHeader>
                             <DialogTitle asChild>
                                 <p className="text-coffee-dark text-lg font-bold">
-                                    {importType === "import"
-                                        ? "นำเข้าสินค้า"
-                                        : "นำออกสินค้า"}
+                                    {importType === 'import'
+                                        ? 'นำเข้าสินค้า'
+                                        : 'นำออกสินค้า'}
                                 </p>
                             </DialogTitle>
                         </DialogHeader>
@@ -138,8 +136,8 @@ function ImportProduct({
                                     <p className="text-coffee-dark font-bold">
                                         <span className="text-coffee-dark">
                                             &quot;
-                                        </span>{" "}
-                                        {productData?.name}{" "}
+                                        </span>{' '}
+                                        {productData?.name}{' '}
                                         <span className="text-coffee-dark">
                                             &quot;
                                         </span>
@@ -151,14 +149,14 @@ function ImportProduct({
                                             key="import"
                                             type="button"
                                             onClick={() =>
-                                                setImportType("import")
+                                                setImportType('import')
                                             }
                                             disabled={isLoading}
                                             className={cn(
-                                                "w-1/2 hover:bg-emerald-600 hover:text-white",
-                                                importType === "import"
-                                                    ? "bg-emerald-500"
-                                                    : "border border-emerald-500 bg-white text-emerald-500"
+                                                'w-1/2 hover:bg-emerald-600 hover:text-white',
+                                                importType === 'import'
+                                                    ? 'bg-emerald-500'
+                                                    : 'border border-emerald-500 bg-white text-emerald-500'
                                             )}
                                         >
                                             <PlusIcon className="size-4" />
@@ -168,14 +166,14 @@ function ImportProduct({
                                             key="export"
                                             type="button"
                                             onClick={() =>
-                                                setImportType("export")
+                                                setImportType('export')
                                             }
                                             disabled={isLoading}
                                             className={cn(
-                                                "w-1/2 hover:bg-red-600 hover:text-white",
-                                                importType === "export"
-                                                    ? "bg-red-500"
-                                                    : "border border-red-500 bg-white text-red-500"
+                                                'w-1/2 hover:bg-red-600 hover:text-white',
+                                                importType === 'export'
+                                                    ? 'bg-red-500'
+                                                    : 'border border-red-500 bg-white text-red-500'
                                             )}
                                         >
                                             <MinusIcon className="size-4" />
@@ -183,10 +181,10 @@ function ImportProduct({
                                         </Button>
                                     </div>
 
-                                    <div className=" flex flex-col gap-2 mt-4">
+                                    <div className="mt-4 flex flex-col gap-2">
                                         <InputWithLabel
                                             fieldTitle={`จำนวน (${
-                                                productData?.unit ?? ""
+                                                productData?.unit ?? ''
                                             }) : มีอยู่ ${
                                                 productData?.stock ?? 0
                                             }`}
@@ -197,7 +195,7 @@ function ImportProduct({
                                             disabled={isLoading}
                                             errorClassName="right-0"
                                         />
-                                        {importType === "import" && (
+                                        {importType === 'import' && (
                                             <InputWithLabel
                                                 fieldTitle="ราคารวม"
                                                 nameInSchema="totalPrice"
@@ -211,7 +209,7 @@ function ImportProduct({
                                     </div>
                                 </div>
                                 <DialogFooter>
-                                    <div className="flex mt-4 items-center justify-between gap-2">
+                                    <div className="mt-4 flex items-center justify-between gap-2">
                                         <DialogClose asChild>
                                             <Button
                                                 key="cancel"
@@ -226,16 +224,16 @@ function ImportProduct({
                                             form="import-export-product-form"
                                             type="submit"
                                             className={cn(
-                                                "bg-coffee-dark text-white",
-                                                importType === "import"
-                                                    ? "bg-emerald-500 hover:bg-emerald-600"
-                                                    : "bg-red-500"
+                                                'bg-coffee-dark text-white',
+                                                importType === 'import'
+                                                    ? 'bg-emerald-500 hover:bg-emerald-600'
+                                                    : 'bg-red-500'
                                             )}
                                             disabled={isLoading}
                                         >
-                                            {importType === "import"
-                                                ? "นำเข้าสินค้า"
-                                                : "นำออกสินค้า"}
+                                            {importType === 'import'
+                                                ? 'นำเข้าสินค้า'
+                                                : 'นำออกสินค้า'}
                                         </Button>
                                     </div>
                                 </DialogFooter>

@@ -1,23 +1,24 @@
-import { eq, or } from "drizzle-orm";
-import { db } from "@/database/db";
-import { getCurrentUser } from "@/services/middleware-hono";
-import { Hono } from "hono";
+import { db } from '@/database/db';
+import { getCurrentUser } from '@/services/middleware-hono';
+import { desc, eq, or } from 'drizzle-orm';
+import { Hono } from 'hono';
 
-import { active as ActiveTable } from "@/database/schema/active";
+import { active as ActiveTable } from '@/database/schema/active';
 
-const app = new Hono().get("/", getCurrentUser, async (c) => {
-    const user = c.get("user");
+const app = new Hono().get('/', getCurrentUser, async c => {
+    const user = c.get('user');
 
     if (!user) {
-        return c.json({ message: "Unauthorized" }, 401);
+        return c.json({ message: 'Unauthorized' }, 401);
     }
 
     try {
         const actives = await db.query.active.findMany({
             where: or(
-                eq(ActiveTable.status, "open"),
-                eq(ActiveTable.status, "partial")
+                eq(ActiveTable.status, 'open'),
+                eq(ActiveTable.status, 'partial')
             ),
+            orderBy: [desc(ActiveTable.updatedAt)],
             columns: {
                 id: true,
                 customerName: true,
@@ -46,10 +47,10 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
         });
 
         if (!actives.length) {
-            return c.json({ message: "Actives not found", result: [] }, 200);
+            return c.json({ message: 'Actives not found', result: [] }, 200);
         }
 
-        const formattedActives = actives.map((active) => ({
+        const formattedActives = actives.map(active => ({
             activeId: active.id,
             customerName: active.customerName,
             customerPhone: active.customerPhone,
@@ -57,22 +58,20 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
             childNumber: active.childNumber,
             openTime: active.openTime,
             updatedAt: active.updatedAt,
-            activeInfos: active.activeInfos.map((info) => ({
+            activeInfos: active.activeInfos.map(info => ({
                 activeInfoId: info.id,
                 tableId: info.tableId,
                 tableNumber: info.diningTable.tableNumber,
             })),
         }));
 
-        console.log(formattedActives);
-
         return c.json({
-            message: "Actives fetched successfully",
+            message: 'Actives fetched successfully',
             result: formattedActives,
         });
     } catch (error) {
         console.log(error);
-        return c.json({ message: "Internal server error" }, 500);
+        return c.json({ message: 'Internal server error' }, 500);
     }
 });
 export default app;

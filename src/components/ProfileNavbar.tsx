@@ -1,15 +1,15 @@
-import Image from "next/image";
+import { USER_IMG } from '@/constant';
+import { cn } from '@/lib/utils';
+import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/components';
+import Image from 'next/image';
+import Link from 'next/link';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import Link from "next/link";
-import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
-import { USER_IMG } from "@/constant";
-import { cn } from "@/lib/utils";
+} from './ui/dropdown-menu';
 
 type ProfileType = {
     currentUser: {
@@ -33,7 +33,7 @@ export function ProfileNavbar({
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger
                 className={cn(
-                    "rounded-full border border-gray-200 focus-visible:ring-0 max-sm:hidden",
+                    'rounded-full border border-gray-200 focus-visible:ring-0 max-sm:hidden',
                     className
                 )}
             >
@@ -54,21 +54,24 @@ export function ProfileNavbar({
             <DropdownMenuContent sideOffset={8} className="z-[60]">
                 {isOwner && (
                     <DropdownMenuItem asChild>
-                        <Link href={"/owner/dashboard"}>เฉพาะเจ้าของร้าน</Link>
+                        <Link href={'/owner/dashboard'}>เฉพาะเจ้าของร้าน</Link>
                     </DropdownMenuItem>
                 )}
                 {isAdmin && (
                     <>
                         <DropdownMenuItem asChild>
-                            <Link href={"/admin/pre-orders"}>
+                            <Link href={'/admin/pre-orders'}>
                                 เฉพาะผู้ดูแลระบบ
                             </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={'/'}>กลับหน้าแรก</Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                     </>
                 )}
                 <DropdownMenuItem asChild>
-                    <Link href={"/pre-orders"}>ประวัติการจอง</Link>
+                    <Link href={'/pre-orders'}>ประวัติการจอง</Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>

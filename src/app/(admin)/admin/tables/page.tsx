@@ -26,9 +26,15 @@ function TablesPage() {
     if (isError) return <div>Error</div>;
 
     return (
-        <AdminPageWrapper>
+        <AdminPageWrapper className="relative">
             <div className="flex items-center gap-2">
                 <TextHeader text="ระบบโต๊ะ" />
+            </div>
+
+            {/* color status */}
+            <div className="flex items-center justify-center gap-2 mt-4">
+                <ColorStatus color="bg-green-500" text="โต๊ะว่าง" />
+                <ColorStatus color="bg-red-500" text="โต๊ะไม่ว่าง" />
             </div>
 
             <div className="mt-4">
@@ -88,7 +94,7 @@ function TablesPage() {
             {/* Traslate Button */}
             <div
                 className={cn(
-                    "sticky mt-4 -bottom-4 flex transition-all duration-300 w-[95%] mx-auto justify-center bg-white border rounded-md p-4",
+                    "fixed mt-4 bottom-22 left-0 right-0 flex transition-all duration-300 w-[95%] mx-auto justify-center bg-white border rounded-md p-4",
                     selectedTables.length === 0 &&
                         "opacity-0 translate-y-8 pointer-events-none"
                 )}
@@ -113,3 +119,15 @@ function TablesPage() {
 }
 
 export default TablesPage;
+
+
+function ColorStatus({ color, text }: { color: string, text: string }) {
+    return (
+        <div className="flex items-center justify-center gap-2">
+            <span className={`size-3 rounded-full ${color}`} />
+            <p className="text-black text-center text-xs">
+                {text}
+            </p>
+        </div>
+    );
+}

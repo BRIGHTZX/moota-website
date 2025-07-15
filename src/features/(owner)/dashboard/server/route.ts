@@ -1,34 +1,34 @@
-import { db } from "@/database/db";
-import { getCurrentUser } from "@/services/middleware-hono";
-import { and, asc, count, eq, gte, lte, sql, sum } from "drizzle-orm";
-import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
-import { dateRangeSchema } from "../schemas";
+import { db } from '@/database/db';
+import { getCurrentUser } from '@/services/middleware-hono';
+import { zValidator } from '@hono/zod-validator';
+import { and, asc, count, eq, gte, lte, sql, sum } from 'drizzle-orm';
+import { Hono } from 'hono';
+import { dateRangeSchema } from '../schemas';
 
 // service function
-import { groupData } from "@/services/groupData";
-import { DateModeType, StockHistoryType } from "../types";
+import { groupData } from '@/services/groupData';
+import { DateModeType, StockHistoryType } from '../types';
 // checkout
-import { checkout as CheckoutTable } from "@/database/schema/checkout";
-import { preOrder as PreOrderTable } from "@/database/schema/pre-order";
-import { product as ProductTable } from "@/database/schema/product";
-import { importExportHistory as ImportExportHistoryTable } from "@/database/schema/import-export-history";
-import { formatStockHistory } from "@/services/formatStockHistory";
-import { groupTopDrinks } from "@/services/groupTopDrinks";
-import z from "zod";
+import { checkout as CheckoutTable } from '@/database/schema/checkout';
+import { importExportHistory as ImportExportHistoryTable } from '@/database/schema/import-export-history';
+import { preOrder as PreOrderTable } from '@/database/schema/pre-order';
+import { product as ProductTable } from '@/database/schema/product';
+import { formatStockHistory } from '@/services/formatStockHistory';
+import { groupTopDrinks } from '@/services/groupTopDrinks';
+import z from 'zod';
 
 const app = new Hono()
     .get(
-        "/total-count-infomation",
+        '/total-count-infomation',
         getCurrentUser,
-        zValidator("query", dateRangeSchema),
-        async (c) => {
-            const user = c.get("user");
+        zValidator('query', dateRangeSchema),
+        async c => {
+            const user = c.get('user');
             if (!user) {
-                return c.json({ error: "Unauthorized" }, 401);
+                return c.json({ error: 'Unauthorized' }, 401);
             }
 
-            const { startDate, endDate } = c.req.valid("query");
+            const { startDate, endDate } = c.req.valid('query');
             const start = new Date(startDate); // includes all time that day
             const end = new Date(endDate);
             end.setDate(end.getDate() + 1); // exclusive upper bound
@@ -56,8 +56,8 @@ const app = new Hono()
                     .from(PreOrderTable)
                     .where(
                         and(
-                            eq(PreOrderTable.status, "confirmed"),
-                            eq(PreOrderTable.paymentStatus, "paid"),
+                            eq(PreOrderTable.status, 'confirmed'),
+                            eq(PreOrderTable.paymentStatus, 'paid'),
                             gte(PreOrderTable.updatedAt, start),
                             lte(PreOrderTable.updatedAt, end)
                         )
@@ -73,29 +73,29 @@ const app = new Hono()
 
                 return c.json(
                     {
-                        message: "Dashboard data fetched successfully",
+                        message: 'Dashboard data fetched successfully',
                         result: formattedTotal,
                     },
                     200
                 );
             } catch (error) {
                 console.error(error);
-                return c.json({ error: "Internal server error" }, 500);
+                return c.json({ error: 'Internal server error' }, 500);
             }
         }
     )
     .get(
-        "total-income-outcome",
+        'total-income-outcome',
         getCurrentUser,
-        zValidator("query", dateRangeSchema),
-        async (c) => {
-            const user = c.get("user");
+        zValidator('query', dateRangeSchema),
+        async c => {
+            const user = c.get('user');
 
             if (!user) {
-                return c.json({ error: "Unauthorized" }, 401);
+                return c.json({ error: 'Unauthorized' }, 401);
             }
 
-            const { startDate, endDate, mode } = c.req.valid("query");
+            const { startDate, endDate, mode } = c.req.valid('query');
             const start = new Date(startDate); // includes all time that day
             const end = new Date(endDate);
             end.setDate(end.getDate() + 1); // exclusive upper bound
@@ -118,7 +118,7 @@ const app = new Hono()
                         extras: {
                             totalAmount:
                                 sql<number>`${ImportExportHistoryTable.totalPrice}`.as(
-                                    "totalAmount"
+                                    'totalAmount'
                                 ),
                         },
                         columns: {
@@ -173,29 +173,29 @@ const app = new Hono()
                 return c.json(
                     {
                         message:
-                            "Total income and outcome fetched successfully",
+                            'Total income and outcome fetched successfully',
                         result: mergedData,
                     },
                     200
                 );
             } catch (error) {
                 console.error(error);
-                return c.json({ error: "Internal server error" }, 500);
+                return c.json({ error: 'Internal server error' }, 500);
             }
         }
     )
     .get(
-        "/customer-count",
+        '/customer-count',
         getCurrentUser,
-        zValidator("query", dateRangeSchema),
-        async (c) => {
-            const user = c.get("user");
+        zValidator('query', dateRangeSchema),
+        async c => {
+            const user = c.get('user');
             if (!user) {
-                return c.json({ error: "Unauthorized" }, 401);
+                return c.json({ error: 'Unauthorized' }, 401);
             }
 
             try {
-                const { startDate, endDate } = c.req.valid("query");
+                const { startDate, endDate } = c.req.valid('query');
                 const start = new Date(startDate); // includes all time that day
                 const end = new Date(endDate);
                 end.setDate(end.getDate() + 1); // exclusive upper bound
@@ -204,7 +204,7 @@ const app = new Hono()
                     extras: {
                         totalAmount:
                             sql<number>`${CheckoutTable.paidAdultNumber} + ${CheckoutTable.paidChildNumber}`.as(
-                                "totalAmount"
+                                'totalAmount'
                             ),
                     },
                     columns: {
@@ -219,39 +219,39 @@ const app = new Hono()
 
                 const groupedCustomer = groupData(
                     customerCount,
-                    "day" as DateModeType
+                    'day' as DateModeType
                 );
 
                 return c.json(
                     {
-                        message: "Customer count fetched successfully",
+                        message: 'Customer count fetched successfully',
                         result: groupedCustomer,
                     },
                     200
                 );
             } catch (error) {
                 console.log(error);
-                return c.json({ error: "Internal server error" }, 500);
+                return c.json({ error: 'Internal server error' }, 500);
             }
         }
     )
     .get(
-        "/stock-history",
+        '/stock-history',
         getCurrentUser,
         zValidator(
-            "query",
+            'query',
             dateRangeSchema.extend({
-                category: z.enum(["วัตถุดิบ", "เครื่องดื่ม"]),
+                category: z.enum(['วัตถุดิบ', 'เครื่องดื่ม']),
             })
         ),
-        async (c) => {
-            const user = c.get("user");
+        async c => {
+            const user = c.get('user');
             if (!user) {
-                return c.json({ error: "Unauthorized" }, 401);
+                return c.json({ error: 'Unauthorized' }, 401);
             }
 
             try {
-                const { startDate, endDate, category } = c.req.valid("query");
+                const { startDate, endDate, category } = c.req.valid('query');
                 const start = new Date(startDate); // includes all time that day
                 const end = new Date(endDate);
                 end.setDate(end.getDate() + 1); // exclusive upper bound
@@ -282,9 +282,9 @@ const app = new Hono()
                     stockHistory as StockHistoryType[]
                 );
 
-                const formattedProduct = productRaw.map((item) => {
+                const formattedProduct = productRaw.map(item => {
                     const stockHistory = formattedStockHistory?.find(
-                        (stock) => stock.productId === item.id
+                        stock => stock.productId === item.id
                     );
 
                     return {
@@ -296,27 +296,27 @@ const app = new Hono()
                     };
                 });
                 return c.json({
-                    message: "Stock history fetched successfully",
+                    message: 'Stock history fetched successfully',
                     result: formattedProduct,
                 });
             } catch (error) {
                 console.log(error);
-                return c.json({ error: "Internal server error" }, 500);
+                return c.json({ error: 'Internal server error' }, 500);
             }
         }
     )
     .get(
-        "/top-drink",
+        '/top-drink',
         getCurrentUser,
-        zValidator("query", dateRangeSchema),
-        async (c) => {
-            const user = c.get("user");
+        zValidator('query', dateRangeSchema),
+        async c => {
+            const user = c.get('user');
             if (!user) {
-                return c.json({ error: "Unauthorized" }, 401);
+                return c.json({ error: 'Unauthorized' }, 401);
             }
 
             try {
-                const { startDate, endDate } = c.req.valid("query");
+                const { startDate, endDate } = c.req.valid('query');
                 const start = new Date(startDate); // includes all time that day
                 const end = new Date(endDate);
                 end.setDate(end.getDate() + 1); // exclusive upper bound
@@ -341,19 +341,15 @@ const app = new Hono()
                     ),
                 });
 
-                console.log("topDrinkRaw", topDrinkRaw);
-
                 const groupedProduct = groupTopDrinks(topDrinkRaw);
 
-                console.log("groupedProduct", groupedProduct);
-
                 return c.json({
-                    message: "Top drink fetched successfully",
+                    message: 'Top drink fetched successfully',
                     result: groupedProduct,
                 });
             } catch (error) {
                 console.log(error);
-                return c.json({ error: "Internal server error" }, 500);
+                return c.json({ error: 'Internal server error' }, 500);
             }
         }
     );

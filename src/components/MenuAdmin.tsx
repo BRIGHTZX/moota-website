@@ -90,7 +90,7 @@ const MenuItem = ({
                 </button>
                 <span
                     className={cn(
-                        "text-sm font-medium text-black group-hover:text-white transition-all duration-300",
+                        "text-xs font-medium text-black group-hover:text-white transition-all duration-300",
                         active && "text-white"
                     )}
                 >

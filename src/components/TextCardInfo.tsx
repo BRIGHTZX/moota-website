@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 
 export const TextCardInfo = ({
     text,
+    subText,
     value,
     status,
     className,
@@ -9,6 +10,7 @@ export const TextCardInfo = ({
     valueClassName,
 }: {
     text: string | React.ReactNode;
+    subText?: string | React.ReactNode;
     value: string | React.ReactNode;
     status?: string;
     className?: string;
@@ -39,7 +41,7 @@ export const TextCardInfo = ({
                     textClassName
                 )}
             >
-                {text}
+                {text} {subText && <span className="text-xs text-gray-500 font-light">{subText}</span>}
             </p>
             {value && (
                 <p
