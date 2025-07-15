@@ -1,14 +1,13 @@
-import React from "react";
-import { useFormContext } from "react-hook-form";
-import { FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { cn } from '@/lib/utils';
+import { useFormContext } from 'react-hook-form';
+import { FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "../ui/select";
-import { cn } from "@/lib/utils";
+} from '../ui/select';
 
 type InputWithLabelProps<S> = {
     fieldTitle: string;
@@ -16,7 +15,10 @@ type InputWithLabelProps<S> = {
     placeholder: string;
     labelClassName?: string;
     inputClassName?: string;
-    options: string[];
+    options: {
+        label: string;
+        value: string;
+    }[];
     errorClassName?: string;
     disabled?: boolean;
 };
@@ -45,30 +47,33 @@ function SelectWithLabel<S>({
                         {fieldTitle}
                     </FormLabel>
                     <Select
-                        value={field.value === "" ? undefined : field.value}
-                        onValueChange={(value) => {
-                            if (value === "") {
+                        value={field.value === '' ? undefined : field.value}
+                        onValueChange={value => {
+                            if (value === '') {
                                 return;
                             }
                             field.onChange(value);
                         }}
                         disabled={disabled}
                     >
-                        <SelectTrigger className={cn(inputClassName, "w-full")}>
+                        <SelectTrigger className={cn(inputClassName, 'w-full')}>
                             <SelectValue placeholder={placeholder} />
                         </SelectTrigger>
                         <SelectContent>
-                            {options.map((option) => (
-                                <SelectItem key={option} value={option}>
-                                    {option}
+                            {options.map(option => (
+                                <SelectItem
+                                    key={option.label}
+                                    value={option.value}
+                                >
+                                    {option.label}
                                 </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                     <FormMessage
                         className={cn(
-                            "absolute text-xs -bottom-5",
-                            errorClassName || "left-0"
+                            'absolute -bottom-5 text-xs',
+                            errorClassName || 'left-0'
                         )}
                     />
                 </FormItem>

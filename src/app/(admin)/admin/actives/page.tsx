@@ -1,12 +1,14 @@
-"use client";
-import AdminPageWrapper from "@/components/AdminPageWrapper";
-import AlertDialogCustom from "@/components/AlertDialogCustom";
-import PageLoader from "@/components/PageLoader";
-import TextHeader from "@/components/TextHeader";
-import { useGetActives } from "@/features/(admin)/actives/api/use-get-actives";
-import TableActiveSection from "@/features/(admin)/actives/components/TableActiveSection";
-import { useRouter } from "next/navigation";
-import React, { Fragment, useState } from "react";
+'use client';
+import AdminPageWrapper from '@/components/AdminPageWrapper';
+import AlertDialogCustom from '@/components/AlertDialogCustom';
+import PageLoader from '@/components/PageLoader';
+import TextHeader from '@/components/TextHeader';
+import { Button } from '@/components/ui/button';
+import { useGetActives } from '@/features/(admin)/actives/api/use-get-actives';
+import TableActiveSection from '@/features/(admin)/actives/components/TableActiveSection';
+import { HistoryIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Fragment, useState } from 'react';
 
 function ActivePage() {
     const router = useRouter();
@@ -29,21 +31,28 @@ function ActivePage() {
 
     return (
         <AdminPageWrapper>
-            <TextHeader text="โต๊ะที่กำลังทำงาน" />
+            <div className="flex items-center justify-between">
+                <TextHeader text="โต๊ะที่กำลังทำงาน" />
+
+                <Button size="sm" variant="outline" className="gap-2">
+                    <HistoryIcon />
+                    <span className="text-xs">ประวัติการชำระเงิน</span>
+                </Button>
+            </div>
             {isLoading ? (
                 <PageLoader className="h-[400px]" />
             ) : (
                 <Fragment>
                     <div className="mt-4 flex flex-col gap-2">
                         {activesData?.length === 0 ? (
-                            <div className="flex items-center justify-center h-[400px]">
+                            <div className="flex h-[400px] items-center justify-center">
                                 <TextHeader
                                     text="ไม่มีโต๊ะที่กำลังทำงาน"
                                     className="text-lg text-gray-400"
                                 />
                             </div>
                         ) : (
-                            activesData?.map((active) => (
+                            activesData?.map(active => (
                                 <TableActiveSection
                                     key={active.activeId}
                                     active={active}
@@ -57,9 +66,9 @@ function ActivePage() {
                         open={openAlertDialog}
                         setOpen={setOpenAlertDialog}
                         action={handleCloseActive}
-                        title={"ยืนยันการปิดโต๊ะ"}
-                        description={"คุณต้องการปิดโต๊ะนี้หรือไม่"}
-                        buttonActionText={"ยืนยัน"}
+                        title={'ยืนยันการปิดโต๊ะ'}
+                        description={'คุณต้องการปิดโต๊ะนี้หรือไม่'}
+                        buttonActionText={'ยืนยัน'}
                     />
                 </Fragment>
             )}
