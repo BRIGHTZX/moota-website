@@ -14,27 +14,27 @@ import React from "react";
 const menuItems = [
     {
         icon: <ShoppingCartIcon />,
-        text: "Pre-Order",
+        text: "จองโต๊ะ",
         href: "/admin/pre-orders",
     },
     {
         icon: <TableIcon />,
-        text: "Table",
+        text: "โต๊ะ",
         href: "/admin/tables",
     },
     {
         icon: <Table2Icon />,
-        text: "Active",
+        text: "ทำงาน",
         href: "/admin/actives",
     },
     {
         icon: <HistoryIcon />,
-        text: "History",
+        text: "ชำระเงิน",
         href: "/admin/checkout-history",
     },
     {
         icon: <PackageIcon />,
-        text: "Stock",
+        text: "นำเข้า/ออก",
         href: "/admin/stocks",
     },
 ];

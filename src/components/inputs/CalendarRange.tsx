@@ -43,8 +43,8 @@ export function CalendarRange({
     };
 
     return (
-        <div className="border border-gray-300 shadow-sm p-4  bg-white rounded-lg">
-            <div className="flex items-center  gap-2">
+        <div className="border border-gray-300 shadow-sm py-4 px-2  bg-white rounded-lg">
+            <div className="flex  items-center gap-2">
                 <div className="flex w-full flex-col gap-2">
                     <Label htmlFor="start-date">ตั้งแต่</Label>
                     <Input

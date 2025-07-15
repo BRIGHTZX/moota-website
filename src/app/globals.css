@@ -147,4 +147,12 @@ color palette:
     h6 {
         font-family: "Playfair Display", serif;
     }
+
+    input,
+    textarea,
+    select {
+        -webkit-appearance: none;
+        appearance: none;
+        border-radius: 0;
+    }
 }
