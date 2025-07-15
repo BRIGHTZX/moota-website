@@ -60,6 +60,24 @@ export default async function middleware(req: NextRequest) {
         }
     }
 
+    if (req.nextUrl.pathname.startsWith("/owner")) {
+        try {
+            const user = await getUser();
+            const email = user?.email;
+
+            if (
+                email !== process.env.OWNER_EMAIL ||
+                email !== process.env.FRIEND_EMAIL_1 ||
+                email !== process.env.FRIEND_EMAIL_2 ||
+                email !== process.env.DEV_EMAIL
+            ) {
+                return NextResponse.redirect(new URL("/", req.url));
+            }
+        } catch (error) {
+            console.error("Error checking roles:", error);
+        }
+    }
+
     return response;
 }
 
