@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useGetActives } from '@/features/(admin)/actives/api/use-get-actives';
 import TableActiveSection from '@/features/(admin)/actives/components/TableActiveSection';
 import { HistoryIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Fragment, useState } from 'react';
 
@@ -34,9 +35,11 @@ function ActivePage() {
             <div className="flex items-center justify-between">
                 <TextHeader text="โต๊ะที่กำลังทำงาน" />
 
-                <Button size="sm" variant="outline" className="gap-2">
-                    <HistoryIcon />
-                    <span className="text-xs">ประวัติการชำระเงิน</span>
+                <Button asChild size="sm" variant="outline" className="gap-2">
+                    <Link href="/admin/checkout-history">
+                        <HistoryIcon />
+                        <span className="text-xs">ประวัติการชำระเงิน</span>
+                    </Link>
                 </Button>
             </div>
             {isLoading ? (

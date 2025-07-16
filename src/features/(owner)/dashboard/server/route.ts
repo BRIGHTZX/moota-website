@@ -50,7 +50,17 @@ const app = new Hono()
                         )
                     );
 
-                console.log(totalCheckout);
+                const [totalTakeAwayIncome] = await db
+                    .select({
+                        totalAmount: sum(TakeAwayTable.totalAmount),
+                    })
+                    .from(TakeAwayTable)
+                    .where(
+                        and(
+                            gte(TakeAwayTable.updatedAt, start),
+                            lte(TakeAwayTable.updatedAt, end)
+                        )
+                    );
 
                 const [totalPreOrder] = await db
                     .select({
@@ -69,7 +79,9 @@ const app = new Hono()
                 const formattedTotal = {
                     totalAdult: Number(totalCheckout.totalAdult) ?? 0,
                     totalChild: Number(totalCheckout.totalChild) ?? 0,
-                    totalAmount: Number(totalCheckout.totalAmount) ?? 0,
+                    totalAmount:
+                        Number(totalCheckout.totalAmount) +
+                            Number(totalTakeAwayIncome.totalAmount) || 0,
                     totalOrder: Number(totalCheckout.totalOrder) ?? 0,
                     totalPreOrder: Number(totalPreOrder.totalPreOrder) ?? 0,
                 };

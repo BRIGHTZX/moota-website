@@ -60,9 +60,7 @@ export function ProfileNavbar({
                 {isAdmin && (
                     <>
                         <DropdownMenuItem asChild>
-                            <Link href={'/admin/pre-orders'}>
-                                เฉพาะผู้ดูแลระบบ
-                            </Link>
+                            <Link href={'/admin/pre-orders'}>เฉพาะพนักงาน</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                             <Link href={'/'}>กลับหน้าแรก</Link>

@@ -3,8 +3,11 @@ import AdminPageWrapper from '@/components/AdminPageWrapper';
 import { CalendarRange } from '@/components/inputs/CalendarRange';
 import PageLoader from '@/components/PageLoader';
 import TextHeader from '@/components/TextHeader';
+import { Button } from '@/components/ui/button';
 import { useGetCheckoutsHistory } from '@/features/(admin)/checkout-history/api/use-get-checkouts-history';
 import CheckoutHistoryCard from '@/features/(admin)/checkout-history/components/CheckoutHistoryCard';
+import { ArrowLeftIcon } from 'lucide-react';
+import Link from 'next/link';
 import { parseAsString, useQueryState } from 'nuqs';
 import { useMemo } from 'react';
 
@@ -38,7 +41,14 @@ function CheckoutHistoryClient() {
 
     return (
         <AdminPageWrapper>
-            <TextHeader text="ประวัติการชำระเงิน" />
+            <div className="flex items-center gap-2">
+                <Button asChild variant="outline" size="sm">
+                    <Link href="/admin/actives">
+                        <ArrowLeftIcon />
+                    </Link>
+                </Button>
+                <TextHeader text="ประวัติการชำระเงิน" />
+            </div>
 
             <div className="relative mt-4 w-full">
                 <CalendarRange

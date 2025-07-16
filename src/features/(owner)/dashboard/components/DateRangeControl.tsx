@@ -1,9 +1,9 @@
-import { CalendarRange } from "@/components/inputs/CalendarRange";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { subDays, subMonths } from "date-fns";
-import React, { useState } from "react";
-import { DateModeType } from "../types";
+import { CalendarRange } from '@/components/inputs/CalendarRange';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { subDays, subMonths } from 'date-fns';
+import { useState } from 'react';
+import { DateModeType } from '../types';
 
 type DateRangeControlProps = {
     today: string;
@@ -22,37 +22,37 @@ function DateRangeControl({
     setMode,
 }: DateRangeControlProps) {
     const [dateType, setDateType] = useState<
-        "today" | "7-days" | "1-month" | "3-months"
-    >("today");
+        'today' | '7-days' | '1-month' | '3-months'
+    >('today');
     const handleToday = () => {
-        setDateType("today");
+        setDateType('today');
         setStartDate(today);
         setEndDate(today);
-        setMode("day");
+        setMode('day');
     };
 
     const handle7Days = (today: string) => {
-        setDateType("7-days");
+        setDateType('7-days');
         const sevenDaysAgo = subDays(new Date(today), 7);
-        setStartDate(sevenDaysAgo.toISOString().split("T")[0]);
+        setStartDate(sevenDaysAgo.toISOString().split('T')[0]);
         setEndDate(today);
-        setMode("day");
+        setMode('day');
     };
 
     const handle1Month = (today: string) => {
-        setDateType("1-month");
+        setDateType('1-month');
         const oneMonthAgo = subMonths(new Date(today), 1);
-        setStartDate(oneMonthAgo.toISOString().split("T")[0]);
+        setStartDate(oneMonthAgo.toISOString().split('T')[0]);
         setEndDate(today);
-        setMode("month");
+        setMode('month');
     };
 
     const handle3Month = (today: string) => {
-        setDateType("3-months");
+        setDateType('3-months');
         const threeMonthsAgo = subMonths(new Date(today), 3);
-        setStartDate(threeMonthsAgo.toISOString().split("T")[0]);
+        setStartDate(threeMonthsAgo.toISOString().split('T')[0]);
         setEndDate(today);
-        setMode("month");
+        setMode('month');
     };
 
     return (
@@ -67,26 +67,26 @@ function DateRangeControl({
             />
 
             {/* Today Button */}
-            <div className="flex items-center gap-2 mt-2">
+            <div className="mt-2 flex items-center gap-2">
                 <DateTypeButton
-                    dateType="today"
+                    label="วันนี้"
                     onClick={handleToday}
-                    isActive={dateType === "today"}
+                    isActive={dateType === 'today'}
                 />
                 <DateTypeButton
-                    dateType="7-days"
+                    label="7 วันที่แล้ว"
                     onClick={() => handle7Days(today)}
-                    isActive={dateType === "7-days"}
+                    isActive={dateType === '7-days'}
                 />
                 <DateTypeButton
-                    dateType="1-month"
+                    label="1 เดือนที่แล้ว"
                     onClick={() => handle1Month(today)}
-                    isActive={dateType === "1-month"}
+                    isActive={dateType === '1-month'}
                 />
                 <DateTypeButton
-                    dateType="3-months"
+                    label="3 เดือนที่แล้ว"
                     onClick={() => handle3Month(today)}
-                    isActive={dateType === "3-months"}
+                    isActive={dateType === '3-months'}
                 />
             </div>
         </div>
@@ -96,23 +96,19 @@ function DateRangeControl({
 export default DateRangeControl;
 
 type DateTypeButtonProps = {
-    dateType: "today" | "7-days" | "1-month" | "3-months";
+    label: string;
     onClick: () => void;
     isActive: boolean;
 };
-const DateTypeButton = ({
-    dateType,
-    onClick,
-    isActive,
-}: DateTypeButtonProps) => {
+const DateTypeButton = ({ label, onClick, isActive }: DateTypeButtonProps) => {
     return (
         <Button
             variant="outline"
             size="sm"
-            className={cn("bg-white", isActive && "bg-blue-500 text-white")}
+            className={cn('bg-white', isActive && 'bg-blue-500 text-white')}
             onClick={onClick}
         >
-            <span className="text-xs">{dateType}</span>
+            <span className="text-xs">{label}</span>
         </Button>
     );
 };

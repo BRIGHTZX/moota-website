@@ -186,7 +186,7 @@ const ProfilDropdown = ({ currentUser, isAdmin, isOwner }: HamburgerType) => {
                             <>
                                 <DropdownMenuItem asChild>
                                     <Link href={'/admin/pre-orders'}>
-                                        เฉพาะผู้ดูแลระบบ
+                                        เฉพาะพนักงาน
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
