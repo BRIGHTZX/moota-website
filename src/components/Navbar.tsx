@@ -31,6 +31,9 @@ function Navbar() {
                         <Link href="/#about">เกี่ยวกับเรา</Link>
                     </li>
                     <li>
+                        <Link href="/#food">อาหาร</Link>
+                    </li>
+                    <li>
                         <Link href="/#review">รีวิว</Link>
                     </li>
                     <li>

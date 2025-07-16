@@ -32,7 +32,7 @@ function ContactSection() {
                     <div className="flex-1 px-4 md:px-0">
                         <div
                             onClick={goToMap}
-                            className="relative min-h-[400px] w-full rounded-lg border bg-gradient-to-t from-[#E7DED0] to-[#ffffff] shadow-lg"
+                            className="relative w-full rounded-lg border bg-gradient-to-t from-[#E7DED0] to-[#ffffff] shadow-lg"
                         >
                             <Image
                                 src="/map.png"

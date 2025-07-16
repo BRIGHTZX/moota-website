@@ -43,6 +43,10 @@ const arrayLink = [
         href: '/#about',
     },
     {
+        name: 'อาหาร',
+        href: '/#food',
+    },
+    {
         name: 'รีวิว',
         href: '/#review',
     },
