@@ -3,31 +3,32 @@ import {
     activeInfo,
     activeInfoRelations,
     activeRelations,
-} from "./schema/active";
-import { diningTable } from "./schema/diningTable";
-import {
-    order,
-    orderItem,
-    orderItemRelations,
-    orderRelations,
-} from "./schema/order";
-import {
-    preOrder,
-    preOrderInfo,
-    preOrderInfoRelations,
-    preOrderRelations,
-} from "./schema/pre-order";
-import {
-    importExportHistory,
-    importExportHistoryRelations,
-} from "./schema/import-export-history";
-import { product } from "./schema/product";
+} from './schema/active';
 import {
     checkout,
     checkoutInfos,
     checkoutInfosRelations,
     checkoutRelations,
-} from "./schema/checkout";
+} from './schema/checkout';
+import { diningTable } from './schema/diningTable';
+import {
+    importExportHistory,
+    importExportHistoryRelations,
+} from './schema/import-export-history';
+import {
+    order,
+    orderItem,
+    orderItemRelations,
+    orderRelations,
+} from './schema/order';
+import {
+    preOrder,
+    preOrderInfo,
+    preOrderInfoRelations,
+    preOrderRelations,
+} from './schema/pre-order';
+import { product } from './schema/product';
+import { takeAway } from './schema/takeaway';
 
 export const schema = {
     active,
@@ -41,6 +42,7 @@ export const schema = {
     product,
     checkout,
     checkoutInfos,
+    takeAway,
     //relations
     activeRelations,
     activeInfoRelations,

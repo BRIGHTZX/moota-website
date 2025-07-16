@@ -13,6 +13,7 @@ import { checkout as CheckoutTable } from '@/database/schema/checkout';
 import { importExportHistory as ImportExportHistoryTable } from '@/database/schema/import-export-history';
 import { preOrder as PreOrderTable } from '@/database/schema/pre-order';
 import { product as ProductTable } from '@/database/schema/product';
+import { takeAway as TakeAwayTable } from '@/database/schema/takeaway';
 import { formatStockHistory } from '@/services/formatStockHistory';
 import { groupTopDrinks } from '@/services/groupTopDrinks';
 import z from 'zod';
@@ -48,6 +49,8 @@ const app = new Hono()
                             lte(CheckoutTable.updatedAt, end)
                         )
                     );
+
+                console.log(totalCheckout);
 
                 const [totalPreOrder] = await db
                     .select({
@@ -113,6 +116,17 @@ const app = new Hono()
                     orderBy: [asc(CheckoutTable.updatedAt)],
                 });
 
+                const totalTakeAwayIncome = await db.query.takeAway.findMany({
+                    columns: {
+                        totalAmount: true,
+                        updatedAt: true,
+                    },
+                    where: and(
+                        gte(TakeAwayTable.updatedAt, start),
+                        lte(TakeAwayTable.updatedAt, end)
+                    ),
+                });
+
                 const totalOutcome =
                     await db.query.importExportHistory.findMany({
                         extras: {
@@ -135,6 +149,11 @@ const app = new Hono()
                     mode as DateModeType
                 );
 
+                const groupTakeAwayIncome = groupData(
+                    totalTakeAwayIncome,
+                    mode as DateModeType
+                );
+
                 const groupedOutcome = groupData(
                     totalOutcome,
                     mode as DateModeType
@@ -152,6 +171,18 @@ const app = new Hono()
                         income: income.total,
                         outcome: 0,
                     });
+                }
+
+                for (const takeAway of groupTakeAwayIncome) {
+                    if (mergedMap.has(takeAway.date)) {
+                        mergedMap.get(takeAway.date)!.income += takeAway.total;
+                    } else {
+                        mergedMap.set(takeAway.date, {
+                            date: takeAway.date,
+                            income: takeAway.total,
+                            outcome: 0,
+                        });
+                    }
                 }
 
                 for (const outcome of groupedOutcome) {

@@ -1,7 +1,7 @@
-import { Context } from "hono";
-import { createMiddleware } from "hono/factory";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { KindeRoles, KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
+import { KindeRoles, KindeUser } from '@kinde-oss/kinde-auth-nextjs/types';
+import { Context } from 'hono';
+import { createMiddleware } from 'hono/factory';
 
 type UserType = {
     Variables: {
@@ -23,7 +23,7 @@ export const getCurrentUser = createMiddleware<UserType>(
             if (!user || user === null || !user.id) {
                 return c.json(
                     {
-                        message: "Unauthorization",
+                        message: 'Unauthorization',
                         user: null,
                         isAdmin: false,
                     },
@@ -38,8 +38,8 @@ export const getCurrentUser = createMiddleware<UserType>(
                 );
             }
 
-            const roleHasAdmin = roles.find((role) => role.key === "admin");
-            const isAdmin = roleHasAdmin?.name === "Admin" ? true : false;
+            const roleHasAdmin = roles.find(role => role.key === 'admin');
+            const isAdmin = roleHasAdmin?.name === 'Admin' ? true : false;
 
             const isOwner =
                 !!email &&
@@ -48,14 +48,14 @@ export const getCurrentUser = createMiddleware<UserType>(
                     email === process.env.FRIEND_EMAIL_2 ||
                     email === process.env.DEV_EMAIL);
 
-            c.set("user", user);
-            c.set("roles", roles);
-            c.set("isAdmin", isAdmin);
-            c.set("isOwner", isOwner);
+            c.set('user', user);
+            c.set('roles', roles);
+            c.set('isAdmin', isAdmin);
+            c.set('isOwner', isOwner);
             await next();
         } catch (error) {
-            console.log("Error during authentication: ", error);
-            return c.json({ data: null, message: "Unauthorized" }, 403);
+            console.log('Error during authentication: ', error);
+            return c.json({ data: null, message: 'Unauthorized' }, 403);
         }
     }
 );
