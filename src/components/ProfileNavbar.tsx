@@ -33,7 +33,7 @@ export function ProfileNavbar({
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger
                 className={cn(
-                    'rounded-full border border-gray-200 focus-visible:ring-0 max-sm:hidden',
+                    'rounded-full border border-gray-200 focus-visible:ring-0 max-md:hidden',
                     className
                 )}
             >

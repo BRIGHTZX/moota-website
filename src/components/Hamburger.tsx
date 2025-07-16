@@ -35,19 +35,19 @@ type HamburgerType = {
 
 const arrayLink = [
     {
-        name: 'Home',
+        name: 'หน้าแรก',
         href: '/',
     },
     {
-        name: 'About',
+        name: 'เกี่ยวกับเรา',
         href: '/#about',
     },
     {
-        name: 'Review',
+        name: 'รีวิว',
         href: '/#review',
     },
     {
-        name: 'Contact',
+        name: 'ติดต่อเรา',
         href: '/#contact',
     },
 ];
@@ -58,14 +58,14 @@ function Hamburger({ currentUser, isAdmin, isOwner }: HamburgerType) {
     return (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger>
-                <div className="bg-coffee-light flex h-8 w-12 cursor-pointer items-center justify-center rounded-md sm:hidden">
+                <div className="bg-coffee-light flex h-8 w-12 cursor-pointer items-center justify-center rounded-md md:hidden">
                     <MenuIcon className="text-coffee-dark size-7 p-1" />
                 </div>
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>
-                    <SheetTitle className="text-coffee-dark text-2xl">
-                        Menu
+                    <SheetTitle asChild className="text-4xl text-black">
+                        <p>เมนู</p>
                     </SheetTitle>
                 </SheetHeader>
 
@@ -130,7 +130,7 @@ const HamburgerLink = ({
                     isActive && 'bg-coffee-light'
                 )}
             >
-                <h1 className="text-coffee-dark text-xl font-bold">{name}</h1>
+                <p className="text-coffee-dark text-xl font-bold">{name}</p>
             </div>
         </Link>
     );

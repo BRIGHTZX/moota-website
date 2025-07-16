@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 type HeaderSectionProps = {
     icon: React.ReactNode;
@@ -18,16 +18,16 @@ function HeaderSection({
             <div className="mb-10 flex items-center justify-center">
                 <div className="flex w-fit items-center gap-2 rounded-full bg-gradient-to-r from-[#4A2C2A] to-[#776054] px-10 py-2 text-white">
                     {icon}
-                    <h2 className="text-center text-coffee-light text-2xl font-bold">
+                    <p className="text-coffee-light text-center text-2xl font-bold">
                         {title}
-                    </h2>
+                    </p>
                 </div>
             </div>
 
-            <h1 className="text-center text-5xl md:text-7xl font-bold text-black">
+            <p className="text-center text-5xl font-bold text-black md:text-7xl">
                 {header}
-            </h1>
-            <p className="mt-8 lg:w-3/4 mx-auto w-3/4 text-center text-sm md:text-xl lg:text-2xl text-coffee-brown">
+            </p>
+            <p className="text-coffee-brown mx-auto mt-8 w-3/4 text-center text-sm md:text-xl lg:w-3/4 lg:text-2xl">
                 {description}
             </p>
         </div>

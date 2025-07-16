@@ -1,22 +1,22 @@
-"use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
-import { useForm } from "react-hook-form";
+'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Image from 'next/image';
+import { useForm } from 'react-hook-form';
 
 import {
     insertPreOrderSchema,
     type insertPreOrderSchemaType,
-} from "@/features/(client)/reservation/schema";
+} from '@/features/(client)/reservation/schema';
 
-import { DateTimeWithLabel } from "@/components/inputs/DateTimeWithLabel";
-import InputWithLabel from "@/components/inputs/InputWithLabel";
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import { useCreateReservation } from "@/features/(client)/reservation/api/use-create-reservation";
-import TableReservation from "@/features/(client)/reservation/components/TableReservation";
-import { useState } from "react";
-import { toast } from "sonner";
-import AlertDialogCustom from "@/components/AlertDialogCustom";
+import { DateTimeWithLabel } from '@/components/inputs/DateTimeWithLabel';
+import InputWithLabel from '@/components/inputs/InputWithLabel';
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
+import { useCreateReservation } from '@/features/(client)/reservation/api/use-create-reservation';
+import TableReservation from '@/features/(client)/reservation/components/TableReservation';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import AlertDialogCustom from '@/components/AlertDialogCustom';
 
 function ReservationPage() {
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
@@ -27,15 +27,15 @@ function ReservationPage() {
         isError: isCreateReservationError,
     } = useCreateReservation();
     const form = useForm<insertPreOrderSchemaType>({
-        mode: "onChange",
+        mode: 'onChange',
         resolver: zodResolver(insertPreOrderSchema),
         defaultValues: {
-            customerName: "",
-            phoneNumber: "",
+            customerName: '',
+            phoneNumber: '',
             adultNumber: 0,
             childNumber: 0,
             reservationDate: new Date().toISOString(),
-            reservationTime: "16:00",
+            reservationTime: '16:00',
         },
     });
 
@@ -52,13 +52,13 @@ function ReservationPage() {
     };
 
     if (isCreateReservationError) {
-        toast.error("กรุณากรอกข้อมูลให้ครบถ้วน", {
+        toast.error('กรุณากรอกข้อมูลให้ครบถ้วน', {
             style: {
-                background: "red",
-                color: "white",
+                background: 'red',
+                color: 'white',
             },
         });
-        return <p className="text-red-500 pt-30">error</p>;
+        return <p className="pt-30 text-red-500">error</p>;
     }
 
     return (
@@ -76,12 +76,14 @@ function ReservationPage() {
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)}>
                     <div className="container mx-auto pt-30">
-                        <div className="flex items-center justify-between">
-                            <h1 className="text-5xl">Reservation</h1>
+                        <div className="flex items-center justify-center md:justify-between">
+                            <p className="text-4xl font-bold sm:text-5xl">
+                                กรอกข้อมูลการจอง
+                            </p>
                             <div className="flex items-center gap-4">
                                 <Button
                                     variant="coffeePrimary"
-                                    className="w-full hidden md:flex"
+                                    className="hidden w-full md:flex"
                                     type="button"
                                     disabled={isCreateReservationPending}
                                     onClick={async () => {
@@ -89,11 +91,11 @@ function ReservationPage() {
 
                                         if (!result) {
                                             toast.error(
-                                                "กรุณากรอกข้อมูลให้ครบถ้วน",
+                                                'กรุณากรอกข้อมูลให้ครบถ้วน',
                                                 {
                                                     style: {
-                                                        background: "red",
-                                                        color: "white",
+                                                        background: 'red',
+                                                        color: 'white',
                                                     },
                                                 }
                                             );
@@ -101,11 +103,11 @@ function ReservationPage() {
                                         } else {
                                             if (arrayTable.length === 0) {
                                                 toast.error(
-                                                    "กรุณาเลือกโต๊ะที่ต้องการจอง",
+                                                    'กรุณาเลือกโต๊ะที่ต้องการจอง',
                                                     {
                                                         style: {
-                                                            background: "red",
-                                                            color: "white",
+                                                            background: 'red',
+                                                            color: 'white',
                                                         },
                                                     }
                                                 );
@@ -122,7 +124,7 @@ function ReservationPage() {
                             </div>
                         </div>
                         <div className="mt-10 rounded-lg border-2 border-gray-300 px-4 py-6">
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                                 <DateTimeWithLabel<insertPreOrderSchemaType>
                                     timeNameInSchema="reservationTime"
                                     dateNameInSchema="reservationDate"
@@ -175,7 +177,7 @@ function ReservationPage() {
                         <div className="flex items-center gap-4">
                             <Button
                                 variant="coffeePrimary"
-                                className="w-full flex mt-8 md:mt-0 md:hidden"
+                                className="mt-8 flex w-full md:mt-0 md:hidden"
                                 type="button"
                                 disabled={isCreateReservationPending}
                                 onClick={async () => {
@@ -183,11 +185,11 @@ function ReservationPage() {
 
                                     if (!result) {
                                         toast.error(
-                                            "กรุณากรอกข้อมูลให้ครบถ้วน",
+                                            'กรุณากรอกข้อมูลให้ครบถ้วน',
                                             {
                                                 style: {
-                                                    background: "red",
-                                                    color: "white",
+                                                    background: 'red',
+                                                    color: 'white',
                                                 },
                                             }
                                         );
@@ -195,11 +197,11 @@ function ReservationPage() {
                                     } else {
                                         if (arrayTable.length === 0) {
                                             toast.error(
-                                                "กรุณาเลือกโต๊ะที่ต้องการจอง",
+                                                'กรุณาเลือกโต๊ะที่ต้องการจอง',
                                                 {
                                                     style: {
-                                                        background: "red",
-                                                        color: "white",
+                                                        background: 'red',
+                                                        color: 'white',
                                                     },
                                                 }
                                             );

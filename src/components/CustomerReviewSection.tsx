@@ -1,9 +1,9 @@
-"use client";
-import HeaderSection from "./HeaderSection";
-import { Star } from "lucide-react";
-import CommentCard from "./CommentCard";
-import { useState } from "react";
-import { Button } from "./ui/button";
+'use client';
+import HeaderSection from './HeaderSection';
+import { Star } from 'lucide-react';
+import CommentCard from './CommentCard';
+import { useState } from 'react';
+import { Button } from './ui/button';
 
 function CustomerReviewSection() {
     const [comments, setComments] = useState(1);
@@ -14,9 +14,9 @@ function CustomerReviewSection() {
         >
             <HeaderSection
                 icon={<Star className="size-6" />}
-                title="Customer Reviews"
-                header="What Our Guests Say"
-                description="ลูกค้าของเราประทับใจในรสชาติอาหารไทยแท้ และการบริการที่อบอุ่น มาดูกันว่าพวกเขาพูดถึงประสบการณ์ที่ Moo Krata ว่าอย่างไรบ้าง"
+                title="รีวิวจากลูกค้า"
+                header="ความคิดเห็นจากลูกค้าของเรา"
+                description="ลูกค้าของเราประทับใจในรสชาติอาหารไทยแท้ และการบริการที่อบอุ่น มาดูกันว่าพวกเขาพูดถึงประสบการณ์ที่ Moo Krata Palace ว่าอย่างไรบ้าง"
             />
 
             <div className="container mx-auto px-4 md:px-0">
@@ -38,7 +38,7 @@ function CustomerReviewSection() {
                         variant="coffeeOutline"
                         className="rounded-full px-10 text-sm md:text-base"
                     >
-                        Prev
+                        ย้อนกลับ
                     </Button>
                     <Button
                         onClick={() => setComments(comments + 1)}
@@ -46,7 +46,7 @@ function CustomerReviewSection() {
                         variant="coffeeOutline"
                         className="rounded-full px-10 text-sm md:text-base"
                     >
-                        Next
+                        ต่อไป
                     </Button>
                 </div>
             </div>

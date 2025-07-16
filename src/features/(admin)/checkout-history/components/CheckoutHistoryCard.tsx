@@ -46,7 +46,7 @@ function CheckoutHistoryCard({
                 value={`${checkoutHistory.paidChildNumber.toString()} คน`}
             />
             <TextCardInfo
-                text="ราคาออร์เดอร์"
+                text="ราคาเครื่องดื่ม"
                 value={`${checkoutHistory.totalOrderPrice.toString()} บาท`}
             />
             <TextCardInfo

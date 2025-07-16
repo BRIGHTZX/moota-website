@@ -9,7 +9,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
-import { IoBag } from 'react-icons/io5';
+import { IoBagHandleOutline } from 'react-icons/io5';
 
 const menuItems = [
     {
@@ -28,7 +28,7 @@ const menuItems = [
         href: '/admin/actives',
     },
     {
-        icon: <IoBag className="text-2xl" />,
+        icon: <IoBagHandleOutline className="text-2xl" />,
         text: 'กลับบ้าน',
         href: '/admin/take-away',
     },
