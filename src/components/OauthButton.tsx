@@ -1,8 +1,8 @@
-"use client";
-import React from "react";
-import { FcGoogle } from "react-icons/fc";
-import { Button } from "./ui/button";
-import { LoginLink } from "@kinde-oss/kinde-auth-nextjs";
+'use client';
+import React from 'react';
+import { FcGoogle } from 'react-icons/fc';
+import { Button } from './ui/button';
+import { LoginLink } from '@kinde-oss/kinde-auth-nextjs';
 
 function OauthButton({ redirectUrl }: { redirectUrl: string | undefined }) {
     const connectionId = process.env.NEXT_PUBLIC_KINDE_CONNECTION_GOOGLE;
@@ -17,9 +17,7 @@ function OauthButton({ redirectUrl }: { redirectUrl: string | undefined }) {
                     }}
                 >
                     <FcGoogle className="size-6" />
-                    <span className="text-sm font-bold">
-                        Connect with Google
-                    </span>
+                    <span className="text-sm">เชื่อมต่อด้วย Google</span>
                 </LoginLink>
             </Button>
         </>

@@ -1,6 +1,6 @@
-"use client";
-import { useGetCurrentUser } from "@/features/auth/api/use-get-current-user";
-import { createContext } from "react";
+'use client';
+import { useGetCurrentUser } from '@/features/auth/api/use-get-current-user';
+import { createContext } from 'react';
 
 type NavbarContextType = {
     user: {

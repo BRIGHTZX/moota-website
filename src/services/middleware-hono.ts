@@ -15,9 +15,9 @@ type UserType = {
 export const getCurrentUser = createMiddleware<UserType>(
     async (c: Context, next) => {
         try {
-            const { getUser, getRoles } = getKindeServerSession();
+            const { getUser, getRoles, getPermission } =
+                getKindeServerSession();
             const user = await getUser();
-            const email = user?.email;
             const roles = await getRoles();
 
             if (!user || user === null || !user.id) {
@@ -38,20 +38,23 @@ export const getCurrentUser = createMiddleware<UserType>(
                 );
             }
 
-            const roleHasAdmin = roles.find(role => role.key === 'admin');
-            const isAdmin = roleHasAdmin?.name === 'Admin' ? true : false;
+            const roleHasAdmin = roles.find(
+                role => role.key === process.env.KINDE_ADMIN_ROLE_KEY
+            );
 
-            const isOwner =
-                !!email &&
-                (email === process.env.OWNER_EMAIL ||
-                    email === process.env.FRIEND_EMAIL_1 ||
-                    email === process.env.FRIEND_EMAIL_2 ||
-                    email === process.env.DEV_EMAIL);
+            const isAdmin =
+                roleHasAdmin?.key === process.env.KINDE_ADMIN_ROLE_KEY
+                    ? true
+                    : false;
+
+            const isOwner = await getPermission(
+                process.env.KINDE_OWNER_PERMISSION!
+            );
 
             c.set('user', user);
             c.set('roles', roles);
             c.set('isAdmin', isAdmin);
-            c.set('isOwner', isOwner);
+            c.set('isOwner', isOwner?.isGranted ?? false);
             await next();
         } catch (error) {
             console.log('Error during authentication: ', error);

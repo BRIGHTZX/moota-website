@@ -1,30 +1,30 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { NextRequest, NextResponse } from 'next/server';
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 
 export default async function middleware(req: NextRequest) {
     const response = NextResponse.next();
-    const { getUser, getRoles } = getKindeServerSession();
+    const { getUser, getRoles, getPermission } = getKindeServerSession();
 
     // -------LOGIN & SIGNUP---------------------------
     const isAuthPage =
-        req.nextUrl.pathname === "/signin" ||
-        req.nextUrl.pathname === "/signup";
+        req.nextUrl.pathname === '/signin' ||
+        req.nextUrl.pathname === '/signup';
 
     if (isAuthPage) {
         try {
             const user = await getUser();
 
             if (user) {
-                return NextResponse.redirect(new URL("/", req.url));
+                return NextResponse.redirect(new URL('/', req.url));
             }
         } catch (error) {
-            console.error("Error checking auth page access:", error);
+            console.error('Error checking auth page access:', error);
         }
     }
 
     const isClientPage =
-        req.nextUrl.pathname.startsWith("/reservation") ||
-        req.nextUrl.pathname.startsWith("/checkout");
+        req.nextUrl.pathname.startsWith('/reservation') ||
+        req.nextUrl.pathname.startsWith('/checkout');
 
     // -------CLIENT ROUTES---------------------------
     if (isClientPage) {
@@ -40,42 +40,48 @@ export default async function middleware(req: NextRequest) {
                 );
             }
         } catch (error) {
-            console.error("Error checking client page access:", error);
+            console.error('Error checking client page access:', error);
         }
     }
 
     // -------ADMIN ROUTES---------------------------
-    if (req.nextUrl.pathname.startsWith("/admin")) {
+    if (req.nextUrl.pathname.startsWith('/admin')) {
         try {
             const roles = await getRoles();
 
-            const isAdmin = roles?.some((role) => role.key === "admin");
+            const isAdmin = roles?.some(role => role.key === 'admin');
+            const isHaveAdminPermission = await getPermission(
+                process.env.KINDE_ADMIN_PERMISSION!
+            );
 
-            if (!isAdmin) {
-                return NextResponse.redirect(new URL("/", req.url));
+            const isAdminPermission = isHaveAdminPermission?.isGranted ?? false;
+
+            if (!isAdmin || !isAdminPermission) {
+                return NextResponse.redirect(new URL('/', req.url));
             }
         } catch (error) {
-            console.error("Error checking roles:", error);
-            return NextResponse.redirect(new URL("/", req.url));
+            console.error('Error checking roles:', error);
+            return NextResponse.redirect(new URL('/', req.url));
         }
     }
 
-    if (req.nextUrl.pathname.startsWith("/owner")) {
+    if (req.nextUrl.pathname.startsWith('/owner')) {
         try {
-            const user = await getUser();
-            const email = user?.email;
+            const roles = await getRoles();
 
-            if (
-                email !== process.env.OWNER_EMAIL ||
-                email !== process.env.FRIEND_EMAIL_1 ||
-                email !== process.env.FRIEND_EMAIL_2 ||
-                email !== process.env.DEV_EMAIL
-            ) {
-                return NextResponse.redirect(new URL("/", req.url));
+            const isAdmin = roles?.some(role => role.key === 'admin');
+            const isHaveOwnerPermission = await getPermission(
+                process.env.KINDE_OWNER_PERMISSION!
+            );
+
+            const isOwnerPermission = isHaveOwnerPermission?.isGranted ?? false;
+
+            if (!isAdmin || !isOwnerPermission) {
+                return NextResponse.redirect(new URL('/', req.url));
             }
         } catch (error) {
-            console.error("Error checking roles:", error);
-            return NextResponse.redirect(new URL("/", req.url));
+            console.error('Error checking roles:', error);
+            return NextResponse.redirect(new URL('/', req.url));
         }
     }
 
@@ -83,5 +89,11 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/admin/:path*", "/reservation/:path*", "/signin", "/signup"],
+    matcher: [
+        '/admin/:path*',
+        '/reservation/:path*',
+        '/signin',
+        '/signup',
+        '/owner/:path*',
+    ],
 };
