@@ -1,29 +1,29 @@
-"use client";
+'use client';
 
-import { format } from "date-fns";
-import { ChevronDownIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { format } from 'date-fns';
+import { ChevronDownIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover";
-import { useEffect, useState } from "react";
-import { useFormContext } from "react-hook-form";
+} from '@/components/ui/popover';
+import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 import {
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "../ui/select";
+} from '../ui/select';
 
 type DateTimeWithLabelProps<S> = {
     timeNameInSchema: keyof S & string;
@@ -47,7 +47,7 @@ export function DateTimeWithLabel<S>({
                     render={({ field }) => (
                         <FormItem className="relative">
                             <FormLabel htmlFor="date-picker" className="px-1">
-                                Date
+                                วันที่
                             </FormLabel>
                             <Popover open={open} onOpenChange={setOpen}>
                                 <PopoverTrigger asChild>
@@ -57,8 +57,8 @@ export function DateTimeWithLabel<S>({
                                         className="w-full justify-between font-normal"
                                     >
                                         {field.value
-                                            ? format(field.value, "dd/MM/yyyy")
-                                            : "Select date"}
+                                            ? format(field.value, 'dd/MM/yyyy')
+                                            : 'Select date'}
                                         <ChevronDownIcon />
                                     </Button>
                                 </PopoverTrigger>
@@ -69,7 +69,7 @@ export function DateTimeWithLabel<S>({
                                     <Calendar
                                         mode="single"
                                         selected={field.value}
-                                        disabled={(date) =>
+                                        disabled={date =>
                                             date <
                                             new Date(
                                                 new Date().setDate(
@@ -77,7 +77,7 @@ export function DateTimeWithLabel<S>({
                                                 )
                                             )
                                         }
-                                        onSelect={(date) => {
+                                        onSelect={date => {
                                             field.onChange(date);
                                             setOpen(false);
                                         }}
@@ -86,7 +86,7 @@ export function DateTimeWithLabel<S>({
                                     />
                                 </PopoverContent>
                             </Popover>
-                            <FormMessage className="absolute text-xs -bottom-5 left-0" />
+                            <FormMessage className="absolute -bottom-5 left-0 text-xs" />
                         </FormItem>
                     )}
                 />
@@ -98,13 +98,13 @@ export function DateTimeWithLabel<S>({
                     render={({ field }) => (
                         <FormItem className="relative">
                             <FormLabel htmlFor="time-picker" className="px-1">
-                                Time
+                                เวลาที่ต้องการจอง
                             </FormLabel>
                             <TimeDropdown
                                 value={field.value}
                                 onChange={field.onChange}
                             />
-                            <FormMessage className="absolute text-xs -bottom-5 left-0" />
+                            <FormMessage className="absolute -bottom-5 left-0 text-xs" />
                         </FormItem>
                     )}
                 />
@@ -121,28 +121,28 @@ type TimeDropdownProps = {
 };
 
 export function TimeDropdown({ value, onChange }: TimeDropdownProps) {
-    const [hour, setHour] = useState("16");
-    const [minute, setMinute] = useState("00");
+    const [hour, setHour] = useState('16');
+    const [minute, setMinute] = useState('00');
     const normalizeValue = (val?: string) => {
-        if (!val) return "16:00";
-        if (!val.includes(":")) return "16:00";
-        const [h, m] = val.split(":");
-        const hh = h.padStart(2, "0") || "16";
-        const mm = m.padStart(2, "0") || "00";
+        if (!val) return '16:00';
+        if (!val.includes(':')) return '16:00';
+        const [h, m] = val.split(':');
+        const hh = h.padStart(2, '0') || '16';
+        const mm = m.padStart(2, '0') || '00';
         return `${hh}:${mm}`;
     };
     useEffect(() => {
         const normalized = normalizeValue(value);
-        const [h, m] = normalized.split(":");
+        const [h, m] = normalized.split(':');
         setHour(h);
         setMinute(m);
     }, [value]);
     const hours = Array.from({ length: 7 }, (_, i) => {
         const hour = i + 16;
-        return String(hour).padStart(2, "0");
+        return String(hour).padStart(2, '0');
     });
     const minutes = Array.from({ length: 60 }, (_, i) =>
-        String(i).padStart(2, "0")
+        String(i).padStart(2, '0')
     );
 
     const handleChange = (h: string, m: string) => {
@@ -151,11 +151,11 @@ export function TimeDropdown({ value, onChange }: TimeDropdownProps) {
     };
 
     return (
-        <div className="flex gap-2 w-full">
+        <div className="flex w-full gap-2">
             {/* Hour Select */}
             <Select
                 value={hour}
-                onValueChange={(val) => {
+                onValueChange={val => {
                     setHour(val);
                     handleChange(val, minute);
                 }}
@@ -164,7 +164,7 @@ export function TimeDropdown({ value, onChange }: TimeDropdownProps) {
                     <SelectValue placeholder="ชั่วโมง" />
                 </SelectTrigger>
                 <SelectContent>
-                    {hours.map((h) => (
+                    {hours.map(h => (
                         <SelectItem key={h} value={h}>
                             {h}
                         </SelectItem>
@@ -175,7 +175,7 @@ export function TimeDropdown({ value, onChange }: TimeDropdownProps) {
             {/* Minute Select */}
             <Select
                 value={minute}
-                onValueChange={(val) => {
+                onValueChange={val => {
                     setMinute(val);
                     handleChange(hour, val);
                 }}
@@ -184,7 +184,7 @@ export function TimeDropdown({ value, onChange }: TimeDropdownProps) {
                     <SelectValue placeholder="นาที" />
                 </SelectTrigger>
                 <SelectContent>
-                    {minutes.map((m) => (
+                    {minutes.map(m => (
                         <SelectItem key={m} value={m}>
                             {m}
                         </SelectItem>

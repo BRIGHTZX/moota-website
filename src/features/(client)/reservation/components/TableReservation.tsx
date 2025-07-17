@@ -1,8 +1,8 @@
-import PageLoader from "@/components/PageLoader";
-import { useGetTables } from "@/features/(client)/reservation/api/use-get-tables";
-import { selectTablesSchemaType } from "@/features/(admin)/tables/schema";
-import { cn } from "@/lib/utils";
-import React from "react";
+import PageLoader from '@/components/PageLoader';
+import { useGetTables } from '@/features/(client)/reservation/api/use-get-tables';
+import { selectTablesSchemaType } from '@/features/(admin)/tables/schema';
+import { cn } from '@/lib/utils';
+import React from 'react';
 
 function TableReservation({
     arrayTable,
@@ -15,17 +15,17 @@ function TableReservation({
     const tablesData = tables?.tables;
 
     const insideTables = tablesData?.filter(
-        (table: selectTablesSchemaType) => table.tableType === "inside"
+        (table: selectTablesSchemaType) => table.tableType === 'inside'
     );
 
     const outsideTables = tablesData?.filter(
-        (table: selectTablesSchemaType) => table.tableType === "outside"
+        (table: selectTablesSchemaType) => table.tableType === 'outside'
     );
 
     const handleSelectTable = (tableId: string, isAvailable: boolean) => {
         if (!isAvailable) return;
         if (arrayTable.includes(tableId)) {
-            setArrayTable(arrayTable.filter((t) => t !== tableId));
+            setArrayTable(arrayTable.filter(t => t !== tableId));
         } else {
             setArrayTable([...arrayTable, tableId]);
         }
@@ -39,7 +39,7 @@ function TableReservation({
             <div className="flex flex-1 flex-wrap gap-4">
                 <div className="flex size-full flex-col gap-4">
                     <div>
-                        <p className="text-2xl text-center font-bold">ด้านใน</p>
+                        <p className="text-center text-2xl font-bold">ด้านใน</p>
                     </div>
                     <div className="flex flex-col gap-2">
                         <div>
@@ -96,10 +96,10 @@ function TableReservation({
             </div>
 
             {/* OUTSIDE */}
-            <div className="flex flex-1 mt-4 sm:mt-0 gap-4">
+            <div className="mt-4 flex flex-1 gap-4 sm:mt-0">
                 <div className="flex size-full flex-col gap-4">
                     <div>
-                        <p className="text-2xl text-center font-bold">
+                        <p className="text-center text-2xl font-bold">
                             ด้านนอก
                         </p>
                     </div>
@@ -147,10 +147,10 @@ const TableCard = ({
         <div
             onClick={() => onSelect(tableId, isAvailable)}
             className={cn(
-                "flex w-[50px] h-[40px] flex-col items-center justify-center border border-gray-300 rounded-lg cursor-pointer transition",
-                !isAvailable && "bg-red-400 opacity-50 cursor-not-allowed",
+                'flex h-[40px] w-[50px] cursor-pointer flex-col items-center justify-center rounded-lg border border-gray-300 transition',
+                !isAvailable && 'cursor-not-allowed bg-red-500',
                 isAvailable &&
-                    (isSelected ? "bg-coffee-dark text-white" : "bg-white")
+                    (isSelected ? 'bg-coffee-dark text-white' : 'bg-white')
             )}
         >
             <p className="text-xl font-bold">{tableNumber}</p>

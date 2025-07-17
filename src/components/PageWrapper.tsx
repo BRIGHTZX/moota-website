@@ -1,8 +1,10 @@
-import React from "react";
+import React from 'react';
 
 function PageWrapper({ children }: { children: React.ReactNode }) {
     return (
-        <div className="p-4 pt-24 pb-8 relative min-h-screen">{children}</div>
+        <div className="relative container mx-auto min-h-screen p-4 px-4 pt-24 pb-8">
+            {children}
+        </div>
     );
 }
 

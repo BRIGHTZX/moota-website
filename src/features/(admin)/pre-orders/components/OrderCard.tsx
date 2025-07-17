@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button";
-import React from "react";
-import { OrderType } from "../types";
-import Link from "next/link";
-import { TextCardInfo } from "@/components/TextCardInfo";
-import ConfirmOrder from "./ConfirmOrder";
+import { Button } from '@/components/ui/button';
+import React from 'react';
+import { OrderType } from '../types';
+import Link from 'next/link';
+import { TextCardInfo } from '@/components/TextCardInfo';
+import ConfirmOrder from './ConfirmOrder';
 
 type OrderCardProps = {
     order: OrderType;
@@ -11,14 +11,14 @@ type OrderCardProps = {
 
 function OrderCard({ order }: OrderCardProps) {
     return (
-        <div className="border mt-4 border-gray-300 shadow-sm p-4 rounded-md bg-white">
+        <div className="mt-4 rounded-md border border-gray-300 bg-white p-4 shadow-sm">
             <div className="">
                 <h1 className="text-lg font-semibold">
-                    Order ID : {order.preOrderNumber}
+                    รหัสการจอง : {order.preOrderNumber}
                 </h1>
             </div>
 
-            <div className="flex flex-col gap-1 mt-4">
+            <div className="mt-4 flex flex-col gap-1">
                 <TextCardInfo
                     text="วันที่จอง"
                     value={new Date(order.reservationDate).toLocaleDateString()}
@@ -38,8 +38,8 @@ function OrderCard({ order }: OrderCardProps) {
                 <TextCardInfo
                     text="โต๊ะที่"
                     value={`${order.tables
-                        .map((table) => table.tableNumber)
-                        .join(", ")}`}
+                        .map(table => table.tableNumber)
+                        .join(', ')}`}
                 />
                 <TextCardInfo
                     text="สถานะจ่ายเงิน"
@@ -49,7 +49,7 @@ function OrderCard({ order }: OrderCardProps) {
                 <TextCardInfo text="สถานะ" value="" status={order.status} />
             </div>
 
-            <div className="mt-4 w-full flex flex-col gap-2">
+            <div className="mt-4 flex w-full flex-col gap-2">
                 <ConfirmOrder orderId={order.id} />
                 <Button
                     asChild

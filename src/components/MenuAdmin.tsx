@@ -29,7 +29,7 @@ const menuItems = [
     },
     {
         icon: <IoBagHandleOutline className="text-2xl" />,
-        text: 'กลับบ้าน',
+        text: 'สั่งกลับบ้าน',
         href: '/admin/take-away',
     },
     {
@@ -90,7 +90,7 @@ const MenuItem = ({
                 </button>
                 <span
                     className={cn(
-                        'text-xs font-medium text-black transition-all duration-300 group-hover:text-white',
+                        'text-[11px] font-medium text-black transition-all duration-300 group-hover:text-white',
                         active && 'text-white'
                     )}
                 >

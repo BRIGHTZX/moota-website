@@ -1,16 +1,16 @@
-"use client";
-import PageLoader from "@/components/PageLoader";
-import TextHeader from "@/components/TextHeader";
-import { Button } from "@/components/ui/button";
-import { useGetProductsStock } from "@/features/(admin)/stocks/api/use-get-products-stock";
-import AddStockProductForm from "@/features/(admin)/stocks/components/AddStockProductForm";
-import ImportExportProduct from "@/features/(admin)/import-export/components/ImportExportProduct";
-import StockProductTable from "@/features/(admin)/stocks/components/StockProductTable";
-import { HistoryIcon, PlusIcon } from "lucide-react";
-import { useState } from "react";
-import Link from "next/link";
-import AdminPageWrapper from "@/components/AdminPageWrapper";
-import LimitNotification from "@/features/(admin)/stocks/components/LimitNotification";
+'use client';
+import PageLoader from '@/components/PageLoader';
+import TextHeader from '@/components/TextHeader';
+import { Button } from '@/components/ui/button';
+import { useGetProductsStock } from '@/features/(admin)/stocks/api/use-get-products-stock';
+import AddStockProductForm from '@/features/(admin)/stocks/components/AddStockProductForm';
+import ImportExportProduct from '@/features/(admin)/import-export/components/ImportExportProduct';
+import StockProductTable from '@/features/(admin)/stocks/components/StockProductTable';
+import { HistoryIcon, PlusIcon } from 'lucide-react';
+import { useState } from 'react';
+import Link from 'next/link';
+import AdminPageWrapper from '@/components/AdminPageWrapper';
+import LimitNotification from '@/features/(admin)/stocks/components/LimitNotification';
 
 function StockPage() {
     const [isAddStockProductFormOpen, setIsAddStockProductFormOpen] =
@@ -28,18 +28,18 @@ function StockPage() {
 
     return (
         <AdminPageWrapper>
-            <div className="flex justify-between items-center">
-                <TextHeader text="รายการสต๊อค" />
+            <div className="flex items-center justify-between">
+                <TextHeader text="รายการสต๊อก" />
                 <LimitNotification />
             </div>
             {/* Button Section */}
-            <div className="flex items-center gap-1 mt-4">
+            <div className="mt-4 flex items-center gap-1">
                 <Button
                     onClick={() => setIsAddStockProductFormOpen(true)}
-                    className="flex-[1_1_0] flex items-center justify-center gap-1"
+                    className="flex flex-[1_1_0] items-center justify-center gap-1"
                     size="sm"
                 >
-                    <PlusIcon className="w-4 h-4 shrink-0" />
+                    <PlusIcon className="h-4 w-4 shrink-0" />
                     <span className="text-xs whitespace-nowrap">
                         เพิ่มสินค้าใหม่
                     </span>
@@ -47,14 +47,14 @@ function StockPage() {
                 <Button
                     asChild
                     variant="outline"
-                    className="flex-[1_1_0] flex items-center justify-center gap-1"
+                    className="flex flex-[1_1_0] items-center justify-center gap-1"
                     size="sm"
                 >
                     <Link
                         href="/admin/stocks/history"
-                        className="text-xs flex items-center gap-1"
+                        className="flex items-center gap-1 text-xs"
                     >
-                        <HistoryIcon className="w-4 h-4 shrink-0" />
+                        <HistoryIcon className="h-4 w-4 shrink-0" />
                         <span className="whitespace-nowrap">
                             ประวัติการนำเข้า/ออก
                         </span>
@@ -64,7 +64,7 @@ function StockPage() {
             <div className="mt-4">
                 <StockProductTable
                     products={
-                        productsStockData?.map((r) => ({
+                        productsStockData?.map(r => ({
                             id: r.id,
                             products: r.products,
                             stocks: r.stocks,

@@ -80,7 +80,7 @@ function ReservationInfoPage() {
     };
     return (
         <PageWrapper>
-            <div className="flex items-center justify-between gap-10">
+            <div className="flex items-center gap-10">
                 <Button
                     asChild
                     variant="outline"
@@ -96,7 +96,7 @@ function ReservationInfoPage() {
             <div className="mt-4 flex flex-wrap items-center gap-4 max-sm:justify-center">
                 <div className="flex items-center gap-2">
                     <h1 className="text-2xl text-nowrap md:text-5xl">
-                        Order :{' '}
+                        รหัสการจอง :{' '}
                     </h1>
                     <p className="text-2xl text-nowrap md:text-5xl">
                         {reservationData?.preOrderNumber}
@@ -173,7 +173,6 @@ function ReservationInfoPage() {
                             {!paymentImage &&
                                 !reservationData?.paymentImage && (
                                     <Button
-                                        variant="coffeePrimary"
                                         className="md:text-md w-full text-sm"
                                         onClick={handleUploadPaymentImage}
                                         disabled={isLoading}
@@ -202,7 +201,7 @@ function ReservationInfoPage() {
                                                 null && (
                                                 <div>
                                                     <Button
-                                                        variant="coffeePrimary"
+                                                        variant="greenPrimary"
                                                         disabled={isLoading}
                                                         onClick={
                                                             handleConfirmPayment

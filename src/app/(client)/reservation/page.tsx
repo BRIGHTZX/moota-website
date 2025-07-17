@@ -117,9 +117,7 @@ function ReservationPage() {
                                         }
                                     }}
                                 >
-                                    <p className="text-lg font-bold">
-                                        จองตาราง
-                                    </p>
+                                    <p className="text-lg font-bold">จองโต๊ะ</p>
                                 </Button>
                             </div>
                         </div>
@@ -211,7 +209,7 @@ function ReservationPage() {
                                     }
                                 }}
                             >
-                                <p className="text-lg font-bold">จองตาราง</p>
+                                <p className="text-lg font-bold">จองโต๊ะ</p>
                             </Button>
                         </div>
                         <div className="mt-10 border-t border-gray-300" />

@@ -1,11 +1,14 @@
-"use client";
+'use client';
 
-import PageLoader from "@/components/PageLoader";
-import PageWrapper from "@/components/PageWrapper";
-import TextHeader from "@/components/TextHeader";
-import { useGetPreOrders } from "@/features/(client)/pre-orders/api/use-get-preOrders";
-import PreOrderCard from "@/features/(client)/pre-orders/components/PreOrderCard";
-import React from "react";
+import PageLoader from '@/components/PageLoader';
+import PageWrapper from '@/components/PageWrapper';
+import TextHeader from '@/components/TextHeader';
+import { Button } from '@/components/ui/button';
+import { useGetPreOrders } from '@/features/(client)/pre-orders/api/use-get-preOrders';
+import PreOrderCard from '@/features/(client)/pre-orders/components/PreOrderCard';
+import { ArrowLeftIcon } from 'lucide-react';
+import Link from 'next/link';
+import React from 'react';
 
 function OrdersPage() {
     const {
@@ -20,13 +23,23 @@ function OrdersPage() {
 
     return (
         <PageWrapper>
-            <TextHeader text="ประวัติการจอง" className="text-2xl md:text-4xl" />
+            <div className="flex items-center gap-4">
+                <Button asChild variant="outline">
+                    <Link href="/reservation">
+                        <ArrowLeftIcon />
+                    </Link>
+                </Button>
+                <TextHeader
+                    text="ประวัติการจอง"
+                    className="text-2xl md:text-4xl"
+                />
+            </div>
 
             {isLoadingPreOrders ? (
                 <PageLoader className="h-[400px]" />
             ) : preOrdersData?.length ? (
-                <div className="mt-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                    {preOrdersData?.map((preOrder) => (
+                <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    {preOrdersData?.map(preOrder => (
                         <PreOrderCard key={preOrder.id} preOrder={preOrder} />
                     ))}
                 </div>
