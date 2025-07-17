@@ -1,5 +1,6 @@
 'use client';
 import AdminPageWrapper from '@/components/AdminPageWrapper';
+import ErrorPage from '@/components/errors/ErrorPage';
 import { CalendarRange } from '@/components/inputs/CalendarRange';
 import PageLoader from '@/components/PageLoader';
 import TextHeader from '@/components/TextHeader';
@@ -34,10 +35,17 @@ function CheckoutHistoryClient() {
     );
 
     // get checkouts history
-    const { data: checkoutsHistory, isLoading: isLoadingCheckoutsHistory } =
-        useGetCheckoutsHistory(startDate, endDate);
+    const {
+        data: checkoutsHistory,
+        isLoading: isLoadingCheckoutsHistory,
+        isError: isErrorCheckoutsHistory,
+    } = useGetCheckoutsHistory(startDate, endDate);
 
     const isLoading = isLoadingCheckoutsHistory;
+
+    const isError = isErrorCheckoutsHistory;
+
+    if (isError) return <ErrorPage />;
 
     return (
         <AdminPageWrapper>
@@ -61,7 +69,7 @@ function CheckoutHistoryClient() {
             </div>
 
             {isLoading ? (
-                <PageLoader className="h-[300px]" />
+                <PageLoader className="h-[calc(100dvh-30dvh)]" />
             ) : (
                 <div className="mt-4 flex flex-col gap-4">
                     {Object.entries(checkoutsHistory ?? {}).length === 0 ? (

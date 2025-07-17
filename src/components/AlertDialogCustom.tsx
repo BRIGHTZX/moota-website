@@ -19,6 +19,7 @@ type AlertDialogCustomProps = {
     description: string;
     buttonActionText: string;
     buttonActionClassName?: string;
+    isLoading: boolean;
 };
 
 function AlertDialogCustom({
@@ -30,6 +31,7 @@ function AlertDialogCustom({
     description,
     buttonActionText,
     buttonActionClassName,
+    isLoading,
 }: AlertDialogCustomProps) {
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
@@ -41,12 +43,16 @@ function AlertDialogCustom({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel onClick={cancelAction}>
+                    <AlertDialogCancel
+                        onClick={cancelAction}
+                        disabled={isLoading}
+                    >
                         Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
                         className={buttonActionClassName}
                         onClick={action}
+                        disabled={isLoading}
                     >
                         {buttonActionText}
                     </AlertDialogAction>

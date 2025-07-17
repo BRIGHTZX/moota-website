@@ -18,7 +18,14 @@ import { diningTable as DiningTable } from '@/database/schema/diningTable';
 import { order as OrderTable } from '@/database/schema/order';
 
 const app = new Hono()
-    .get('/checkout-info/:activeId', async c => {
+    .get('/checkout-info/:activeId', getCurrentUser, async c => {
+        const user = c.get('user');
+        const isAdmin = c.get('isAdmin');
+
+        if (!user && !isAdmin) {
+            return c.json({ message: 'Unauthorized' }, 401);
+        }
+
         try {
             const activeId = c.req.param('activeId');
 
@@ -99,8 +106,9 @@ const app = new Hono()
         zValidator('json', getOrderListSchema),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
 
-            if (!user) {
+            if (!user && !isAdmin) {
                 return c.json({ message: 'Unauthorized' }, 401);
             }
 
@@ -169,8 +177,9 @@ const app = new Hono()
         zValidator('json', insertCheckoutSchema),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
 
-            if (!user) {
+            if (!user && !isAdmin) {
                 return c.json({ message: 'Unauthorized' }, 401);
             }
 

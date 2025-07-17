@@ -3,6 +3,7 @@ import { useGetTables } from '@/features/(client)/reservation/api/use-get-tables
 import { selectTablesSchemaType } from '@/features/(admin)/tables/schema';
 import { cn } from '@/lib/utils';
 import React from 'react';
+import ErrorPage from '@/components/errors/ErrorPage';
 
 function TableReservation({
     arrayTable,
@@ -11,7 +12,7 @@ function TableReservation({
     arrayTable: string[];
     setArrayTable: (arrayTable: string[]) => void;
 }) {
-    const { data: tables, isLoading } = useGetTables();
+    const { data: tables, isLoading, isError } = useGetTables();
     const tablesData = tables?.tables;
 
     const insideTables = tablesData?.filter(
@@ -32,6 +33,7 @@ function TableReservation({
     };
 
     if (isLoading) return <PageLoader className="h-[200px]" />;
+    if (isError) return <ErrorPage />;
 
     return (
         <div className="mt-10 flex flex-col sm:flex-row">

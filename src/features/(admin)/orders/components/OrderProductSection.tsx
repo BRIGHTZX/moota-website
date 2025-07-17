@@ -1,16 +1,17 @@
-"use client";
-import React, { useMemo, useState } from "react";
-import { useGetProductDrinks } from "../api/use-get-product-drinks";
-import OrderProductCard from "./OrderProductCard";
-import PageLoader from "@/components/PageLoader";
-import { OrderItem } from "../types";
-import { Button } from "@/components/ui/button";
-import AlertDialogCustom from "@/components/AlertDialogCustom";
-import { useCreateOrder } from "../api/use-create-order";
-import SeperateLine from "@/components/SeperateLine";
-import { useGetOrderHistoryActiveInfoId } from "../api/use-get-order-history-activeInfoId";
-import TextHeader from "@/components/TextHeader";
-import OrderHistoryCard from "./OrderHistoryCard";
+'use client';
+import React, { useMemo, useState } from 'react';
+import { useGetProductDrinks } from '../api/use-get-product-drinks';
+import OrderProductCard from './OrderProductCard';
+import PageLoader from '@/components/PageLoader';
+import { OrderItem } from '../types';
+import { Button } from '@/components/ui/button';
+import AlertDialogCustom from '@/components/AlertDialogCustom';
+import { useCreateOrder } from '../api/use-create-order';
+import SeperateLine from '@/components/SeperateLine';
+import { useGetOrderHistoryActiveInfoId } from '../api/use-get-order-history-activeInfoId';
+import TextHeader from '@/components/TextHeader';
+import OrderHistoryCard from './OrderHistoryCard';
+import ErrorPage from '@/components/errors/ErrorPage';
 
 function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
     const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false);
@@ -58,13 +59,17 @@ function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
     };
 
     if (isErrorDrinkList || isErrorCreateOrder || isErrorOrderHistory) {
-        return <div>Error</div>;
+        return <ErrorPage />;
     }
+
+    const isLoading =
+        isLoadingDrinkList || isLoadingOrderHistory || isPendingCreateOrder;
 
     return (
         <div>
             {/* Alert Dialog */}
             <AlertDialogCustom
+                isLoading={isLoading}
                 open={openAlertDialog}
                 setOpen={setOpenAlertDialog}
                 action={handleCreateOrder}
@@ -79,7 +84,7 @@ function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
                 <PageLoader className="h-[400px]" />
             ) : (
                 <div className="flex flex-col gap-2">
-                    {drinkList?.map((drink) => (
+                    {drinkList?.map(drink => (
                         <OrderProductCard
                             key={drink.id}
                             product={drink}
@@ -91,13 +96,13 @@ function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
                 </div>
             )}
             {/* Order List and Send Data */}
-            <div className="flex flex-col gap-2 border-2 border-black rounded-md mt-4 p-4">
+            <div className="mt-4 flex flex-col gap-2 rounded-md border-2 border-black p-4">
                 <div className="flex items-center justify-between">
-                    <p className="text-black text-lg font-bold">
+                    <p className="text-lg font-bold text-black">
                         รายการสั่งซื้อ
                     </p>
-                    <p className="text-black text-sm font-bold">
-                        รวม{" "}
+                    <p className="text-sm font-bold text-black">
+                        รวม{' '}
                         {orderList.reduce(
                             (acc, item) => acc + item.quantity,
                             0
@@ -107,13 +112,13 @@ function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
 
                 <div className="flex flex-col gap-2">
                     {orderList.length === 0 && (
-                        <div className="flex items-center justify-center h-24">
-                            <p className="text-gray-500 text-center text-sm font-bold">
+                        <div className="flex h-24 items-center justify-center">
+                            <p className="text-center text-sm font-bold text-gray-500">
                                 ไม่มีรายการสั่งซื้อ
                             </p>
                         </div>
                     )}
-                    {orderList.map((item) => (
+                    {orderList.map(item => (
                         <OrderInfoCard
                             key={item.product.id}
                             productName={item.product.name}
@@ -123,9 +128,9 @@ function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
                     ))}
 
                     <SeperateLine className="my-2" />
-                    <div className="flex justify-between items-center">
-                        <p className="text-black font-bold">รวมราคา</p>
-                        <p className="text-black font-bold">{totalPrice}฿</p>
+                    <div className="flex items-center justify-between">
+                        <p className="font-bold text-black">รวมราคา</p>
+                        <p className="font-bold text-black">{totalPrice}฿</p>
                     </div>
 
                     <div className="mt-4">
@@ -146,12 +151,12 @@ function OrderProductSection({ activeInfoId }: { activeInfoId: string }) {
             {/* Order History */}
             <div className="mt-4">
                 <TextHeader text="ประวัติการสั่งซื้อ" className="text-xl" />
-                <div className="flex flex-col gap-2 mt-4">
+                <div className="mt-4 flex flex-col gap-2">
                     {isLoadingOrderHistory ? (
                         <PageLoader className="h-[400px]" />
                     ) : orderHistory?.length === 0 ? (
-                        <div className="flex items-center justify-center h-24">
-                            <p className="text-gray-500 text-center text-sm font-bold">
+                        <div className="flex h-24 items-center justify-center">
+                            <p className="text-center text-sm font-bold text-gray-500">
                                 ไม่มีประวัติการสั่งซื้อ
                             </p>
                         </div>
@@ -187,10 +192,10 @@ const OrderInfoCard = ({
 }: OrderInfoCardProps) => {
     const totalPrice = price * quantity;
     return (
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
             <div>
                 <p>{productName}</p>
-                <div className="flex text-sm text-gray-500 items-center gap-2">
+                <div className="flex items-center gap-2 text-sm text-gray-500">
                     <p>{price} ฿</p>
                     <p>x</p>
                     <p>{quantity}</p>

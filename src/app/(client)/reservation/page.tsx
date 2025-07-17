@@ -17,6 +17,7 @@ import TableReservation from '@/features/(client)/reservation/components/TableRe
 import { useState } from 'react';
 import { toast } from 'sonner';
 import AlertDialogCustom from '@/components/AlertDialogCustom';
+import ErrorPage from '@/components/errors/ErrorPage';
 
 function ReservationPage() {
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
@@ -52,18 +53,13 @@ function ReservationPage() {
     };
 
     if (isCreateReservationError) {
-        toast.error('กรุณากรอกข้อมูลให้ครบถ้วน', {
-            style: {
-                background: 'red',
-                color: 'white',
-            },
-        });
-        return <p className="pt-30 text-red-500">error</p>;
+        return <ErrorPage />;
     }
 
     return (
         <div className="min-h-screen w-full px-4 md:px-0">
             <AlertDialogCustom
+                isLoading={isCreateReservationPending}
                 open={openAlertDialog}
                 setOpen={setOpenAlertDialog}
                 action={() => {

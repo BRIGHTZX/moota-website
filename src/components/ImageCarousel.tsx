@@ -15,7 +15,7 @@ import Image from 'next/image';
 
 function ImageCarousel({ imgArray }: { imgArray: string[] }) {
     const plugin = React.useRef(
-        Autoplay({ delay: 6000, stopOnInteraction: false })
+        Autoplay({ delay: 6000, stopOnInteraction: true })
     );
 
     return (

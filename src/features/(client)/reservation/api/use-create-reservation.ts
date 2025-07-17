@@ -1,10 +1,10 @@
-import { client } from "@/lib/rpc";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { InferRequestType, InferResponseType } from "hono";
+import { client } from '@/lib/rpc';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { InferRequestType, InferResponseType } from 'hono';
 
-const api = client.api.reservation["$post"];
+const api = client.api.reservation['$post'];
 type ResponseType = InferResponseType<typeof api, 200>;
 type RequestType = InferRequestType<typeof api>;
 
@@ -20,29 +20,29 @@ export const useCreateReservation = () => {
             });
 
             if (!response.ok) {
-                throw new Error("Failed to create reservation");
+                throw new Error('การสร้างการจองล้มเหลว');
             }
 
             const data = await response.json();
 
             return data;
         },
-        onSuccess: (data) => {
-            toast.success("Reservation created successfully");
+        onSuccess: data => {
+            toast.success('สร้างการจองสำเร็จ');
             router.push(`/reservation/info/${data.result.id}`);
             queryClient.invalidateQueries({
-                queryKey: ["pre-orders"],
+                queryKey: ['pre-orders'],
             });
             queryClient.invalidateQueries({
-                queryKey: ["admin-pre-orders"],
+                queryKey: ['admin-pre-orders'],
             });
             queryClient.invalidateQueries({
-                queryKey: ["reservation"],
+                queryKey: ['reservation'],
             });
         },
-        onError: (error) => {
+        onError: error => {
             console.log(error);
-            toast.error("Failed to create reservation");
+            toast.error('การสร้างการจองล้มเหลว');
         },
     });
 };

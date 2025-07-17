@@ -1,5 +1,6 @@
 'use client';
 import AdminPageWrapper from '@/components/AdminPageWrapper';
+import ErrorPage from '@/components/errors/ErrorPage';
 import PageLoader from '@/components/PageLoader';
 import SeperateLine from '@/components/SeperateLine';
 import { TextCardInfo } from '@/components/TextCardInfo';
@@ -21,7 +22,11 @@ function CheckoutHistoryDetailPage({
     const { checkoutId } = use(params);
     const searchParams = useSearchParams();
     const returnUrl = searchParams.get('returnUrl');
-    const { data: checkoutHistory, isLoading } = useGetCheckoutHistory({
+    const {
+        data: checkoutHistory,
+        isLoading,
+        isError,
+    } = useGetCheckoutHistory({
         checkoutId,
     });
 
@@ -39,10 +44,12 @@ function CheckoutHistoryDetailPage({
     const totalAdultPrice = paidAdultNumber ? paidAdultNumber * ADULT_PRICE : 0;
     const totalChildPrice = paidChildNumber ? paidChildNumber * CHILD_PRICE : 0;
 
+    if (isError) return <ErrorPage />;
+
     return (
         <AdminPageWrapper>
             {isLoading ? (
-                <PageLoader className="h-[calc(100vh-10rem)]" />
+                <PageLoader className="h-[calc(100vh-30rem)]" />
             ) : (
                 <>
                     <div className="relative">

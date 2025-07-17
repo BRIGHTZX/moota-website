@@ -34,6 +34,7 @@ import { selectStockProductSchemaType } from '../schemas';
 import Image from 'next/image';
 import { useDeleteProduct } from '../api/use-delete-product-stock';
 import AlertDialogCustom from '@/components/AlertDialogCustom';
+import ErrorPage from '@/components/errors/ErrorPage';
 
 type StockProductTableType = {
     products: selectStockProductSchemaType[];
@@ -50,7 +51,11 @@ function StockProductTable({
 }: StockProductTableType) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [productId, setProductId] = useState<string | null>(null);
-    const { mutate: deleteProduct } = useDeleteProduct({
+    const {
+        mutate: deleteProduct,
+        isPending: isDeletingProduct,
+        isError: isErrorDeletingProduct,
+    } = useDeleteProduct({
         setIsOpen: setIsDeleteDialogOpen,
     });
     const columnHeaderArray: Array<keyof rowType> = ['products', 'stocks'];
@@ -209,9 +214,12 @@ function StockProductTable({
         getCoreRowModel: getCoreRowModel(),
     });
 
+    if (isErrorDeletingProduct) return <ErrorPage />;
+
     return (
         <div className="border-coffee-dark relative rounded-lg border p-4">
             <AlertDialogCustom
+                isLoading={isDeletingProduct}
                 open={isDeleteDialogOpen}
                 setOpen={setIsDeleteDialogOpen}
                 buttonActionText="ยืนยันการลบสินค้า"

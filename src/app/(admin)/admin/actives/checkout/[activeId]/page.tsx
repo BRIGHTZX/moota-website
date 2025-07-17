@@ -2,6 +2,7 @@
 
 import AdminPageWrapper from '@/components/AdminPageWrapper';
 import AlertDialogCustom from '@/components/AlertDialogCustom';
+import ErrorPage from '@/components/errors/ErrorPage';
 import PageLoader from '@/components/PageLoader';
 import SeperateLine from '@/components/SeperateLine';
 import { TextCardInfo } from '@/components/TextCardInfo';
@@ -41,8 +42,11 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
         null
     );
     // Customer Info and Table Selector
-    const { data: checkoutInfo, isLoading: isLoadingCheckoutInfo } =
-        useGetCheckoutInfo(activeId);
+    const {
+        data: checkoutInfo,
+        isLoading: isLoadingCheckoutInfo,
+        isError: isErrorCheckoutInfo,
+    } = useGetCheckoutInfo(activeId);
 
     const calcualteAdultNumber = useMemo(() => {
         return (
@@ -67,17 +71,23 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
     }, [selectedTable]);
 
     // Order List
-    const { data: orderList, isLoading: isLoadingOrderList } =
-        useGetCheckoutOrderLists(
-            selectedTable?.map(info => info.activeInfoId) ?? []
-        );
+    const {
+        data: orderList,
+        isLoading: isLoadingOrderList,
+        isError: isErrorOrderList,
+    } = useGetCheckoutOrderLists(
+        selectedTable?.map(info => info.activeInfoId) ?? []
+    );
 
     // Create Checkout
-    const { mutate: createCheckout, isPending: isLoadingCreateCheckout } =
-        useCreateCheckout({
-            activeId: activeId,
-            activeInfoId: activeInfoIds,
-        });
+    const {
+        mutate: createCheckout,
+        isPending: isLoadingCreateCheckout,
+        isError: isErrorCreateCheckout,
+    } = useCreateCheckout({
+        activeId: activeId,
+        activeInfoId: activeInfoIds,
+    });
 
     // function calculate
 
@@ -195,6 +205,11 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
 
     const isLoading =
         isLoadingOrderList || isLoadingCheckoutInfo || isLoadingCreateCheckout;
+
+    const isError =
+        isErrorCheckoutInfo || isErrorCreateCheckout || isErrorOrderList;
+
+    if (isError) return <ErrorPage />;
 
     return (
         <AdminPageWrapper>
@@ -412,6 +427,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
             {/* Action Buttons */}
             <div>
                 <AlertDialogCustom
+                    isLoading={isLoading}
                     open={openAlertDialog}
                     setOpen={setOpenAlertDialog}
                     action={() => {

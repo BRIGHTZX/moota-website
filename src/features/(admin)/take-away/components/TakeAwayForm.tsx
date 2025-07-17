@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useCreateTakeAway } from '../api/use-create-take-away';
 import { insertTakeAwaySchema, InsertTakeAwaySchemaType } from '../schemas';
+import ErrorPage from '@/components/errors/ErrorPage';
 
 function TakeAwayForm() {
     const form = useForm<InsertTakeAwaySchemaType>({
@@ -19,8 +20,11 @@ function TakeAwayForm() {
 
     const paymentMethod = form.watch('paymentMethod');
 
-    const { mutate: createTakeAway, isPending: isCreatingTakeAway } =
-        useCreateTakeAway();
+    const {
+        mutate: createTakeAway,
+        isPending: isCreatingTakeAway,
+        isError: isErrorCreateTakeAway,
+    } = useCreateTakeAway();
 
     const onSubmit = (data: InsertTakeAwaySchemaType) => {
         createTakeAway({
@@ -30,6 +34,8 @@ function TakeAwayForm() {
             },
         });
     };
+
+    if (isErrorCreateTakeAway) return <ErrorPage />;
 
     return (
         <div className="w-full rounded-md border border-gray-300 p-4 shadow-sm">

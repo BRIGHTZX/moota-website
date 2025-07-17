@@ -18,6 +18,7 @@ import { useUpdateProductStock } from '@/features/(admin)/stocks/api/use-update-
 import PageLoader from '@/components/PageLoader';
 import { Loader2 } from 'lucide-react';
 import AdminPageWrapper from '@/components/AdminPageWrapper';
+import ErrorPage from '@/components/errors/ErrorPage';
 
 function StockDetailPage({
     params,
@@ -26,13 +27,19 @@ function StockDetailPage({
 }) {
     const { productId } = use(params);
     const [isEditing, setIsEditing] = useState<boolean>(false);
-    const { data: productStockData, isLoading: isLoadingProductStock } =
-        useGetProductStock(productId as string);
-    const { mutate: updateProductStock, isPending: isUpdatingProductStock } =
-        useUpdateProductStock({
-            productId,
-            setIsEditing,
-        });
+    const {
+        data: productStockData,
+        isLoading: isLoadingProductStock,
+        isError: isErrorProductStock,
+    } = useGetProductStock(productId as string);
+    const {
+        mutate: updateProductStock,
+        isPending: isUpdatingProductStock,
+        isError: isErrorUpdatingProductStock,
+    } = useUpdateProductStock({
+        productId,
+        setIsEditing,
+    });
     const form = useForm<z.infer<typeof updateStockProductSchema>>({
         resolver: zodResolver(updateStockProductSchema),
         defaultValues: {
@@ -82,15 +89,16 @@ function StockDetailPage({
     };
 
     const isLoading = isLoadingProductStock || isUpdatingProductStock;
+    const isError = isErrorProductStock || isErrorUpdatingProductStock;
 
-    console.log(productStockData);
+    if (isError) return <ErrorPage />;
 
     return (
         <AdminPageWrapper>
             <TextHeader text="รายละเอียดสินค้า" />
 
             {isLoadingProductStock ? (
-                <PageLoader className="h-[calc(100vh-10rem)]" />
+                <PageLoader className="h-[calc(100vh-30rem)]" />
             ) : (
                 <FormProvider {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>

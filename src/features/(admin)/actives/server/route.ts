@@ -7,8 +7,9 @@ import { active as ActiveTable } from '@/database/schema/active';
 
 const app = new Hono().get('/', getCurrentUser, async c => {
     const user = c.get('user');
+    const isAdmin = c.get('isAdmin');
 
-    if (!user) {
+    if (!user && !isAdmin) {
         return c.json({ message: 'Unauthorized' }, 401);
     }
 

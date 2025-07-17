@@ -1,13 +1,17 @@
-import { client } from "@/lib/rpc";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { InferRequestType, InferResponseType } from "hono";
-import { toast } from "sonner";
+import { client } from '@/lib/rpc';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { InferRequestType, InferResponseType } from 'hono';
+import { toast } from 'sonner';
 
-const api = client.api.admin["pre-orders"]["create-active"]["$post"];
+const api = client.api.admin['pre-orders']['create-active']['$post'];
 type ResponseType = InferResponseType<typeof api>;
 type RequestType = InferRequestType<typeof api>;
 
-export const useCreateActiveFromOrder = () => {
+export const useCreateActiveFromOrder = ({
+    setIsSuspenseLoading,
+}: {
+    setIsSuspenseLoading: (isSuspenseLoading: boolean) => void;
+}) => {
     const queryClient = useQueryClient();
     const mutation = useMutation<ResponseType, Error, RequestType>({
         mutationFn: async ({ json }) => {
@@ -16,7 +20,7 @@ export const useCreateActiveFromOrder = () => {
             });
 
             if (!response.ok) {
-                throw new Error("Failed to create active");
+                throw new Error('Failed to create active');
             }
 
             const data = await response.json();
@@ -25,13 +29,14 @@ export const useCreateActiveFromOrder = () => {
         },
 
         onSuccess: () => {
-            toast.success("สร้างการเปิดโต๊ะสำเร็จ");
-            queryClient.invalidateQueries({ queryKey: ["admin-pre-orders"] });
-            queryClient.invalidateQueries({ queryKey: ["admin-actives"] });
+            toast.success('สร้างการเปิดโต๊ะสำเร็จ');
+            queryClient.invalidateQueries({ queryKey: ['admin-pre-orders'] });
+            queryClient.invalidateQueries({ queryKey: ['admin-actives'] });
+            setIsSuspenseLoading(false);
         },
-        onError: (error) => {
-            console.log("error", error.message);
-            toast.error("สร้างการเปิดโต๊ะไม่สำเร็จ");
+        onError: error => {
+            console.log('error', error.message);
+            toast.error('สร้างการเปิดโต๊ะไม่สำเร็จ');
         },
     });
 

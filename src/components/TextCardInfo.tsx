@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 export const TextCardInfo = ({
     text,
@@ -18,35 +18,40 @@ export const TextCardInfo = ({
     valueClassName?: string;
 }) => {
     const statusColor = {
-        unpaid: "bg-yellow-500",
-        paid: "bg-green-500",
-        pending: "bg-yellow-500",
-        success: "bg-green-500",
-        failed: "bg-red-500",
+        unpaid: 'bg-yellow-500',
+        paid: 'bg-green-500',
+        pending: 'bg-yellow-500',
+        confirmed: 'bg-green-500',
+        failed: 'bg-red-500',
     };
     const statusText = {
-        unpaid: "ยังไม่ชำระ",
-        paid: "จ่ายแล้ว",
-        pending: "รอยืนยัน",
-        success: "ยืนยันแล้ว",
-        failed: "ยกเลิก",
+        unpaid: 'ยังไม่ชำระ',
+        paid: 'จ่ายแล้ว',
+        pending: 'รอยืนยัน',
+        confirmed: 'ยืนยันแล้ว',
+        failed: 'ยกเลิก',
     };
     return (
         <div
-            className={cn("flex justify-between items-center gap-2", className)}
+            className={cn('flex items-center justify-between gap-2', className)}
         >
             <p
                 className={cn(
-                    "font-semibold text-sm sm:text-md md:text-lg text-nowrap",
+                    'sm:text-md text-sm font-semibold text-nowrap md:text-lg',
                     textClassName
                 )}
             >
-                {text} {subText && <span className="text-xs text-gray-500 font-light">{subText}</span>}
+                {text}{' '}
+                {subText && (
+                    <span className="text-xs font-light text-gray-500">
+                        {subText}
+                    </span>
+                )}
             </p>
             {value && (
                 <p
                     className={cn(
-                        "text-xs sm:text-md md:text-lg text-nowrap",
+                        'sm:text-md text-xs text-nowrap md:text-lg',
                         valueClassName
                     )}
                 >
@@ -57,11 +62,11 @@ export const TextCardInfo = ({
                 <div className="flex items-center gap-2">
                     <div
                         className={cn(
-                            "size-2 rounded-full",
+                            'size-2 rounded-full',
                             statusColor[status as keyof typeof statusColor]
                         )}
                     />
-                    <p className="text-xs sm:text-md md:text-lg text-nowrap">
+                    <p className="sm:text-md text-xs text-nowrap md:text-lg">
                         {statusText[status as keyof typeof statusText]}
                     </p>
                 </div>

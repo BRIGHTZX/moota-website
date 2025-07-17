@@ -1,5 +1,6 @@
 'use client';
 
+import ErrorPage from '@/components/errors/ErrorPage';
 import PageLoader from '@/components/PageLoader';
 import PageWrapper from '@/components/PageWrapper';
 import TextHeader from '@/components/TextHeader';
@@ -18,7 +19,7 @@ function OrdersPage() {
     } = useGetPreOrders();
 
     if (error) {
-        return <div>Error...</div>;
+        return <ErrorPage />;
     }
 
     return (

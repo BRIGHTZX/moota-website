@@ -1,6 +1,7 @@
 'use client';
 import AdminPageWrapper from '@/components/AdminPageWrapper';
 import AlertDialogCustom from '@/components/AlertDialogCustom';
+import ErrorPage from '@/components/errors/ErrorPage';
 import PageLoader from '@/components/PageLoader';
 import TextHeader from '@/components/TextHeader';
 import { Button } from '@/components/ui/button';
@@ -28,7 +29,7 @@ function ActivePage() {
     const isError = isErrorActives;
     const isLoading = isLoadingActives;
 
-    if (isError) return <div>Error</div>;
+    if (isError) return <ErrorPage />;
 
     return (
         <AdminPageWrapper>
@@ -43,7 +44,7 @@ function ActivePage() {
                 </Button>
             </div>
             {isLoading ? (
-                <PageLoader className="h-[400px]" />
+                <PageLoader className="h-[calc(100dvh-30dvh)]" />
             ) : (
                 <Fragment>
                     <div className="mt-4 flex flex-col gap-2">
@@ -66,6 +67,7 @@ function ActivePage() {
                         )}
                     </div>
                     <AlertDialogCustom
+                        isLoading={isLoading}
                         open={openAlertDialog}
                         setOpen={setOpenAlertDialog}
                         action={handleCloseActive}

@@ -1,4 +1,6 @@
 'use client';
+import ErrorPage from '@/components/errors/ErrorPage';
+import PageLoader from '@/components/PageLoader';
 import PageWrapper from '@/components/PageWrapper';
 import { TextCardInfo } from '@/components/TextCardInfo';
 import { Button } from '@/components/ui/button';
@@ -35,9 +37,8 @@ function ReservationInfoPage() {
         isError: isUpdatePaymentImageError,
     } = useUpdatePaymentImage(preOrderId);
 
-    if (isLoadingReservation) return <div>Loading...</div>;
-    if (isErrorReservation || isUpdatePaymentImageError)
-        return <div>Error</div>;
+    if (isLoadingReservation) return <PageLoader />;
+    if (isErrorReservation || isUpdatePaymentImageError) return <ErrorPage />;
 
     const isLoading = isLoadingReservation || isUpdatingPaymentImage;
 

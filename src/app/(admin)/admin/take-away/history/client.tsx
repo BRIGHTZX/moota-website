@@ -1,6 +1,7 @@
 'use client';
 
 import AdminPageWrapper from '@/components/AdminPageWrapper';
+import ErrorPage from '@/components/errors/ErrorPage';
 import { CalendarRange } from '@/components/inputs/CalendarRange';
 import PageLoader from '@/components/PageLoader';
 import TextHeader from '@/components/TextHeader';
@@ -35,10 +36,14 @@ function TakeAwayHistoryClient() {
     );
 
     // get take-away history
-    const { data: takeAwayHistory, isLoading: isLoadingTakeAwayHistory } =
-        useGetTakeAwayHistory({ startDate, endDate });
+    const {
+        data: takeAwayHistory,
+        isLoading: isLoadingTakeAwayHistory,
+        isError: isErrorTakeAwayHistory,
+    } = useGetTakeAwayHistory({ startDate, endDate });
 
-    console.log(takeAwayHistory);
+    if (isErrorTakeAwayHistory) return <ErrorPage />;
+
     return (
         <AdminPageWrapper>
             <div className="flex items-center gap-2">
@@ -61,7 +66,7 @@ function TakeAwayHistoryClient() {
             </div>
 
             {isLoadingTakeAwayHistory ? (
-                <PageLoader />
+                <PageLoader className="h-[calc(100dvh-30dvh)]" />
             ) : Object.entries(takeAwayHistory ?? {}).length === 0 ? (
                 <div className="flex items-center justify-center">
                     <p className="text-sm text-gray-500">
