@@ -1,26 +1,26 @@
-import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
-import { getCurrentUser } from "@/services/middleware-hono";
+import { Hono } from 'hono';
+import { zValidator } from '@hono/zod-validator';
+import { getCurrentUser } from '@/services/middleware-hono';
 
-import { db } from "@/database/db";
-import { asc, eq, sql } from "drizzle-orm";
-import z from "zod";
-import { insertOrderSchema } from "../schemas";
+import { db } from '@/database/db';
+import { and, asc, eq, isNull, sql } from 'drizzle-orm';
+import z from 'zod';
+import { insertOrderSchema } from '../schemas';
 
-import { product as ProductTable } from "@/database/schema/product";
-import { activeInfo as ActiveInfoTable } from "@/database/schema/active";
+import { product as ProductTable } from '@/database/schema/product';
+import { activeInfo as ActiveInfoTable } from '@/database/schema/active';
 import {
     order as OrderTable,
     orderItem as OrderItemTable,
-} from "@/database/schema/order";
-import { OrderItem } from "../types";
+} from '@/database/schema/order';
+import { OrderItem } from '../types';
 
 const app = new Hono()
-    .get("/product-drink-list", getCurrentUser, async (c) => {
-        const user = c.get("user");
+    .get('/product-drink-list', getCurrentUser, async c => {
+        const user = c.get('user');
 
         if (!user) {
-            return c.json({ error: "Unauthorized" }, 401);
+            return c.json({ error: 'Unauthorized' }, 401);
         }
 
         try {
@@ -34,40 +34,45 @@ const app = new Hono()
                     image: ProductTable.image,
                 })
                 .from(ProductTable)
-                .where(eq(ProductTable.category, "เครื่องดื่ม"))
+                .where(
+                    and(
+                        eq(ProductTable.category, 'เครื่องดื่ม'),
+                        isNull(ProductTable.deletedAt)
+                    )
+                )
                 .orderBy(asc(ProductTable.name));
 
-            return c.json({ message: "success", result: drinkList }, 200);
+            return c.json({ message: 'success', result: drinkList }, 200);
         } catch (error) {
             console.log(error);
-            return c.json({ error: "Internal server error" }, 500);
+            return c.json({ error: 'Internal server error' }, 500);
         }
     })
     .get(
-        "/get-activeInfo-tableNumber/:activeInfoId",
+        '/get-activeInfo-tableNumber/:activeInfoId',
         getCurrentUser,
         zValidator(
-            "param",
+            'param',
             z.object({
                 activeInfoId: z.string(),
             })
         ),
-        async (c) => {
-            const user = c.get("user");
+        async c => {
+            const user = c.get('user');
 
             if (!user) {
-                return c.json({ error: "Unauthorized" }, 401);
+                return c.json({ error: 'Unauthorized' }, 401);
             }
 
             try {
-                const activeInfoId = c.req.param("activeInfoId");
+                const activeInfoId = c.req.param('activeInfoId');
 
                 const activeInfo = await db.query.activeInfo.findFirst({
                     columns: {
                         id: true,
                         tableId: true,
                     },
-                    where: eq(ActiveInfoTable.id, activeInfoId ?? ""),
+                    where: eq(ActiveInfoTable.id, activeInfoId ?? ''),
                     with: {
                         diningTable: {
                             columns: {
@@ -77,22 +82,22 @@ const app = new Hono()
                     },
                 });
 
-                return c.json({ message: "success", result: activeInfo }, 200);
+                return c.json({ message: 'success', result: activeInfo }, 200);
             } catch (error) {
                 console.log(error);
-                return c.json({ error: "Internal server error" }, 500);
+                return c.json({ error: 'Internal server error' }, 500);
             }
         }
     )
-    .get("/order-history/:activeInfoId", getCurrentUser, async (c) => {
-        const user = c.get("user");
+    .get('/order-history/:activeInfoId', getCurrentUser, async c => {
+        const user = c.get('user');
 
         if (!user) {
-            return c.json({ error: "Unauthorized" }, 401);
+            return c.json({ error: 'Unauthorized' }, 401);
         }
 
         try {
-            const activeInfoId = c.req.param("activeInfoId");
+            const activeInfoId = c.req.param('activeInfoId');
 
             const orders = await db.query.order.findMany({
                 where: eq(OrderTable.activeInfoId, activeInfoId),
@@ -121,11 +126,11 @@ const app = new Hono()
                 },
             });
 
-            const formattedOrders = orders.map((order) => ({
+            const formattedOrders = orders.map(order => ({
                 id: order.id,
                 totalPrice: order.totalPrice,
                 updatedAt: order.updatedAt!,
-                orderItems: order.orderItems.map((item) => ({
+                orderItems: order.orderItems.map(item => ({
                     id: item.id,
                     orderId: item.orderId,
                     productId: item.productId,
@@ -135,28 +140,28 @@ const app = new Hono()
                 })),
             }));
 
-            return c.json({ message: "success", result: formattedOrders }, 200);
+            return c.json({ message: 'success', result: formattedOrders }, 200);
         } catch (error) {
             console.log(error);
-            return c.json({ error: "Internal server error" }, 500);
+            return c.json({ error: 'Internal server error' }, 500);
         }
     })
     .post(
-        "/create-order",
+        '/create-order',
         getCurrentUser,
-        zValidator("json", insertOrderSchema),
-        async (c) => {
-            const user = c.get("user");
+        zValidator('json', insertOrderSchema),
+        async c => {
+            const user = c.get('user');
 
             if (!user) {
-                return c.json({ error: "Unauthorized" }, 401);
+                return c.json({ error: 'Unauthorized' }, 401);
             }
 
             try {
                 const { activeInfoId, totalPrice, orderList } =
                     await c.req.json();
 
-                await db.transaction(async (tx) => {
+                await db.transaction(async tx => {
                     for (const item of orderList) {
                         await tx
                             .update(ProductTable)
@@ -186,10 +191,10 @@ const app = new Hono()
                     );
                 });
 
-                return c.json({ message: "create order successfully" }, 200);
+                return c.json({ message: 'create order successfully' }, 200);
             } catch (error) {
                 console.log(error);
-                return c.json({ error: "Internal server error" }, 500);
+                return c.json({ error: 'Internal server error' }, 500);
             }
         }
     );
