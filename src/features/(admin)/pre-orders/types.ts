@@ -10,7 +10,7 @@ export type OrderType = {
     reservationTime: string;
     status: string;
     paymentStatus: string;
-    createdAt: string | null;
+    updatedAt: string | null;
     tables: TableType[];
 };
 
