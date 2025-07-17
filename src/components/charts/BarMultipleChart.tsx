@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { TrendingUp } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
+import { TrendingUp } from 'lucide-react';
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from 'recharts';
 
 import {
     Card,
@@ -9,16 +9,16 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
     ChartContainer,
     ChartLegend,
     ChartLegendContent,
     ChartTooltip,
     ChartTooltipContent,
-} from "@/components/ui/chart";
-import { Fragment } from "react";
-import { Skeleton } from "../ui/skeleton";
+} from '@/components/ui/chart';
+import { Fragment } from 'react';
+import { Skeleton } from '../ui/skeleton';
 
 type ChartConfigType = Record<
     string,
@@ -48,7 +48,7 @@ function BarMultipleChart<T>({
             </CardHeader>
             <CardContent>
                 {isLoading ? (
-                    <Skeleton className="rounded-lg w-full h-[25dvh]" />
+                    <Skeleton className="h-[25dvh] w-full rounded-lg" />
                 ) : (
                     <Fragment>
                         <ChartContainer config={chartConfig}>
@@ -104,11 +104,10 @@ function BarMultipleChart<T>({
             </CardContent>
             <CardFooter className="flex-col items-start gap-2 text-sm">
                 <div className="flex gap-2 leading-none font-medium">
-                    Trending up by 5.2% this month{" "}
-                    <TrendingUp className="h-4 w-4" />
+                    เพิ่มขึ้น 5.2% ในเดือนนี้ <TrendingUp className="h-4 w-4" />
                 </div>
                 <div className="text-muted-foreground leading-none">
-                    Showing total visitors for the last 6 months
+                    แสดงจำนวนผู้เข้าชมทั้งหมดในช่วง 6 เดือนที่ผ่านมา
                 </div>
             </CardFooter>
         </Card>

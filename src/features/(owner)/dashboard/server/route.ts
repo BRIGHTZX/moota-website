@@ -1,7 +1,7 @@
 import { db } from '@/database/db';
 import { getCurrentUser } from '@/services/middleware-hono';
 import { zValidator } from '@hono/zod-validator';
-import { and, asc, count, eq, gte, lte, sql, sum } from 'drizzle-orm';
+import { and, asc, count, eq, gte, isNull, lte, sql, sum } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { dateRangeSchema } from '../schemas';
 
@@ -305,7 +305,10 @@ const app = new Hono()
                         name: true,
                         stock: true,
                     },
-                    where: eq(ProductTable.category, category),
+                    where: and(
+                        eq(ProductTable.category, category),
+                        isNull(ProductTable.deletedAt)
+                    ),
                 });
 
                 const stockHistory =

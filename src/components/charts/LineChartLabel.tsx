@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { TrendingUp } from "lucide-react";
-import { CartesianGrid, LabelList, Line, LineChart, XAxis } from "recharts";
+import { TrendingUp } from 'lucide-react';
+import { CartesianGrid, LabelList, Line, LineChart, XAxis } from 'recharts';
 
 import {
     Card,
@@ -10,15 +10,15 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
-} from "@/components/ui/chart";
-import { format } from "date-fns";
-import { th } from "date-fns/locale";
-import { Skeleton } from "../ui/skeleton";
+} from '@/components/ui/chart';
+import { format } from 'date-fns';
+import { th } from 'date-fns/locale';
+import { Skeleton } from '../ui/skeleton';
 
 type ChartConfigType = Record<
     string,
@@ -48,13 +48,13 @@ function ChartLineLabel<T>({
             <CardHeader>
                 <CardTitle>{title}</CardTitle>
                 <CardDescription>
-                    {format(new Date(startDate), "dd MMM yyyy", { locale: th })}{" "}
-                    - {format(new Date(endDate), "dd MMM yyyy", { locale: th })}
+                    {format(new Date(startDate), 'dd MMM yyyy', { locale: th })}{' '}
+                    - {format(new Date(endDate), 'dd MMM yyyy', { locale: th })}
                 </CardDescription>
             </CardHeader>
 
             {isLoading ? (
-                <Skeleton className="rounded-lg w-full h-[25dvh]" />
+                <Skeleton className="h-[25dvh] w-full rounded-lg" />
             ) : (
                 <CardContent>
                     <ChartContainer config={chartConfig}>
@@ -105,11 +105,10 @@ function ChartLineLabel<T>({
             )}
             <CardFooter className="flex-col items-start gap-2 text-sm">
                 <div className="flex gap-2 leading-none font-medium">
-                    Trending up by 5.2% this month{" "}
-                    <TrendingUp className="h-4 w-4" />
+                    เพิ่มขึ้น 5.2% ในเดือนนี้ <TrendingUp className="h-4 w-4" />
                 </div>
                 <div className="text-muted-foreground leading-none">
-                    Showing total visitors for the last 6 months
+                    แสดงจำนวนผู้เข้าชมทั้งหมดในช่วง 6 เดือนที่ผ่านมา
                 </div>
             </CardFooter>
         </Card>
