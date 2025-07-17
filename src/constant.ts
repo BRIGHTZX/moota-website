@@ -1,4 +1,5 @@
 export const USER_IMG = '/user-image.png';
+export const IMAGE_PLACEHOLDER = '/product-default.jpg';
 
 export const ADULT_PRICE = 199;
 export const CHILD_PRICE = 129;

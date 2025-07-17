@@ -1,32 +1,32 @@
-import { db } from "@/database/db";
-import { getCurrentUser } from "@/services/middleware-hono";
-import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
-import { z } from "zod";
+import { db } from '@/database/db';
+import { getCurrentUser } from '@/services/middleware-hono';
+import { Hono } from 'hono';
+import { zValidator } from '@hono/zod-validator';
+import { z } from 'zod';
 
 import {
     preOrder as PreOrderTable,
     preOrderInfo as PreOrderInfoTable,
-} from "@/database/schema/pre-order";
-import { diningTable as DiningTable } from "@/database/schema/diningTable";
+} from '@/database/schema/pre-order';
+import { diningTable as DiningTable } from '@/database/schema/diningTable';
 import {
     active as ActiveTable,
     activeInfo as ActiveInfoTable,
-} from "@/database/schema/active";
-import { and, eq, inArray } from "drizzle-orm";
+} from '@/database/schema/active';
+import { and, desc, eq, inArray } from 'drizzle-orm';
 
 const app = new Hono()
-    .get("/", getCurrentUser, async (c) => {
-        const user = c.get("user");
+    .get('/', getCurrentUser, async c => {
+        const user = c.get('user');
         if (!user) {
-            return c.json({ message: "Unauthorized" }, 401);
+            return c.json({ message: 'Unauthorized' }, 401);
         }
 
         try {
             const preOrders = await db.query.preOrder.findMany({
                 where: and(
-                    eq(PreOrderTable.status, "pending"),
-                    eq(PreOrderTable.paymentStatus, "paid")
+                    eq(PreOrderTable.status, 'pending'),
+                    eq(PreOrderTable.paymentStatus, 'paid')
                 ),
                 columns: {
                     id: true,
@@ -40,7 +40,7 @@ const app = new Hono()
                     reservationTime: true,
                     status: true,
                     paymentStatus: true,
-                    createdAt: true,
+                    updatedAt: true,
                 },
                 with: {
                     preOrderInfo: {
@@ -57,18 +57,19 @@ const app = new Hono()
                         },
                     },
                 },
+                orderBy: [desc(PreOrderTable.updatedAt)],
             });
 
             if (!preOrders.length) {
                 return c.json(
-                    { message: "Reservation not found", result: [] },
+                    { message: 'Reservation not found', result: [] },
                     200
                 );
             }
 
-            const formattedPreOrders = preOrders.map((preOrder) => ({
+            const formattedPreOrders = preOrders.map(preOrder => ({
                 ...preOrder,
-                tables: preOrder.preOrderInfo.map((info) => ({
+                tables: preOrder.preOrderInfo.map(info => ({
                     tableId: info.tableId,
                     tableNumber: info.table.tableNumber,
                 })),
@@ -76,143 +77,71 @@ const app = new Hono()
 
             return c.json(
                 {
-                    message: "Reservation fetched successfully",
+                    message: 'Reservation fetched successfully',
                     result: formattedPreOrders,
                 },
                 200
             );
         } catch (error) {
             console.error(error);
-            return c.json({ message: "Internal server error" }, 500);
+            return c.json({ message: 'Internal server error' }, 500);
         }
     })
-    .get("/:preOrderId", getCurrentUser, async (c) => {
-        const user = c.get("user");
+    .get('/payment-image/:preOrderId', getCurrentUser, async c => {
+        const user = c.get('user');
 
         if (!user) {
-            return c.json({ message: "Unauthorized" }, 401);
+            return c.json({ message: 'Unauthorized' }, 401);
         }
 
         try {
-            const preOrderId = c.req.param("preOrderId");
+            const preOrderId = c.req.param('preOrderId');
 
             const preOrder = await db.query.preOrder.findFirst({
                 where: eq(PreOrderTable.id, preOrderId),
                 columns: {
                     id: true,
-                    preOrderNumber: true,
-                    customerName: true,
-                    phoneNumber: true,
-                    adultNumber: true,
-                    childNumber: true,
-                    totalPrice: true,
-                    reservationDate: true,
-                    reservationTime: true,
-                    status: true,
-                    paymentStatus: true,
                     paymentImage: true,
-                    createdAt: true,
-                },
-                with: {
-                    preOrderInfo: {
-                        columns: {
-                            id: true,
-                            tableId: true,
-                        },
-                        with: {
-                            table: {
-                                columns: {
-                                    tableNumber: true,
-                                },
-                            },
-                        },
-                    },
+                    updatedAt: true,
                 },
             });
 
-            // const preOrders = await db
-            //     .select({
-            //         preOrder: {
-            //             id: PreOrderTable.id,
-            //             preOrderNumber: PreOrderTable.preOrderNumber,
-            //             customerName: PreOrderTable.customerName,
-            //             phoneNumber: PreOrderTable.phoneNumber,
-            //             adultNumber: PreOrderTable.adultNumber,
-            //             childNumber: PreOrderTable.childNumber,
-            //             totalPrice: PreOrderTable.totalPrice,
-            //             reservationDate: PreOrderTable.reservationDate,
-            //             reservationTime: PreOrderTable.reservationTime,
-            //             status: PreOrderTable.status,
-            //             paymentStatus: PreOrderTable.paymentStatus,
-            //             paymentImage: PreOrderTable.paymentImage,
-            //             createdAt: PreOrderTable.createdAt,
-            //         },
-            //         table: {
-            //             id: PreOrderInfoTable.tableId,
-            //             tableNumber: TablesTable.tableNumber,
-            //         },
-            //     })
-            //     .from(PreOrderTable)
-            //     .leftJoin(
-            //         PreOrderInfoTable,
-            //         eq(PreOrderTable.id, PreOrderInfoTable.preOrderId)
-            //     )
-            //     .leftJoin(
-            //         TablesTable,
-            //         eq(PreOrderInfoTable.tableId, TablesTable.id)
-            //     )
-            //     .where(
-            //         and(
-            //             eq(PreOrderTable.id, preOrderId),
-            //             eq(PreOrderTable.userKindeId, user.id.toString())
-            //         )
-            //     );
-
             if (!preOrder) {
-                return c.json({ message: "Reservation not found" }, 404);
+                return c.json({ message: 'Reservation not found' }, 404);
             }
-
-            const formattedPreOrder = {
-                ...preOrder,
-                table: preOrder.preOrderInfo.map((info) => ({
-                    tableNumber: info.table.tableNumber,
-                })),
-            };
-
-            console.log(formattedPreOrder);
 
             return c.json(
                 {
-                    message: "Reservation fetched successfully",
-                    result: formattedPreOrder,
+                    message: 'Reservation fetched successfully',
+                    result: preOrder,
                 },
                 200
             );
         } catch (error) {
             console.log(error);
-            return c.json({ message: "Internal server error", error }, 500);
+            return c.json({ message: 'Internal server error', error }, 500);
         }
     })
     .post(
-        "/create-active",
+        '/create-active',
         getCurrentUser,
         zValidator(
-            "json",
+            'json',
             z.object({
                 preOrderId: z.string(),
             })
         ),
-        async (c) => {
-            const user = c.get("user");
+        async c => {
+            const user = c.get('user');
 
             if (!user) {
-                return c.json({ message: "Unauthorized" }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
             }
 
             try {
-                const { preOrderId } = c.req.valid("json");
+                const { preOrderId } = c.req.valid('json');
 
-                const result = await db.transaction(async (tx) => {
+                const result = await db.transaction(async tx => {
                     const [preOrder] = await tx
                         .select({
                             id: PreOrderTable.id,
@@ -228,7 +157,7 @@ const app = new Hono()
                         .limit(1);
 
                     if (!preOrder) {
-                        throw new Error("Pre-order not found");
+                        throw new Error('Pre-order not found');
                     }
 
                     const preOrderInfo = await tx
@@ -240,7 +169,7 @@ const app = new Hono()
                         .where(eq(PreOrderInfoTable.preOrderId, preOrderId));
 
                     if (!preOrderInfo) {
-                        throw new Error("Pre-order info not found");
+                        throw new Error('Pre-order info not found');
                     }
 
                     const [active] = await tx
@@ -257,7 +186,7 @@ const app = new Hono()
                         });
 
                     await tx.insert(ActiveInfoTable).values(
-                        preOrderInfo.map((info) => ({
+                        preOrderInfo.map(info => ({
                             activeId: active.id,
                             tableId: info.tableId,
                         }))
@@ -271,14 +200,14 @@ const app = new Hono()
                         .where(
                             inArray(
                                 DiningTable.id,
-                                preOrderInfo.map((info) => info.tableId)
+                                preOrderInfo.map(info => info.tableId)
                             )
                         );
 
                     await tx
                         .update(PreOrderTable)
                         .set({
-                            status: "confirmed",
+                            status: 'confirmed',
                         })
                         .where(eq(PreOrderTable.id, preOrderId));
 
@@ -286,12 +215,12 @@ const app = new Hono()
                 });
 
                 return c.json(
-                    { message: "Active created successfully", result },
+                    { message: 'Active created successfully', result },
                     200
                 );
             } catch (error) {
                 console.log(error);
-                return c.json({ message: "Invalid request" }, 400);
+                return c.json({ message: 'Invalid request' }, 400);
             }
         }
     );
