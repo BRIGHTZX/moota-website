@@ -1,5 +1,5 @@
-"use client";
-import { Button } from "@/components/ui/button";
+'use client';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogClose,
@@ -7,19 +7,19 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog";
-import { FormProvider, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import InputWithLabel from "@/components/inputs/InputWithLabel";
+} from '@/components/ui/dialog';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import InputWithLabel from '@/components/inputs/InputWithLabel';
 import {
     insertStockProductSchema,
     insertStockProductSchemaType,
-} from "../schemas";
-import ImageInput from "@/components/inputs/ImageInput";
-import SelectWithLabel from "@/components/inputs/SelectWithLabel";
-import { StockProductCategory } from "../types";
-import { useAddProductStock } from "../api/use-add-product-stock";
-import { toast } from "sonner";
+} from '../schemas';
+import ImageInput from '@/components/inputs/ImageInput';
+import SelectWithLabel from '@/components/inputs/SelectWithLabel';
+import { StockProductCategory } from '../types';
+import { useAddProductStock } from '../api/use-add-product-stock';
+import { toast } from 'sonner';
 
 type AddStockProductFormProps = {
     isOpen: boolean;
@@ -35,10 +35,10 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
     const form = useForm<insertStockProductSchemaType>({
         resolver: zodResolver(insertStockProductSchema),
         defaultValues: {
-            name: "",
-            unit: "",
+            name: '',
+            unit: '',
             image: undefined,
-            category: "",
+            category: '',
             price: 0,
             limitAlert: 0,
         },
@@ -47,7 +47,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            form.setValue("image", file, { shouldValidate: true });
+            form.setValue('image', file, { shouldValidate: true });
         }
     };
 
@@ -61,7 +61,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
     };
 
     if (isErrorAddingProductStock) {
-        toast.error("เพิ่มสินค้าไม่สำเร็จ");
+        toast.error('เพิ่มสินค้าไม่สำเร็จ');
         return <div>error</div>;
     }
 
@@ -72,17 +72,17 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                     id="add-stock-product-form"
                     onSubmit={form.handleSubmit(onSubmit)}
                 >
-                    <DialogContent className=" border-gray-300 shadow-sm sm:max-w-[425px]">
+                    <DialogContent className="border-gray-300 shadow-sm sm:max-w-[425px]">
                         <DialogHeader>
                             <DialogTitle asChild>
-                                <p className="text-black text-lg font-bold">
+                                <p className="text-lg font-bold text-black">
                                     เพิ่มสินค้าใหม่
                                 </p>
                             </DialogTitle>
                         </DialogHeader>
-                        <div className="grid gap-2">
+                        <div className="flex flex-col gap-4">
                             <ImageInput<insertStockProductSchemaType>
-                                value={form.watch("image") as File | null}
+                                value={form.watch('image') as File | null}
                                 nameInSchema="image"
                                 errorClassName="right-0"
                                 handleImageChange={handleFileChange}
@@ -144,7 +144,7 @@ function AddStockProductForm({ isOpen, setIsOpen }: AddStockProductFormProps) {
                             />
                         </div>
                         <DialogFooter>
-                            <div className="flex mt-4 items-center justify-between gap-2">
+                            <div className="mt-4 flex items-center justify-between gap-2">
                                 <DialogClose asChild>
                                     <Button
                                         type="button"

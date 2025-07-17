@@ -1,23 +1,23 @@
-"use client";
-import ImageInput from "@/components/inputs/ImageInput";
-import TextHeader from "@/components/TextHeader";
-import { FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
+'use client';
+import ImageInput from '@/components/inputs/ImageInput';
+import TextHeader from '@/components/TextHeader';
+import { FormProvider, useForm } from 'react-hook-form';
+import { z } from 'zod';
 import {
     updateStockProductSchema,
     updateStockProductSchemaType,
-} from "@/features/(admin)/stocks/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import InputWithLabel from "@/components/inputs/InputWithLabel";
-import SelectWithLabel from "@/components/inputs/SelectWithLabel";
-import { StockProductCategory } from "@/features/(admin)/stocks/types";
-import { Button } from "@/components/ui/button";
-import { useGetProductStock } from "@/features/(admin)/stocks/api/use-get-product-stock";
-import { use, useEffect, useState } from "react";
-import { useUpdateProductStock } from "@/features/(admin)/stocks/api/use-update-product-stock";
-import PageLoader from "@/components/PageLoader";
-import { Loader2 } from "lucide-react";
-import AdminPageWrapper from "@/components/AdminPageWrapper";
+} from '@/features/(admin)/stocks/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import InputWithLabel from '@/components/inputs/InputWithLabel';
+import SelectWithLabel from '@/components/inputs/SelectWithLabel';
+import { StockProductCategory } from '@/features/(admin)/stocks/types';
+import { Button } from '@/components/ui/button';
+import { useGetProductStock } from '@/features/(admin)/stocks/api/use-get-product-stock';
+import { use, useEffect, useState } from 'react';
+import { useUpdateProductStock } from '@/features/(admin)/stocks/api/use-update-product-stock';
+import PageLoader from '@/components/PageLoader';
+import { Loader2 } from 'lucide-react';
+import AdminPageWrapper from '@/components/AdminPageWrapper';
 
 function StockDetailPage({
     params,
@@ -36,10 +36,10 @@ function StockDetailPage({
     const form = useForm<z.infer<typeof updateStockProductSchema>>({
         resolver: zodResolver(updateStockProductSchema),
         defaultValues: {
-            name: "",
+            name: '',
             image: undefined,
-            unit: "",
-            category: "",
+            unit: '',
+            category: '',
             price: 0,
             limitAlert: 0,
         },
@@ -48,7 +48,7 @@ function StockDetailPage({
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            form.setValue("image", file, { shouldValidate: true });
+            form.setValue('image', file, { shouldValidate: true });
         }
     };
 
@@ -83,6 +83,8 @@ function StockDetailPage({
 
     const isLoading = isLoadingProductStock || isUpdatingProductStock;
 
+    console.log(productStockData);
+
     return (
         <AdminPageWrapper>
             <TextHeader text="รายละเอียดสินค้า" />
@@ -94,12 +96,12 @@ function StockDetailPage({
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <div className="mt-4">
                             {/* Image */}
-                            <div className="w-4/5 mx-auto">
+                            <div className="mx-auto w-4/5">
                                 <ImageInput
                                     nameInSchema="image"
                                     handleImageChange={handleFileChange}
                                     value={
-                                        form.watch("image") as
+                                        form.watch('image') as
                                             | File
                                             | string
                                             | null
@@ -108,7 +110,7 @@ function StockDetailPage({
                                 />
                             </div>
 
-                            <div className="flex flex-col gap-2 mt-8">
+                            <div className="mt-8 flex flex-col gap-2">
                                 <InputWithLabel
                                     fieldTitle="ชื่อสินค้า"
                                     nameInSchema="name"
@@ -163,9 +165,9 @@ function StockDetailPage({
                                             disabled={isLoading}
                                         >
                                             {isLoading ? (
-                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                <Loader2 className="h-4 w-4 animate-spin" />
                                             ) : (
-                                                "บันทึก"
+                                                'บันทึก'
                                             )}
                                         </Button>
                                     )}

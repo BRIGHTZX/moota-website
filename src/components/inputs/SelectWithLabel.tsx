@@ -49,7 +49,9 @@ function SelectWithLabel<S>({
                     <Select
                         value={field.value || ''}
                         onValueChange={value => {
-                            field.onChange(value);
+                            if (value) {
+                                field.onChange(value);
+                            }
                         }}
                         disabled={disabled}
                     >

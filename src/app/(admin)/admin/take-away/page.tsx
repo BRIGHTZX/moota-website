@@ -16,7 +16,7 @@ function TakeAwayPage() {
                 <Button asChild size="sm" variant="outline">
                     <Link href="/admin/take-away/history">
                         <HistoryIcon />
-                        <span className="text-xs">ซื้อกลับบ้าน</span>
+                        <span className="text-xs">ประวัติการสั่งซื้อ</span>
                     </Link>
                 </Button>
             </div>

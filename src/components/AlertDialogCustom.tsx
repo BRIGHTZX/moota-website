@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -8,7 +8,7 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog';
 
 type AlertDialogCustomProps = {
     open: boolean;
@@ -18,6 +18,7 @@ type AlertDialogCustomProps = {
     title: string;
     description: string;
     buttonActionText: string;
+    buttonActionClassName?: string;
 };
 
 function AlertDialogCustom({
@@ -28,6 +29,7 @@ function AlertDialogCustom({
     title,
     description,
     buttonActionText,
+    buttonActionClassName,
 }: AlertDialogCustomProps) {
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
@@ -42,7 +44,10 @@ function AlertDialogCustom({
                     <AlertDialogCancel onClick={cancelAction}>
                         Cancel
                     </AlertDialogCancel>
-                    <AlertDialogAction onClick={action}>
+                    <AlertDialogAction
+                        className={buttonActionClassName}
+                        onClick={action}
+                    >
                         {buttonActionText}
                     </AlertDialogAction>
                 </AlertDialogFooter>

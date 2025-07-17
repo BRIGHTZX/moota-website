@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from 'react';
 
 import {
     CellContext,
@@ -6,22 +6,22 @@ import {
     flexRender,
     getCoreRowModel,
     useReactTable,
-} from "@tanstack/react-table";
-import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
+} from '@tanstack/react-table';
+import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 import {
     MoreHorizontalIcon,
     PencilLineIcon,
     PlusIcon,
     TableOfContents,
     TrashIcon,
-} from "lucide-react";
-import Link from "next/link";
+} from 'lucide-react';
+import Link from 'next/link';
 import {
     Table,
     TableBody,
@@ -29,9 +29,11 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table";
-import { selectStockProductSchemaType } from "../schemas";
-import Image from "next/image";
+} from '@/components/ui/table';
+import { selectStockProductSchemaType } from '../schemas';
+import Image from 'next/image';
+import { useDeleteProduct } from '../api/use-delete-product-stock';
+import AlertDialogCustom from '@/components/AlertDialogCustom';
 
 type StockProductTableType = {
     products: selectStockProductSchemaType[];
@@ -46,7 +48,12 @@ function StockProductTable({
     setIsImportProductFormOpen,
     setImportProductId,
 }: StockProductTableType) {
-    const columnHeaderArray: Array<keyof rowType> = ["products", "stocks"];
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [productId, setProductId] = useState<string | null>(null);
+    const { mutate: deleteProduct } = useDeleteProduct({
+        setIsOpen: setIsDeleteDialogOpen,
+    });
+    const columnHeaderArray: Array<keyof rowType> = ['products', 'stocks'];
 
     const columnWidths = {
         products: 100,
@@ -61,7 +68,7 @@ function StockProductTable({
                 <DropdownMenu>
                     <DropdownMenuTrigger
                         asChild
-                        className="grid place-content-center  bg-blue-100 border border-gray-300 shadow-sm"
+                        className="grid place-content-center border border-gray-300 bg-blue-100 shadow-sm"
                     >
                         <Button variant="ghost" className="size-6">
                             <MoreHorizontalIcon className="size-4" />
@@ -85,7 +92,12 @@ function StockProductTable({
                             <PlusIcon className="size-4" />
                             นำเข้าสินค้า
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setProductId(row.original.id);
+                                setIsDeleteDialogOpen(true);
+                            }}
+                        >
                             <TrashIcon className="size-4" />
                             ลบสินค้า
                         </DropdownMenuItem>
@@ -95,13 +107,13 @@ function StockProductTable({
         );
     };
 
-    ActionCell.displayName = "ActionCell";
+    ActionCell.displayName = 'ActionCell';
 
     //  COLUMNS (SET COLUMN)
     const columns = [
-        ...columnHeaderArray.map((columnName) => {
+        ...columnHeaderArray.map(columnName => {
             return columnHelper.accessor(
-                (row) => {
+                row => {
                     return row[columnName];
                 },
                 {
@@ -110,7 +122,7 @@ function StockProductTable({
                         columnWidths[columnName as keyof typeof columnWidths] ??
                         undefined,
                     header: () => {
-                        if (columnName === "products") {
+                        if (columnName === 'products') {
                             return (
                                 <div className="text-start">
                                     <p>สินค้า</p>
@@ -118,7 +130,7 @@ function StockProductTable({
                             );
                         }
 
-                        if (columnName === "stocks") {
+                        if (columnName === 'stocks') {
                             return (
                                 <div className="text-end">
                                     <p>จำนวน</p>
@@ -135,19 +147,19 @@ function StockProductTable({
                     cell: ({ getValue }) => {
                         const value = getValue();
 
-                        if (columnName === "products") {
+                        if (columnName === 'products') {
                             const product = value as {
                                 name: string;
                                 image: string;
                             };
                             return (
                                 <div className="flex items-center gap-2">
-                                    <div className="size-10 relative rounded-md overflow-hidden">
+                                    <div className="relative size-10 overflow-hidden rounded-md">
                                         <Image
                                             src={
                                                 product.image
                                                     ? product.image
-                                                    : "/product-default.jpg"
+                                                    : '/product-default.jpg'
                                             }
                                             alt={product.name}
                                             width={100}
@@ -160,7 +172,7 @@ function StockProductTable({
                             );
                         }
 
-                        if (columnName === "stocks") {
+                        if (columnName === 'stocks') {
                             const stock = value as {
                                 stock: number;
                                 unit: string;
@@ -177,7 +189,7 @@ function StockProductTable({
             );
         }),
         columnHelper.display({
-            id: "action",
+            id: 'action',
             size: 100,
             header: () => {
                 return (
@@ -198,12 +210,27 @@ function StockProductTable({
     });
 
     return (
-        <div className="border border-coffee-dark rounded-lg p-4 relative">
+        <div className="border-coffee-dark relative rounded-lg border p-4">
+            <AlertDialogCustom
+                open={isDeleteDialogOpen}
+                setOpen={setIsDeleteDialogOpen}
+                buttonActionText="ยืนยันการลบสินค้า"
+                action={() => {
+                    deleteProduct({
+                        param: {
+                            productId: productId ?? '',
+                        },
+                    });
+                }}
+                title="ลบสินค้า"
+                description="คุณต้องการลบสินค้านี้หรือไม่"
+                buttonActionClassName="bg-red-500"
+            />
             <Table className="rounded-lg">
                 <TableHeader>
-                    {table.getHeaderGroups().map((headerGroup) => (
+                    {table.getHeaderGroups().map(headerGroup => (
                         <TableRow key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => (
+                            {headerGroup.headers.map(header => (
                                 <TableHead
                                     key={header.id}
                                     className="font-bold"
@@ -234,9 +261,9 @@ function StockProductTable({
                             </TableCell>
                         </TableRow>
                     ) : (
-                        table.getRowModel().rows.map((row) => (
+                        table.getRowModel().rows.map(row => (
                             <TableRow key={row.id}>
-                                {row.getVisibleCells().map((cell) => (
+                                {row.getVisibleCells().map(cell => (
                                     <TableCell
                                         key={cell.id}
                                         className={`${
