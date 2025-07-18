@@ -32,7 +32,7 @@ export const useCreateCheckout = ({
                 if (response.status === 403) {
                     throw new Error('Forbidden');
                 } else {
-                    throw new Error('Failed to fetch actives');
+                    throw new Error('สร้างรายการชำระเงินไม่เสำเร็จ');
                 }
             }
 

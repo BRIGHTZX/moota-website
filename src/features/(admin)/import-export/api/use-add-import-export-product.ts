@@ -28,7 +28,7 @@ export const useAddImportExportProduct = ({
                 if (response.status === 403) {
                     throw new Error('Forbidden');
                 } else {
-                    throw new Error('Failed to fetch actives');
+                    throw new Error('เพิ่มสินค้าไม่สำเร็จ');
                 }
             }
 

@@ -1,14 +1,17 @@
-import { client } from "@/lib/rpc";
-import { useQuery } from "@tanstack/react-query";
+import { client } from '@/lib/rpc';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 const api =
-    client.api.admin.orders["get-activeInfo-tableNumber"][":activeInfoId"][
-        "$get"
+    client.api.admin.orders['get-activeInfo-tableNumber'][':activeInfoId'][
+        '$get'
     ];
 
 export const useGetActiveInfoTableNumber = (activeInfoId: string) => {
+    const router = useRouter();
     const query = useQuery({
-        queryKey: ["get-activeInfo-tableNumber", activeInfoId],
+        queryKey: ['get-activeInfo-tableNumber', activeInfoId],
         queryFn: async () => {
             const response = await api({
                 param: {
@@ -17,7 +20,11 @@ export const useGetActiveInfoTableNumber = (activeInfoId: string) => {
             });
 
             if (!response.ok) {
-                throw new Error("Failed to fetch products stock");
+                if (response.status === 403) {
+                    throw new Error('Forbidden');
+                } else {
+                    throw new Error('ไม่พบข้อมูลตารางนั่ง');
+                }
             }
 
             const data = await response.json();
@@ -25,6 +32,15 @@ export const useGetActiveInfoTableNumber = (activeInfoId: string) => {
             return data.result;
         },
     });
+
+    useEffect(() => {
+        if (query.error) {
+            if (query.error.message === 'Forbidden') {
+                router.push('/forbidden');
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [query.error]);
 
     return query;
 };

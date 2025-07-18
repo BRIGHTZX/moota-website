@@ -21,7 +21,7 @@ export const useGetImportExportProduct = (productId: string | null) => {
                 if (response.status === 403) {
                     throw new Error('Forbidden');
                 } else {
-                    throw new Error('Failed to fetch actives');
+                    throw new Error('ไม่พบข้อมูลการนำเข้า/นำออกสินค้า');
                 }
             }
 

@@ -39,7 +39,8 @@ export const useGetHistory = (startDate: string, endDate: string) => {
             }
             console.error('Error getting carts:', query.error);
         }
-    }, [query.error, router]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [query.error]);
 
     return query;
 };
