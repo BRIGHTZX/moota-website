@@ -1,7 +1,7 @@
-"use server";
-import { checkIfActiveClosed } from "@/services/checkIfActiveClosed";
-import { redirect } from "next/navigation";
-import React, { Fragment } from "react";
+'use server';
+import { checkIfActiveClosed } from '@/services/checkIfActiveClosed';
+import { redirect } from 'next/navigation';
+import React, { Fragment } from 'react';
 
 async function CheckoutLayout({
     children,
@@ -14,7 +14,7 @@ async function CheckoutLayout({
     const isActiveClosed = await checkIfActiveClosed(activeId);
 
     if (isActiveClosed) {
-        return redirect("/admin/actives");
+        return redirect('/admin/actives');
     }
     return <Fragment>{children}</Fragment>;
 }

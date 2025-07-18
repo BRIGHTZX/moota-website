@@ -1,10 +1,10 @@
-import { client } from "@/lib/rpc";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { InferRequestType, InferResponseType } from "hono";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { client } from '@/lib/rpc';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { InferRequestType, InferResponseType } from 'hono';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
-const api = client.api.admin.checkout["checkout"][":activeId"]["$post"];
+const api = client.api.admin.checkout['checkout'][':activeId']['$post'];
 type RequestType = InferRequestType<typeof api>;
 type ResponseType = InferResponseType<typeof api, 200>;
 
@@ -29,7 +29,11 @@ export const useCreateCheckout = ({
             });
 
             if (!response.ok) {
-                throw new Error("Failed to create checkout");
+                if (response.status === 403) {
+                    throw new Error('Forbidden');
+                } else {
+                    throw new Error('Failed to fetch actives');
+                }
             }
 
             const data = await response.json();
@@ -37,21 +41,23 @@ export const useCreateCheckout = ({
             return data;
         },
 
-        onSuccess: (data) => {
+        onSuccess: data => {
             queryClient.invalidateQueries({
-                queryKey: ["checkout-info", activeId],
+                queryKey: ['checkout-info', activeId],
             });
             queryClient.invalidateQueries({
-                queryKey: ["checkout-order-lists", activeInfoId],
+                queryKey: ['checkout-order-lists', activeInfoId],
             });
-            toast.success("สร้างรายการชำระเงินสำเร็จ");
+            toast.success('สร้างรายการชำระเงินสำเร็จ');
             if (data.activeSuccess) {
                 router.push(`/admin/checkout-history/${data.checkoutId}`);
             }
         },
-        onError: (error) => {
-            console.log(error);
-            toast.error("สร้างรายการชำระเงินไม่สำเร็จ");
+        onError: error => {
+            if (error.message === 'Forbidden') {
+                router.push('/forbidden');
+            }
+            toast.error('สร้างรายการชำระเงินไม่สำเร็จ');
         },
     });
 
