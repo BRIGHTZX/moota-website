@@ -1,9 +1,10 @@
-import { client } from "@/lib/rpc";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { InferRequestType, InferResponseType } from "hono";
-import { toast } from "sonner";
+import { client } from '@/lib/rpc';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { InferRequestType, InferResponseType } from 'hono';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
-const api = client.api.admin.stocks[":productId"]["$put"];
+const api = client.api.admin.stocks[':productId']['$put'];
 type RequestType = InferRequestType<typeof api>;
 type ResponseType = InferResponseType<typeof api>;
 
@@ -14,6 +15,7 @@ export const useUpdateProductStock = ({
     productId: string;
     setIsEditing: (isEditing: boolean) => void;
 }) => {
+    const router = useRouter();
     const queryClient = useQueryClient();
     return useMutation<ResponseType, Error, RequestType>({
         mutationFn: async ({ param, form }) => {
@@ -23,7 +25,11 @@ export const useUpdateProductStock = ({
             });
 
             if (!response.ok) {
-                throw new Error("Failed to update product stock");
+                if (response.status === 403) {
+                    throw new Error('Forbidden');
+                } else {
+                    throw new Error('อัพเดตสินค้าไม่สำเร็จ');
+                }
             }
 
             const data = await response.json();
@@ -31,18 +37,20 @@ export const useUpdateProductStock = ({
             return data;
         },
         onSuccess: () => {
-            toast.success("อัพเดตสินค้าเรียบร้อย");
+            toast.success('อัพเดตสินค้าเรียบร้อย');
             setIsEditing(false);
             queryClient.invalidateQueries({
-                queryKey: ["product-stock", productId],
+                queryKey: ['product-stock', productId],
             });
             queryClient.invalidateQueries({
-                queryKey: ["products-stock"],
+                queryKey: ['products-stock'],
             });
         },
-        onError: (error) => {
-            toast.error("อัพเดตสินค้าไม่สำเร็จ");
-            console.log(error);
+        onError: error => {
+            if (error.message === 'Forbidden') {
+                router.push('/forbidden');
+            }
+            toast.error('อัพเดตสินค้าไม่สำเร็จ');
         },
     });
 };

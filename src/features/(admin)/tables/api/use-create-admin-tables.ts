@@ -1,13 +1,15 @@
-import { client } from "@/lib/rpc";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { InferRequestType, InferResponseType } from "hono";
-import { toast } from "sonner";
+import { client } from '@/lib/rpc';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { InferRequestType, InferResponseType } from 'hono';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
-const api = client.api.admin.tables["open-table"]["$post"];
+const api = client.api.admin.tables['open-table']['$post'];
 type ResponstType = InferResponseType<typeof api>;
 type RequestType = InferRequestType<typeof api>;
 
 export const useCreateAdminTables = () => {
+    const router = useRouter();
     const queryClient = useQueryClient();
     const mutation = useMutation<ResponstType, Error, RequestType>({
         mutationFn: async ({ json }) => {
@@ -16,7 +18,11 @@ export const useCreateAdminTables = () => {
             });
 
             if (!response.ok) {
-                throw Error("Failed to open table");
+                if (response.status === 403) {
+                    throw new Error('Forbidden');
+                } else {
+                    throw new Error('เปิดโต๊ะไม่สำเร็จ');
+                }
             }
 
             const data = response.json();
@@ -24,12 +30,14 @@ export const useCreateAdminTables = () => {
             return data;
         },
         onSuccess: () => {
-            toast.success("เปิดโต๊ะสำเร็จ");
-            queryClient.invalidateQueries({ queryKey: ["admin-tables"] });
+            toast.success('เปิดโต๊ะสำเร็จ');
+            queryClient.invalidateQueries({ queryKey: ['admin-tables'] });
         },
-        onError: (error) => {
-            console.log(error.message);
-            toast.error("เปิดโต๊ะไม่สำเร็จ");
+        onError: error => {
+            if (error.message === 'Forbidden') {
+                router.push('/forbidden');
+            }
+            toast.error('เปิดโต๊ะไม่สำเร็จ');
         },
     });
 

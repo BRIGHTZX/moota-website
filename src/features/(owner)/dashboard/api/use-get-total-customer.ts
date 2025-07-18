@@ -1,16 +1,19 @@
-import { client } from "@/lib/rpc";
-import { useQuery } from "@tanstack/react-query";
-import { DateModeType } from "../types";
+import { client } from '@/lib/rpc';
+import { useQuery } from '@tanstack/react-query';
+import { DateModeType } from '../types';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-const api = client.api.owner.dashboard["customer-count"]["$get"];
+const api = client.api.owner.dashboard['customer-count']['$get'];
 
 export const useGetTotalCustomer = (
     startDate: string,
     endDate: string,
     mode: DateModeType
 ) => {
+    const router = useRouter();
     const query = useQuery({
-        queryKey: ["customer-count", startDate, endDate, mode],
+        queryKey: ['customer-count', startDate, endDate, mode],
         queryFn: async () => {
             const response = await api({
                 query: {
@@ -21,7 +24,11 @@ export const useGetTotalCustomer = (
             });
 
             if (!response.ok) {
-                throw new Error("Failed to fetch customer count");
+                if (response.status === 403) {
+                    throw new Error('Forbidden');
+                } else {
+                    throw new Error('ไม่พบข้อมูลจำนวนลูกค้า');
+                }
             }
 
             const data = await response.json();
@@ -30,6 +37,15 @@ export const useGetTotalCustomer = (
         },
         enabled: !!startDate && !!endDate && !!mode,
     });
+
+    useEffect(() => {
+        if (query.error) {
+            if (query.error.message === 'Forbidden') {
+                router.push('/forbidden');
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [query.error]);
 
     return query;
 };

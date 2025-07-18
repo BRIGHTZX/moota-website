@@ -1,6 +1,7 @@
 import { client } from '@/lib/rpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { InferRequestType, InferResponseType } from 'hono';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 const api = client.api.admin.stocks['delete-product'][':productId']['$delete'];
@@ -12,6 +13,7 @@ export const useDeleteProduct = ({
 }: {
     setIsOpen: (isOpen: boolean) => void;
 }) => {
+    const router = useRouter();
     const queryClient = useQueryClient();
     const mutation = useMutation<ResponseType, Error, RequestType>({
         mutationFn: async ({ param }) => {
@@ -22,7 +24,11 @@ export const useDeleteProduct = ({
             });
 
             if (!response.ok) {
-                throw new Error('ลบสินค้าไม่สำเร็จ');
+                if (response.status === 403) {
+                    throw new Error('Forbidden');
+                } else {
+                    throw new Error('ลบสินค้าไม่สำเร็จ');
+                }
             }
 
             const data = await response.json();
@@ -35,8 +41,10 @@ export const useDeleteProduct = ({
             setIsOpen(false);
         },
         onError: error => {
+            if (error.message === 'Forbidden') {
+                router.push('/forbidden');
+            }
             toast.error('ลบสินค้าไม่สำเร็จ');
-            console.log(error);
         },
     });
 
