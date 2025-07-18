@@ -1,18 +1,18 @@
-import { db } from "@/database/db";
-import { getCurrentUser } from "@/services/middleware-hono";
-import { desc, eq } from "drizzle-orm";
-import { Hono } from "hono";
+import { db } from '@/database/db';
+import { getCurrentUser } from '@/services/middleware-hono';
+import { desc, eq } from 'drizzle-orm';
+import { Hono } from 'hono';
 import {
     preOrder as PreOrderTable,
     preOrderInfo as PreOrderInfoTable,
-} from "@/database/schema//pre-order";
-import { diningTable as DiningTable } from "@/database/schema//diningTable";
+} from '@/database/schema//pre-order';
+import { diningTable as DiningTable } from '@/database/schema//diningTable';
 
-const app = new Hono().get("/", getCurrentUser, async (c) => {
-    const user = c.get("user");
+const app = new Hono().get('/', getCurrentUser, async c => {
+    const user = c.get('user');
 
     if (!user) {
-        return c.json({ message: "Unauthorized" }, 401);
+        return c.json({ message: 'Unauthorized' }, 401);
     }
 
     try {
@@ -52,7 +52,7 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
 
         if (!preOrders.length) {
             return c.json(
-                { message: "Reservation not found", result: [] },
+                { message: 'Reservation not found', result: [] },
                 200
             );
         }
@@ -81,14 +81,14 @@ const app = new Hono().get("/", getCurrentUser, async (c) => {
 
         return c.json(
             {
-                message: "Reservation fetched successfully",
+                message: 'Reservation fetched successfully',
                 result: formattedPreOrders,
             },
             200
         );
     } catch (error) {
         console.error(error);
-        return c.json({ message: "Internal server error" }, 500);
+        return c.json({ message: 'Internal server error' }, 500);
     }
 });
 

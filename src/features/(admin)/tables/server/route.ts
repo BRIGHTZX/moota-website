@@ -1,22 +1,30 @@
-import { Hono } from "hono";
-import { db } from "@/database/db";
-import { diningTable as DiningTable } from "@/database/schema//diningTable";
+import { Hono } from 'hono';
+import { db } from '@/database/db';
+import { diningTable as DiningTable } from '@/database/schema//diningTable';
 import {
     active as ActiveTable,
     activeInfo as ActiveInfoTable,
-} from "@/database/schema//active";
-import { insertTalblesSchema, selectTablesSchemaType } from "../schema";
-import { asc, eq, sql } from "drizzle-orm";
-import { getCurrentUser } from "@/services/middleware-hono";
-import { zValidator } from "@hono/zod-validator";
-import { z } from "zod";
+} from '@/database/schema//active';
+import { insertTalblesSchema, selectTablesSchemaType } from '../schema';
+import { asc, eq, sql } from 'drizzle-orm';
+import { getCurrentUser } from '@/services/middleware-hono';
+import { zValidator } from '@hono/zod-validator';
+import { z } from 'zod';
 
 const app = new Hono()
-    .get("/", getCurrentUser, async (c) => {
-        const user = c.get("user");
+    .get('/', getCurrentUser, async c => {
+        const user = c.get('user');
+        const isAdmin = c.get('isAdmin');
 
         if (!user) {
-            return c.json({ message: "Unauthorized" }, 401);
+            return c.json({ message: 'Unauthorized' }, 401);
+        }
+
+        if (!isAdmin) {
+            return c.json(
+                { message: "You don't have permission to access" },
+                403
+            );
         }
 
         try {
@@ -31,30 +39,38 @@ const app = new Hono()
                 .orderBy(asc(sql`CAST(${DiningTable.tableNumber} AS INTEGER)`));
 
             return c.json(
-                { message: "Tables fetched successfully", tables },
+                { message: 'Tables fetched successfully', tables },
                 200
             );
         } catch (error) {
             console.log(error);
-            return c.json({ message: "Internal server error" }, 500);
+            return c.json({ message: 'Internal server error' }, 500);
         }
     })
     .post(
-        "/open-table",
+        '/open-table',
         getCurrentUser,
         zValidator(
-            "json",
+            'json',
             insertTalblesSchema.merge(
                 z.object({
                     tableNumber: z.array(z.string()),
                 })
             )
         ),
-        async (c) => {
-            const user = c.get("user");
+        async c => {
+            const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
 
             if (!user) {
-                return c.json({ message: "Unauthorized" }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {
@@ -66,7 +82,7 @@ const app = new Hono()
                     tableNumber,
                 } = await c.req.json();
 
-                await db.transaction(async (tx) => {
+                await db.transaction(async tx => {
                     const [active] = await tx
                         .insert(ActiveTable)
                         .values({
@@ -74,9 +90,9 @@ const app = new Hono()
                             customerPhone,
                             adultNumber,
                             childNumber,
-                            openTime: new Date().toLocaleTimeString("th-TH", {
-                                hour: "2-digit",
-                                minute: "2-digit",
+                            openTime: new Date().toLocaleTimeString('th-TH', {
+                                hour: '2-digit',
+                                minute: '2-digit',
                                 hour12: false,
                             }),
                         })
@@ -98,10 +114,10 @@ const app = new Hono()
                     }
                 });
 
-                return c.json({ message: "Open Table Successfully" }, 200);
+                return c.json({ message: 'Open Table Successfully' }, 200);
             } catch (error) {
                 console.log(error);
-                return c.json({ message: "Internal server error" }, 500);
+                return c.json({ message: 'Internal server error' }, 500);
             }
         }
     );

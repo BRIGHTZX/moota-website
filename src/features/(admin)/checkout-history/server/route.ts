@@ -1,18 +1,26 @@
-import { db } from "@/database/db";
-import { checkout } from "@/database/schema/checkout";
-import { mapHistoryDateToRecord } from "@/services/mapHistoryDateToRecord";
-import { getCurrentUser } from "@/services/middleware-hono";
-import { zValidator } from "@hono/zod-validator";
-import { and, desc, eq, gte, lte } from "drizzle-orm";
-import { Hono } from "hono";
-import z from "zod";
+import { db } from '@/database/db';
+import { checkout } from '@/database/schema/checkout';
+import { mapHistoryDateToRecord } from '@/services/mapHistoryDateToRecord';
+import { getCurrentUser } from '@/services/middleware-hono';
+import { zValidator } from '@hono/zod-validator';
+import { and, desc, eq, gte, lte } from 'drizzle-orm';
+import { Hono } from 'hono';
+import z from 'zod';
 
 const app = new Hono()
-    .get("/", getCurrentUser, async (c) => {
-        const user = c.get("user");
+    .get('/', getCurrentUser, async c => {
+        const user = c.get('user');
+        const isAdmin = c.get('isAdmin');
 
         if (!user) {
-            return c.json({ message: "Unauthorized" }, 401);
+            return c.json({ message: 'Unauthorized' }, 401);
+        }
+
+        if (!isAdmin) {
+            return c.json(
+                { message: "You don't have permission to access" },
+                403
+            );
         }
 
         try {
@@ -40,7 +48,7 @@ const app = new Hono()
                 },
             });
 
-            const formattedCheckoutHistory = checkoutHistory.map((item) => ({
+            const formattedCheckoutHistory = checkoutHistory.map(item => ({
                 id: item.id,
                 customerName: item.customerName,
                 paidAdultNumber: item.paidAdultNumber,
@@ -58,34 +66,42 @@ const app = new Hono()
 
             return c.json(
                 {
-                    message: "fetch checkout history successfully",
+                    message: 'fetch checkout history successfully',
                     result: groupByDate,
                 },
                 200
             );
         } catch (error) {
             console.error(error);
-            return c.json({ message: "Internal Server Error" }, 500);
+            return c.json({ message: 'Internal Server Error' }, 500);
         }
     })
     .get(
-        "/:checkoutId",
+        '/:checkoutId',
         getCurrentUser,
         zValidator(
-            "param",
+            'param',
             z.object({
                 checkoutId: z.string(),
             })
         ),
-        async (c) => {
-            const user = c.get("user");
+        async c => {
+            const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
 
             if (!user) {
-                return c.json({ message: "Unauthorized" }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {
-                const checkoutId = c.req.param("checkoutId");
+                const checkoutId = c.req.param('checkoutId');
 
                 const checkoutList = await db.query.checkout.findFirst({
                     where: eq(checkout.id, checkoutId),
@@ -154,14 +170,14 @@ const app = new Hono()
 
                 return c.json(
                     {
-                        message: "fetch checkout list successfully",
+                        message: 'fetch checkout list successfully',
                         result: formattedCheckoutList,
                     },
                     200
                 );
             } catch (error) {
                 console.error(error);
-                return c.json({ message: "Internal Server Error" }, 500);
+                return c.json({ message: 'Internal Server Error' }, 500);
             }
         }
     );

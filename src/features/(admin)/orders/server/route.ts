@@ -18,9 +18,17 @@ import { OrderItem } from '../types';
 const app = new Hono()
     .get('/product-drink-list', getCurrentUser, async c => {
         const user = c.get('user');
+        const isAdmin = c.get('isAdmin');
 
         if (!user) {
-            return c.json({ error: 'Unauthorized' }, 401);
+            return c.json({ message: 'Unauthorized' }, 401);
+        }
+
+        if (!isAdmin) {
+            return c.json(
+                { message: "You don't have permission to access" },
+                403
+            );
         }
 
         try {
@@ -59,9 +67,17 @@ const app = new Hono()
         ),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
 
             if (!user) {
-                return c.json({ error: 'Unauthorized' }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {
@@ -91,9 +107,17 @@ const app = new Hono()
     )
     .get('/order-history/:activeInfoId', getCurrentUser, async c => {
         const user = c.get('user');
+        const isAdmin = c.get('isAdmin');
 
         if (!user) {
-            return c.json({ error: 'Unauthorized' }, 401);
+            return c.json({ message: 'Unauthorized' }, 401);
+        }
+
+        if (!isAdmin) {
+            return c.json(
+                { message: "You don't have permission to access" },
+                403
+            );
         }
 
         try {
@@ -152,9 +176,17 @@ const app = new Hono()
         zValidator('json', insertOrderSchema),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
 
             if (!user) {
-                return c.json({ error: 'Unauthorized' }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {

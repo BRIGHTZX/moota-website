@@ -17,11 +17,18 @@ const app = new Hono()
         zValidator('query', dateRangeSchema),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
 
             if (!user) {
                 return c.json({ message: 'Unauthorized' }, 401);
             }
 
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
+            }
             try {
                 const { startDate, endDate } = c.req.query();
                 const start = new Date(startDate);
@@ -76,9 +83,17 @@ const app = new Hono()
         zValidator('form', insertTakeAwaySchema),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
 
             if (!user) {
                 return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {

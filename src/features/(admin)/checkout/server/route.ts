@@ -22,8 +22,15 @@ const app = new Hono()
         const user = c.get('user');
         const isAdmin = c.get('isAdmin');
 
-        if (!user && !isAdmin) {
+        if (!user) {
             return c.json({ message: 'Unauthorized' }, 401);
+        }
+
+        if (!isAdmin) {
+            return c.json(
+                { message: "You don't have permission to access" },
+                403
+            );
         }
 
         try {
@@ -108,8 +115,15 @@ const app = new Hono()
             const user = c.get('user');
             const isAdmin = c.get('isAdmin');
 
-            if (!user && !isAdmin) {
+            if (!user) {
                 return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {
@@ -179,8 +193,15 @@ const app = new Hono()
             const user = c.get('user');
             const isAdmin = c.get('isAdmin');
 
-            if (!user && !isAdmin) {
+            if (!user) {
                 return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {

@@ -14,8 +14,17 @@ import { connectCloudinary } from '@/lib/cloudinary';
 const app = new Hono()
     .get('/', getCurrentUser, async c => {
         const user = c.get('user');
+        const isAdmin = c.get('isAdmin');
+
         if (!user) {
-            return c.json({ error: 'Unauthorized' }, 401);
+            return c.json({ message: 'Unauthorized' }, 401);
+        }
+
+        if (!isAdmin) {
+            return c.json(
+                { message: "You don't have permission to access" },
+                403
+            );
         }
 
         try {
@@ -57,8 +66,17 @@ const app = new Hono()
     })
     .get('/detail/:productId', getCurrentUser, async c => {
         const user = c.get('user');
+        const isAdmin = c.get('isAdmin');
+
         if (!user) {
-            return c.json({ error: 'Unauthorized' }, 401);
+            return c.json({ message: 'Unauthorized' }, 401);
+        }
+
+        if (!isAdmin) {
+            return c.json(
+                { message: "You don't have permission to access" },
+                403
+            );
         }
 
         try {
@@ -91,8 +109,17 @@ const app = new Hono()
     })
     .get('/limit-notification', getCurrentUser, async c => {
         const user = c.get('user');
+        const isAdmin = c.get('isAdmin');
+
         if (!user) {
-            return c.json({ error: 'Unauthorized' }, 401);
+            return c.json({ message: 'Unauthorized' }, 401);
+        }
+
+        if (!isAdmin) {
+            return c.json(
+                { message: "You don't have permission to access" },
+                403
+            );
         }
 
         try {
@@ -129,8 +156,17 @@ const app = new Hono()
         zValidator('form', insertStockProductSchema),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
+
             if (!user) {
-                return c.json({ error: 'Unauthorized' }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {
@@ -187,8 +223,17 @@ const app = new Hono()
         zValidator('form', updateStockProductSchema),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
+
             if (!user) {
-                return c.json({ error: 'Unauthorized' }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {
@@ -250,8 +295,17 @@ const app = new Hono()
         zValidator('param', deleteStockProductSchema),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
+
             if (!user) {
-                return c.json({ error: 'Unauthorized' }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {

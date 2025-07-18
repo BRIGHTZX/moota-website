@@ -25,8 +25,18 @@ const app = new Hono()
         zValidator('query', dateRangeSchema),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
+            const isOwner = c.get('isOwner');
+
             if (!user) {
-                return c.json({ error: 'Unauthorized' }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin || !isOwner) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             const { startDate, endDate } = c.req.valid('query');
@@ -105,9 +115,18 @@ const app = new Hono()
         zValidator('query', dateRangeSchema),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
+            const isOwner = c.get('isOwner');
 
             if (!user) {
-                return c.json({ error: 'Unauthorized' }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin || !isOwner) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             const { startDate, endDate, mode } = c.req.valid('query');
@@ -233,8 +252,18 @@ const app = new Hono()
         zValidator('query', dateRangeSchema),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
+            const isOwner = c.get('isOwner');
+
             if (!user) {
-                return c.json({ error: 'Unauthorized' }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin || !isOwner) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {
@@ -289,8 +318,18 @@ const app = new Hono()
         ),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
+            const isOwner = c.get('isOwner');
+
             if (!user) {
-                return c.json({ error: 'Unauthorized' }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin || !isOwner) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {
@@ -357,8 +396,18 @@ const app = new Hono()
         zValidator('query', dateRangeSchema),
         async c => {
             const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
+            const isOwner = c.get('isOwner');
+
             if (!user) {
-                return c.json({ error: 'Unauthorized' }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin || !isOwner) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {

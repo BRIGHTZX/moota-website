@@ -1,31 +1,39 @@
-import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
-import { getCurrentUser } from "@/services/middleware-hono";
-import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
+import { Hono } from 'hono';
+import { zValidator } from '@hono/zod-validator';
+import { getCurrentUser } from '@/services/middleware-hono';
+import { and, desc, eq, gte, lte, sql } from 'drizzle-orm';
 
-import { db } from "@/database/db";
-import { importExportProductSchema } from "../schemas";
-import { product as ProductTable } from "@/database/schema/product";
-import { importExportHistory as ImportExportHistoryTable } from "@/database/schema/import-export-history";
-import { z } from "zod";
-import { mapHistoryDateToRecord } from "@/services/mapHistoryDateToRecord";
+import { db } from '@/database/db';
+import { importExportProductSchema } from '../schemas';
+import { product as ProductTable } from '@/database/schema/product';
+import { importExportHistory as ImportExportHistoryTable } from '@/database/schema/import-export-history';
+import { z } from 'zod';
+import { mapHistoryDateToRecord } from '@/services/mapHistoryDateToRecord';
 
 const app = new Hono()
     .get(
-        "/",
+        '/',
         getCurrentUser,
         zValidator(
-            "query",
+            'query',
             z.object({
                 startDate: z.string(),
                 endDate: z.string(),
             })
         ),
-        async (c) => {
-            const user = c.get("user");
+        async c => {
+            const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
 
             if (!user) {
-                return c.json({ error: "Unauthorized" }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {
@@ -61,14 +69,14 @@ const app = new Hono()
                     },
                 });
 
-                const formattedHistory = result.map((item) => ({
+                const formattedHistory = result.map(item => ({
                     id: item.id,
                     productId: item.productId,
                     productName: item.product.name,
                     productUnit: item.product.unit,
                     stock: item.stock,
                     totalPrice: item.totalPrice,
-                    type: item.type as "import" | "export",
+                    type: item.type as 'import' | 'export',
                     updatedAt: item.updatedAt.toISOString(),
                 }));
 
@@ -76,25 +84,33 @@ const app = new Hono()
 
                 return c.json(
                     {
-                        message: "History fetched successfully",
+                        message: 'History fetched successfully',
                         history: groupByDate,
                     },
                     200
                 );
             } catch (error) {
                 console.log(error);
-                return c.json({ error: "Internal Server Error" }, 500);
+                return c.json({ error: 'Internal Server Error' }, 500);
             }
         }
     )
-    .get("/get-product-info/:productId", getCurrentUser, async (c) => {
-        const user = c.get("user");
+    .get('/get-product-info/:productId', getCurrentUser, async c => {
+        const user = c.get('user');
+        const isAdmin = c.get('isAdmin');
 
         if (!user) {
-            return c.json({ error: "Unauthorized" }, 401);
+            return c.json({ message: 'Unauthorized' }, 401);
+        }
+
+        if (!isAdmin) {
+            return c.json(
+                { message: "You don't have permission to access" },
+                403
+            );
         }
         try {
-            const productId = c.req.param("productId");
+            const productId = c.req.param('productId');
 
             const product = await db.query.product.findFirst({
                 columns: {
@@ -107,30 +123,39 @@ const app = new Hono()
             });
 
             if (!product) {
-                return c.json({ error: "Product not found" }, 404);
+                return c.json({ error: 'Product not found' }, 404);
             }
 
-            return c.json({ message: "fetch product success", product }, 200);
+            return c.json({ message: 'fetch product success', product }, 200);
         } catch (error) {
             console.log(error);
-            return c.json({ error: "Internal Server Error" }, 500);
+            return c.json({ error: 'Internal Server Error' }, 500);
         }
     })
     .post(
-        "/:productId",
+        '/:productId',
         getCurrentUser,
-        zValidator("json", importExportProductSchema),
-        async (c) => {
-            const user = c.get("user");
+        zValidator('json', importExportProductSchema),
+        async c => {
+            const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
+
             if (!user) {
-                return c.json({ error: "Unauthorized" }, 401);
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
             }
 
             try {
-                const productId = c.req.param("productId");
+                const productId = c.req.param('productId');
                 const { stock, totalPrice, type } = await c.req.json();
 
-                await db.transaction(async (tx) => {
+                await db.transaction(async tx => {
                     // ดึงข้อมูลปัจจุบันมาเช็ก ก่อนจะ export
                     const [product] = await tx
                         .select({ currentStock: ProductTable.stock })
@@ -138,11 +163,11 @@ const app = new Hono()
                         .where(eq(ProductTable.id, productId))
                         .limit(1);
 
-                    if (!product) throw new Error("Product not found");
+                    if (!product) throw new Error('Product not found');
 
-                    if (type === "export" && product.currentStock < stock) {
+                    if (type === 'export' && product.currentStock < stock) {
                         throw new Error(
-                            "จำนวนสินค้าคงเหลือไม่พอสำหรับการส่งออก"
+                            'จำนวนสินค้าคงเหลือไม่พอสำหรับการส่งออก'
                         );
                     }
 
@@ -151,7 +176,7 @@ const app = new Hono()
                         .update(ProductTable)
                         .set({
                             stock:
-                                type === "import"
+                                type === 'import'
                                     ? sql`${ProductTable.stock} + ${stock}`
                                     : sql`${ProductTable.stock} - ${stock}`,
                             updatedAt: new Date(),
@@ -167,12 +192,12 @@ const app = new Hono()
                     });
                 });
                 return c.json(
-                    { message: "add import/export product success" },
+                    { message: 'add import/export product success' },
                     200
                 );
             } catch (error) {
                 console.log(error);
-                return c.json({ error: "Internal Server Error" }, 500);
+                return c.json({ error: 'Internal Server Error' }, 500);
             }
         }
     );
