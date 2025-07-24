@@ -6,12 +6,14 @@ import { ActiveType } from '../types';
 type TableActiveSectionProps = {
     active: ActiveType;
     setOpenAlertDialog: (open: boolean) => void;
+    setOpenCancelDialog: (open: boolean) => void;
     setActiveId: (activeId: string) => void;
 };
 
 function TableActiveSection({
     active,
     setOpenAlertDialog,
+    setOpenCancelDialog,
     setActiveId,
 }: TableActiveSectionProps) {
     const {
@@ -59,10 +61,22 @@ function TableActiveSection({
                 ))}
             </div>
 
-            <div className="mt-4 flex justify-end">
+            <div className="mt-4 flex gap-4">
                 <Button
                     size="sm"
-                    className="bg-red-500 px-8 hover:bg-red-600"
+                    variant="destructiveOutline"
+                    className="flex-1"
+                    onClick={() => {
+                        setOpenCancelDialog(true);
+                        setActiveId(active.activeId);
+                    }}
+                >
+                    ยกเลิก
+                </Button>
+                <Button
+                    size="sm"
+                    variant="destructive"
+                    className="flex-1"
                     onClick={() => {
                         setOpenAlertDialog(true);
                         setActiveId(active.activeId);

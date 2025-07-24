@@ -5,6 +5,7 @@ import ErrorPage from '@/components/errors/ErrorPage';
 import PageLoader from '@/components/PageLoader';
 import TextHeader from '@/components/TextHeader';
 import { Button } from '@/components/ui/button';
+import { useCancelActive } from '@/features/(admin)/actives/api/use-cancel-active';
 import { useGetActives } from '@/features/(admin)/actives/api/use-get-actives';
 import TableActiveSection from '@/features/(admin)/actives/components/TableActiveSection';
 import { HistoryIcon } from 'lucide-react';
@@ -15,6 +16,7 @@ import { Fragment, useState } from 'react';
 function ActivePage() {
     const router = useRouter();
     const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false);
+    const [openCancelDialog, setOpenCancelDialog] = useState<boolean>(false);
     const [activeId, setActiveId] = useState<string | null>(null);
     const {
         data: activesData,
@@ -22,12 +24,22 @@ function ActivePage() {
         isError: isErrorActives,
     } = useGetActives();
 
+    const {
+        mutate: cancelActive,
+        isPending: isPendingCancelActive,
+        isError: isErrorCancelActive,
+    } = useCancelActive();
+
     const handleCloseActive = () => {
         router.push(`/admin/actives/checkout/${activeId}`);
     };
 
-    const isError = isErrorActives;
-    const isLoading = isLoadingActives;
+    const handleCancelActive = () => {
+        cancelActive({ json: { activeId: activeId ?? '' } });
+    };
+
+    const isError = isErrorActives || isErrorCancelActive;
+    const isLoading = isLoadingActives || isPendingCancelActive;
 
     if (isError) return <ErrorPage />;
 
@@ -61,6 +73,7 @@ function ActivePage() {
                                     key={active.activeId}
                                     active={active}
                                     setOpenAlertDialog={setOpenAlertDialog}
+                                    setOpenCancelDialog={setOpenCancelDialog}
                                     setActiveId={setActiveId}
                                 />
                             ))
@@ -71,6 +84,15 @@ function ActivePage() {
                         open={openAlertDialog}
                         setOpen={setOpenAlertDialog}
                         action={handleCloseActive}
+                        title={'ยืนยันการปิดโต๊ะ'}
+                        description={'คุณต้องการปิดโต๊ะนี้หรือไม่'}
+                        buttonActionText={'ยืนยัน'}
+                    />
+                    <AlertDialogCustom
+                        isLoading={isLoading}
+                        open={openCancelDialog}
+                        setOpen={setOpenCancelDialog}
+                        action={handleCancelActive}
                         title={'ยืนยันการปิดโต๊ะ'}
                         description={'คุณต้องการปิดโต๊ะนี้หรือไม่'}
                         buttonActionText={'ยืนยัน'}
