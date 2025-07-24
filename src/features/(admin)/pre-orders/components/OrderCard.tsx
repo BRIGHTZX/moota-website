@@ -2,11 +2,13 @@ import { Button } from '@/components/ui/button';
 import React from 'react';
 import { OrderType } from '../types';
 import { TextCardInfo } from '@/components/TextCardInfo';
+import { XIcon } from 'lucide-react';
 
 type OrderCardProps = {
     order: OrderType;
     setOrderId: (orderId: string) => void;
     setIsDialogOpen: (isDialogOpen: boolean) => void;
+    setIsCancelDialogOpen: (isCancelDialogOpen: boolean) => void;
     setIsPaymentDialogOpen: (isPaymentDialogOpen: boolean) => void;
 };
 
@@ -14,10 +16,23 @@ function OrderCard({
     order,
     setOrderId,
     setIsDialogOpen,
+    setIsCancelDialogOpen,
     setIsPaymentDialogOpen,
 }: OrderCardProps) {
     return (
-        <div className="mt-4 rounded-md border border-gray-300 bg-white p-4 shadow-sm">
+        <div className="relative mt-4 rounded-md border border-gray-300 bg-white p-4 shadow-sm">
+            {/* cancael section  */}
+            <div
+                onClick={() => {
+                    setIsCancelDialogOpen(true);
+                    setOrderId(order.id);
+                }}
+                className="absolute top-4 right-4"
+            >
+                <div className="group flex size-6 cursor-pointer items-center justify-center rounded-full border border-gray-500 hover:border-red-500 hover:bg-red-500">
+                    <XIcon className="size-4 group-hover:text-white" />
+                </div>
+            </div>
             <div className="text-center">
                 <h1 className="text-lg font-semibold">
                     รหัสการจอง : {order.preOrderNumber}

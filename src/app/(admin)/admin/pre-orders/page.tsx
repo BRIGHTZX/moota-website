@@ -5,6 +5,7 @@ import ErrorPage from '@/components/errors/ErrorPage';
 import PageLoader from '@/components/PageLoader';
 import SuspenseLoading from '@/components/SuspenseLoading';
 import TextHeader from '@/components/TextHeader';
+import { useCancelPreOrder } from '@/features/(admin)/pre-orders/api/use-cancel-pre-order';
 import { useCreateActiveFromOrder } from '@/features/(admin)/pre-orders/api/use-create-active-from-order';
 import { useGetOrders } from '@/features/(admin)/pre-orders/api/use-get-admin-preOrders';
 import OrderCard from '@/features/(admin)/pre-orders/components/OrderCard';
@@ -13,6 +14,8 @@ import { useState } from 'react';
 
 function OrderPage() {
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+    const [isCancelDialogOpen, setIsCancelDialogOpen] =
+        useState<boolean>(false);
     const [isSuspenseLoading, setIsSuspenseLoading] = useState<boolean>(false);
     const [isPaymentDialogOpen, setIsPaymentDialogOpen] =
         useState<boolean>(false);
@@ -31,12 +34,27 @@ function OrderPage() {
         setIsSuspenseLoading,
     });
 
+    const {
+        mutate: cancelOrder,
+        isPending: isLoadingCancelOrder,
+        isError: isErrorCancelOrder,
+    } = useCancelPreOrder({
+        setIsSuspenseLoading,
+    });
+
     const handleCreateActive = async () => {
         setIsSuspenseLoading(true);
         await createActive({ json: { preOrderId: orderId ?? '' } });
     };
 
-    const isError = isErrorOrders || isErrorCreateActive;
+    const handleCancelOrder = async () => {
+        setIsSuspenseLoading(true);
+        await cancelOrder({ json: { preOrderId: orderId ?? '' } });
+    };
+
+    const isError = isErrorOrders || isErrorCreateActive || isErrorCancelOrder;
+    const isLoading =
+        isLoadingOrders || isLoadingCreateActive || isLoadingCancelOrder;
 
     if (isError) {
         return <ErrorPage />;
@@ -68,6 +86,9 @@ function OrderPage() {
                                     order={order}
                                     setOrderId={setOrderId}
                                     setIsDialogOpen={setIsDialogOpen}
+                                    setIsCancelDialogOpen={
+                                        setIsCancelDialogOpen
+                                    }
                                     setIsPaymentDialogOpen={
                                         setIsPaymentDialogOpen
                                     }
@@ -87,7 +108,7 @@ function OrderPage() {
                 <AlertDialogCustom
                     title="ยืนยันการจอง"
                     description="ยืนยันการจองที่นั่ง"
-                    isLoading={isLoadingCreateActive}
+                    isLoading={isLoading}
                     open={isDialogOpen}
                     setOpen={setIsDialogOpen}
                     cancelAction={() => {
@@ -96,6 +117,19 @@ function OrderPage() {
                     }}
                     action={handleCreateActive}
                     buttonActionText="ยืนยันการจอง"
+                />
+                <AlertDialogCustom
+                    title="ยินยันการยกเลิก"
+                    description="คุณต้องการยกเลิกออเดอร์นี้หรือไม่"
+                    isLoading={isLoading}
+                    open={isCancelDialogOpen}
+                    setOpen={setIsCancelDialogOpen}
+                    cancelAction={() => {
+                        setIsCancelDialogOpen(false);
+                        setOrderId(null);
+                    }}
+                    action={handleCancelOrder}
+                    buttonActionText="ยืนยันการยกเลิก"
                 />
             </AdminPageWrapper>
         </div>

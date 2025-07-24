@@ -93,8 +93,8 @@ function ActivePage() {
                         open={openCancelDialog}
                         setOpen={setOpenCancelDialog}
                         action={handleCancelActive}
-                        title={'ยืนยันการปิดโต๊ะ'}
-                        description={'คุณต้องการปิดโต๊ะนี้หรือไม่'}
+                        title={'ยินยันการยกเลิก'}
+                        description={'คุณต้องการยกเลิกโต๊ะนี้หรือไม่'}
                         buttonActionText={'ยืนยัน'}
                     />
                 </Fragment>

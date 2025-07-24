@@ -6,11 +6,12 @@ function PageLoader({ className }: { className?: string }) {
     return (
         <div
             className={cn(
-                'flex h-screen items-center justify-center',
+                'flex h-screen flex-col items-center justify-center gap-2',
                 className
             )}
         >
             <Loader2 className="size-10 animate-spin" />
+            <span className="text-sm">กำลังโหลด...</span>
         </div>
     );
 }

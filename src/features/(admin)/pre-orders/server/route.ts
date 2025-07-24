@@ -248,6 +248,47 @@ const app = new Hono()
                 return c.json({ message: 'Invalid request' }, 400);
             }
         }
+    )
+    .patch(
+        '/cancel-pre-order',
+        getCurrentUser,
+        zValidator('json', z.object({ preOrderId: z.string() })),
+        async c => {
+            const user = c.get('user');
+            const isAdmin = c.get('isAdmin');
+
+            if (!user) {
+                return c.json({ message: 'Unauthorized' }, 401);
+            }
+
+            if (!isAdmin) {
+                return c.json(
+                    { message: "You don't have permission to access" },
+                    403
+                );
+            }
+
+            try {
+                const { preOrderId } = c.req.valid('json');
+
+                await db.transaction(async tx => {
+                    await tx
+                        .update(PreOrderTable)
+                        .set({
+                            status: 'canceled',
+                        })
+                        .where(eq(PreOrderTable.id, preOrderId));
+                });
+
+                return c.json(
+                    { message: 'Pre-order canceled successfully' },
+                    200
+                );
+            } catch (error) {
+                console.log(error);
+                return c.json({ message: 'Invalid request' }, 400);
+            }
+        }
     );
 
 export default app;

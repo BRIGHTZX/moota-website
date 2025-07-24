@@ -42,7 +42,7 @@ const menuItems = [
 function MenuAdmin() {
     const pathname = usePathname();
     return (
-        <div className="fixed bottom-0 left-0 h-20 w-full rounded-t-md border-t border-gray-200 bg-white p-2 shadow-lg">
+        <div className="fixed bottom-0 left-0 z-100 h-20 w-full rounded-t-md border-t border-gray-200 bg-white p-2 shadow-lg">
             <ul className="flex h-full w-full items-center justify-center overflow-hidden rounded-md bg-gray-200">
                 {menuItems.map(item => (
                     <MenuItem
