@@ -64,7 +64,7 @@ function TableActiveSection({
             <div className="mt-4 flex gap-4">
                 <Button
                     size="sm"
-                    variant="destructiveOutline"
+                    variant="destructive"
                     className="flex-1"
                     onClick={() => {
                         setOpenCancelDialog(true);
@@ -75,7 +75,7 @@ function TableActiveSection({
                 </Button>
                 <Button
                     size="sm"
-                    variant="destructive"
+                    variant="greenPrimary"
                     className="flex-1"
                     onClick={() => {
                         setOpenAlertDialog(true);
