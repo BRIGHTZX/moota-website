@@ -1,13 +1,13 @@
 import { getTableNumber } from '@/features/(admin)/actives/hooks/getTableNumber';
 import { Metadata } from 'next';
-import React, { ReactNode } from 'react';
 
 type Props = {
-    params: { activeInfoId: string };
+    params: Promise<{ activeInfoId: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const tableNumber = await getTableNumber(params.activeInfoId);
+    const { activeInfoId } = await params;
+    const tableNumber = await getTableNumber(activeInfoId);
 
     return {
         title: tableNumber ? `ออเดอร์โต๊ะ ${tableNumber}` : 'ออเดอร์',
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
 }
 
-function AdminOrdersLayout({ children }: { children: ReactNode }) {
+function AdminOrdersLayout({ children }: { children: React.ReactNode }) {
     return <div>{children}</div>;
 }
 
