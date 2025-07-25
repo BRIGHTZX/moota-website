@@ -1,7 +1,12 @@
-'use server';
 import { checkIfActiveClosed } from '@/services/checkIfActiveClosed';
+import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import React, { Fragment } from 'react';
+
+export const metadata: Metadata = {
+    title: 'ชำระเงิน | นกหมูกระทะ',
+    description: 'ชำระเงินสำหรับการจัดการและควบคุมระบบ',
+};
 
 async function CheckoutLayout({
     children,

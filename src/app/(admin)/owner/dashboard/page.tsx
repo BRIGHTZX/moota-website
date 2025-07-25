@@ -1,6 +1,6 @@
-import PageLoader from "@/components/PageLoader";
-import DashboardClient from "./client";
-import { Suspense } from "react";
+import PageLoader from '@/components/PageLoader';
+import DashboardClient from './client';
+import { Suspense } from 'react';
 
 function OwnerDashboardPage() {
     return (
