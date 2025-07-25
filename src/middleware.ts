@@ -1,52 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
+import {
+    getKindeServerSession,
+    withAuth,
+} from '@kinde-oss/kinde-auth-nextjs/server';
 
 export default async function middleware(req: NextRequest) {
-    const response = NextResponse.next();
+    let response = NextResponse.next();
     const { getUser, getRoles, getPermission } = getKindeServerSession();
 
-    // -------LOGIN & SIGNUP---------------------------
-    const isAuthPage =
-        req.nextUrl.pathname === '/signin' ||
-        req.nextUrl.pathname === '/signup';
+    const authConfig = {
+        loginPage: '/signin',
+        isReturnToCurrentPage: true,
+    };
 
-    if (isAuthPage) {
-        try {
+    try {
+        // -------LOGIN & SIGNUP---------------------------
+        const isAuthPage =
+            req.nextUrl.pathname === '/signin' ||
+            req.nextUrl.pathname === '/signup';
+
+        if (!isAuthPage) {
+            const authMiddleware = withAuth(authConfig);
+            if (typeof authMiddleware === 'function') {
+                response = await authMiddleware(req);
+
+                if (
+                    response.status !== 200 &&
+                    response.headers.has('Location')
+                ) {
+                    return response;
+                }
+            }
+        }
+
+        if (isAuthPage) {
             const user = await getUser();
 
             if (user) {
                 return NextResponse.redirect(new URL('/', req.url));
             }
-        } catch (error) {
-            console.error('Error checking auth page access:', error);
         }
-    }
 
-    const isClientPage =
-        req.nextUrl.pathname.startsWith('/reservation') ||
-        req.nextUrl.pathname.startsWith('/checkout');
-
-    // -------CLIENT ROUTES---------------------------
-    if (isClientPage) {
-        try {
-            const user = await getUser();
-
-            if (!user) {
-                return NextResponse.redirect(
-                    new URL(
-                        `/signin?post_login_redirect_url=${req.nextUrl.pathname}`,
-                        req.url
-                    )
-                );
-            }
-        } catch (error) {
-            console.error('Error checking client page access:', error);
-        }
-    }
-
-    // -------ADMIN ROUTES---------------------------
-    if (req.nextUrl.pathname.startsWith('/admin')) {
-        try {
+        // -------ADMIN ROUTES---------------------------
+        if (req.nextUrl.pathname.startsWith('/admin')) {
             const roles = await getRoles();
 
             const isAdmin = roles?.some(role => role.key === 'admin');
@@ -59,14 +55,11 @@ export default async function middleware(req: NextRequest) {
             if (!isAdmin || !isAdminPermission) {
                 return NextResponse.redirect(new URL('/', req.url));
             }
-        } catch (error) {
-            console.error('Error checking roles:', error);
-            return NextResponse.redirect(new URL('/', req.url));
         }
-    }
 
-    if (req.nextUrl.pathname.startsWith('/owner')) {
-        try {
+        // -------OWNER ROUTES---------------------------
+
+        if (req.nextUrl.pathname.startsWith('/owner')) {
             const roles = await getRoles();
 
             const isAdmin = roles?.some(role => role.key === 'admin');
@@ -79,10 +72,10 @@ export default async function middleware(req: NextRequest) {
             if (!isAdmin || !isOwnerPermission) {
                 return NextResponse.redirect(new URL('/', req.url));
             }
-        } catch (error) {
-            console.error('Error checking roles:', error);
-            return NextResponse.redirect(new URL('/', req.url));
         }
+    } catch (error) {
+        console.log('Auth Middleware Error:', error);
+        return NextResponse.redirect(new URL('/', req.url));
     }
 
     return response;

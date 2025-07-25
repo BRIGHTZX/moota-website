@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useGetPreOrders } from '@/features/(client)/pre-orders/api/use-get-preOrders';
 import PreOrderCard from '@/features/(client)/pre-orders/components/PreOrderCard';
 import { ArrowLeftIcon } from 'lucide-react';
+import { Metadata } from 'next';
 import Link from 'next/link';
 import React from 'react';
 

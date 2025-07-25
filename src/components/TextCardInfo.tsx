@@ -22,14 +22,14 @@ export const TextCardInfo = ({
         paid: 'bg-green-500',
         pending: 'bg-yellow-500',
         confirmed: 'bg-green-500',
-        failed: 'bg-red-500',
+        canceled: 'bg-red-500',
     };
     const statusText = {
         unpaid: 'ยังไม่ชำระ',
         paid: 'จ่ายแล้ว',
         pending: 'รอยืนยัน',
         confirmed: 'ยืนยันแล้ว',
-        failed: 'ยกเลิก',
+        canceled: 'ยกเลิก',
     };
     return (
         <div

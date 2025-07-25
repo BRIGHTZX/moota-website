@@ -1,6 +1,12 @@
-import PageLoader from "@/components/PageLoader";
-import SignUpForm from "@/features/auth/components/SignUpForm";
-import { Suspense } from "react";
+import PageLoader from '@/components/PageLoader';
+import SignUpForm from '@/features/auth/components/SignUpForm';
+import { Metadata } from 'next';
+import { Suspense } from 'react';
+
+export const metadata: Metadata = {
+    title: 'สมัครสมาชิก | นกหมูกระทะ',
+    description: 'สมัครสมาชิกที่นกหมูกระทะ',
+};
 
 function SignupPage() {
     return (

@@ -13,18 +13,21 @@ import { useGetReservation } from '@/features/(client)/reservation/api/use-get-r
 import { useUpdatePaymentImage } from '@/features/(client)/reservation/api/use-update-paymentImage';
 import ReservationDetail from '@/features/(client)/reservation/components/ReservationDetail';
 import ReservationStatus from '@/features/(client)/reservation/components/ReservationStatus';
-import { useGetPreOrderId } from '@/features/(client)/reservation/hooks/get-preOrderId';
 import { cn } from '@/lib/utils';
 import { ArrowLeftIcon, CheckIcon, XIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { use, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-function ReservationInfoPage() {
+type Props = {
+    params: Promise<{ preOrderId: string }>;
+};
+
+function ReservationInfoPage({ params }: Props) {
+    const { preOrderId } = use(params);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [paymentImage, setPaymentImage] = useState<File | null>(null);
-    const preOrderId = useGetPreOrderId();
     const {
         data: reservation,
         isLoading: isLoadingReservation,

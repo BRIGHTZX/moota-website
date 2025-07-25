@@ -19,7 +19,7 @@ import { toast } from 'sonner';
 import AlertDialogCustom from '@/components/AlertDialogCustom';
 import ErrorPage from '@/components/errors/ErrorPage';
 
-function ReservationPage() {
+function ReservationClient() {
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
     const [arrayTable, setArrayTable] = useState<string[]>([]);
     const {
@@ -227,4 +227,4 @@ function ReservationPage() {
     );
 }
 
-export default ReservationPage;
+export default ReservationClient;
