@@ -18,8 +18,8 @@ function TablesPage() {
 
     const { data: tables, isLoading, isError } = useGetAdminTables();
 
-    const tablesInside = tables?.tables.filter(t => t.tableType === 'inside');
-    const tablesOutside = tables?.tables.filter(t => t.tableType === 'outside');
+    const tablesInside = tables?.filter(t => t.tableType === 'inside');
+    const tablesOutside = tables?.filter(t => t.tableType === 'outside');
 
     if (isError) return <ErrorPage />;
 

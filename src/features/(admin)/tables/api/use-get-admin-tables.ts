@@ -22,7 +22,7 @@ export const useGetAdminTables = () => {
 
             const data = await response.json();
 
-            return data;
+            return data.result;
         },
     });
 

@@ -32,6 +32,7 @@ export const useCreateAdminTables = () => {
         onSuccess: () => {
             toast.success('เปิดโต๊ะสำเร็จ');
             queryClient.invalidateQueries({ queryKey: ['admin-tables'] });
+            queryClient.invalidateQueries({ queryKey: ['admin-actives'] });
         },
         onError: error => {
             if (error.message === 'Forbidden') {

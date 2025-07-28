@@ -1,4 +1,4 @@
 export type TableStateType = {
     tableId: string;
-    tableNumber: number;
+    tableNumber: string;
 };

@@ -2,14 +2,18 @@ import { db } from '@/database/db';
 import { getCurrentUser } from '@/services/middleware-hono';
 import { desc, eq, inArray, or } from 'drizzle-orm';
 import { Hono } from 'hono';
+import { zValidator } from '@hono/zod-validator';
+import z from 'zod';
 
 import {
     activeInfo as ActiveInfoTable,
     active as ActiveTable,
 } from '@/database/schema/active';
-import { zValidator } from '@hono/zod-validator';
-import z from 'zod';
 import { diningTable as DiningTable } from '@/database/schema/diningTable';
+import {
+    checkout as CheckoutTable,
+    checkoutInfos as CheckoutInfosTable,
+} from '@/database/schema/checkout';
 
 const app = new Hono()
     .get('/', getCurrentUser, async c => {
@@ -143,6 +147,30 @@ const app = new Hono()
                                 activeInfo.map(info => info.tableId)
                             )
                         );
+
+                    const [checkout] = await tx
+                        .select({
+                            id: CheckoutTable.id,
+                        })
+                        .from(CheckoutTable)
+                        .where(eq(CheckoutTable.activeId, activeId))
+                        .limit(1);
+
+                    if (checkout) {
+                        await tx
+                            .delete(CheckoutInfosTable)
+                            .where(
+                                eq(CheckoutInfosTable.checkoutId, checkout.id)
+                            );
+
+                        await tx
+                            .delete(CheckoutTable)
+                            .where(eq(CheckoutTable.activeId, activeId));
+                    }
+
+                    await tx
+                        .delete(ActiveInfoTable)
+                        .where(eq(ActiveInfoTable.activeId, activeId));
 
                     await tx
                         .delete(ActiveTable)

@@ -6,7 +6,7 @@ import {
     activeInfo as ActiveInfoTable,
 } from '@/database/schema//active';
 import { insertTalblesSchema, selectTablesSchemaType } from '../schema';
-import { asc, eq, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { getCurrentUser } from '@/services/middleware-hono';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
@@ -35,11 +35,22 @@ const app = new Hono()
                     tableType: DiningTable.tableType,
                     isAvailable: DiningTable.isAvailable,
                 })
-                .from(DiningTable)
-                .orderBy(asc(sql`CAST(${DiningTable.tableNumber} AS INTEGER)`));
+                .from(DiningTable);
+
+            const sortingTable = tables.sort((a, b) => {
+                const parse = (s: string) => s.split('/').map(Number);
+                const [aMain, aSub = 0] = parse(a.tableNumber);
+                const [bMain, bSub = 0] = parse(b.tableNumber);
+
+                if (aMain !== bMain) return aMain - bMain;
+                return aSub - bSub;
+            });
 
             return c.json(
-                { message: 'Tables fetched successfully', tables },
+                {
+                    message: 'Tables fetched successfully',
+                    result: sortingTable,
+                },
                 200
             );
         } catch (error) {

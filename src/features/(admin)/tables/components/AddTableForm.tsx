@@ -29,6 +29,7 @@ function AddTableForm({
     isOpen,
     setIsOpen,
 }: AddTableFormProps) {
+    console.log(selectedTables);
     const [isSuspenseLoading, setIsSuspenseLoading] = useState(false);
     const { mutate: createOpenTable, isPending: isLoadingCreateOpenTable } =
         useCreateAdminTables();
@@ -143,26 +144,29 @@ function AddTableForm({
                                 </div>
                             </div>
                             <DialogFooter>
-                                <DialogClose asChild>
+                                <div className="flex w-full flex-col gap-2">
                                     <Button
-                                        disabled={isLoading}
-                                        type="button"
-                                        variant="outline"
+                                        form="add-table-form"
+                                        type="submit"
+                                        disabled={
+                                            isLoading ||
+                                            selectedTables.length === 0
+                                        }
                                         className="w-full"
                                     >
-                                        ยกเลิก
+                                        เปิดโต๊ะ
                                     </Button>
-                                </DialogClose>
-                                <Button
-                                    form="add-table-form"
-                                    type="submit"
-                                    disabled={
-                                        isLoading || selectedTables.length === 0
-                                    }
-                                    className="w-full"
-                                >
-                                    เปิดโต๊ะ
-                                </Button>
+                                    <DialogClose asChild>
+                                        <Button
+                                            disabled={isLoading}
+                                            type="button"
+                                            variant="outline"
+                                            className="w-full"
+                                        >
+                                            ยกเลิก
+                                        </Button>
+                                    </DialogClose>
+                                </div>
                             </DialogFooter>
                         </DialogContent>
                     </form>

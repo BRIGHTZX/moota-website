@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
-import React from "react";
-import { TableStateType } from "../type";
+import { cn } from '@/lib/utils';
+import React from 'react';
+import { TableStateType } from '../type';
 
 type TableCardProps = {
     tableId: string;
@@ -17,19 +17,16 @@ function TableCard({
     setSelectedTables,
     isAvailable,
 }: TableCardProps) {
-    const isSelected = selectedTables.some((t) => t.tableId === tableId);
+    const isSelected = selectedTables.some(t => t.tableId === tableId);
     const handleSelectTable = () => {
         if (isSelected) {
             // เอาออก
             setSelectedTables(
-                selectedTables.filter((t) => t.tableId !== tableId)
+                selectedTables.filter(t => t.tableId !== tableId)
             );
         } else {
             // เพิ่มเข้า (แปลง tableNumber เป็น number ถ้าต้องการเก็บเป็นตัวเลข)
-            setSelectedTables([
-                ...selectedTables,
-                { tableId, tableNumber: Number(tableNumber) },
-            ]);
+            setSelectedTables([...selectedTables, { tableId, tableNumber }]);
         }
     };
     return (
@@ -37,10 +34,10 @@ function TableCard({
             disabled={!isAvailable}
             onClick={handleSelectTable}
             className={cn(
-                "bg-green-500 size-full border border-black rounded-md p-4 flex items-center justify-center",
-                isSelected && "bg-green-700 text-white",
+                'flex size-full items-center justify-center rounded-md border border-black bg-green-500 p-4',
+                isSelected && 'bg-green-700 text-white',
                 !isAvailable &&
-                    "bg-red-500 border-black text-white cursor-not-allowed"
+                    'cursor-not-allowed border-black bg-red-500 text-white'
             )}
         >
             {tableNumber}

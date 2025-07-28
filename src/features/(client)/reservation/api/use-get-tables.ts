@@ -1,21 +1,22 @@
-import { client } from "@/lib/rpc";
-import { useQuery } from "@tanstack/react-query";
+import { client } from '@/lib/rpc';
+import { useQuery } from '@tanstack/react-query';
 
-const api = client.api.reservation.tables["$get"];
+const api = client.api.reservation.tables['$get'];
 
 export const useGetTables = () => {
     return useQuery({
-        queryKey: ["tables"],
+        queryKey: ['tables'],
         queryFn: async () => {
             const response = await api();
 
             if (!response.ok) {
-                throw new Error("Failed to fetch tables");
+                throw new Error('Failed to fetch tables');
             }
 
             const data = await response.json();
 
-            return data;
+            console.log(data.result);
+            return data.result;
         },
     });
 };

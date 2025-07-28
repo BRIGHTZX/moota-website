@@ -13,7 +13,7 @@ function TableReservation({
     setArrayTable: (arrayTable: string[]) => void;
 }) {
     const { data: tables, isLoading, isError } = useGetTables();
-    const tablesData = tables?.tables;
+    const tablesData = tables;
 
     const insideTables = tablesData?.filter(
         (table: selectTablesSchemaType) => table.tableType === 'inside'
