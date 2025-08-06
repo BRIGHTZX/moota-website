@@ -6,6 +6,5 @@ export type CheckoutHistoryType = {
     totalOrderPrice: number;
     totalDiscount: number;
     totalAmount: number;
-    paymentMethod: string;
     updatedAt: string;
 };

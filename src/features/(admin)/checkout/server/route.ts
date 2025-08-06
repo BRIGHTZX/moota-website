@@ -205,8 +205,6 @@ const app = new Hono()
                 );
             }
 
-            console.log(c.req.valid('json'));
-
             try {
                 const { activeId } = c.req.param();
                 const {
@@ -226,7 +224,7 @@ const app = new Hono()
                 if (status !== 'partial' && status !== 'closed') {
                     return c.json({ message: 'Invalid status' }, 400);
                 }
-                let activeSuccess;
+                let activeSuccess = false;
                 let checkoutId = '';
                 const result: string = await db.transaction(async tx => {
                     // have checkout, update checkout

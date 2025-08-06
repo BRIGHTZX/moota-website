@@ -2,7 +2,7 @@ import { TextCardInfo } from '@/components/TextCardInfo';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { CheckoutHistoryType } from '../types';
-import PaymentBadge from './PaymentMethodBadge';
+import { formattedDateTimeThai } from '@/services/formattedDateTimeThai';
 
 function CheckoutHistoryCard({
     checkoutHistory,
@@ -24,13 +24,7 @@ function CheckoutHistoryCard({
                 </p>
 
                 <p className="text-xs text-gray-500">
-                    {new Date(checkoutHistory.updatedAt).toLocaleTimeString(
-                        'th-TH',
-                        {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                        }
-                    )}
+                    {formattedDateTimeThai(checkoutHistory.updatedAt)}
                 </p>
             </div>
             <TextCardInfo
@@ -53,8 +47,6 @@ function CheckoutHistoryCard({
                 text="ราคารวม"
                 value={`${checkoutHistory.totalAmount.toString()} บาท`}
             />
-
-            <PaymentBadge paymentMethod={checkoutHistory.paymentMethod} />
 
             <Button asChild variant="outline" className="w-full" size="sm">
                 <Link href={`/admin/checkout-history/${checkoutHistory.id}`}>
