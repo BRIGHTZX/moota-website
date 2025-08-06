@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { CheckoutStatus } from "./types";
+import { z } from 'zod';
+import { CheckoutStatus } from './types';
 
 export const getOrderListSchema = z.object({
     activeInfoId: z.array(z.string()),
@@ -16,8 +16,16 @@ export const insertCheckoutSchema = z.object({
     totalOrderPrice: z.number(),
     totalDiscount: z.number(),
     totalAmount: z.number(),
-    paymentMethod: z.string(),
     status: z.enum(CheckoutStatus),
+    paymentMethod: z.enum(['cash', 'promptpay']),
+    paymentDetail: z.array(
+        z.object({
+            groupType: z.enum(['adult', 'child']),
+            quantity: z.number(),
+            pricePerUnit: z.number(),
+            totalPrice: z.number(),
+        })
+    ),
     orderList: z.array(
         z.object({
             productId: z.string(),

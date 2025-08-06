@@ -24,3 +24,26 @@ export const FOOD_IMAGE_ARRAY = [
     '/food/food-3.png',
     '/food/food-11.png',
 ];
+
+export const PRICE_CHILD_ARRAY = [
+    {
+        id: '1',
+        price: 39,
+    },
+    {
+        id: '2',
+        price: 59,
+    },
+    {
+        id: '3',
+        price: 89,
+    },
+    {
+        id: '3',
+        price: 129,
+    },
+    {
+        id: '4',
+        price: 159,
+    },
+];

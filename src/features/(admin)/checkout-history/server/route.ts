@@ -1,5 +1,6 @@
 import { db } from '@/database/db';
 import { checkout } from '@/database/schema/checkout';
+import { groupCheckoutByCreatedAt } from '@/services/groupCheckout';
 import { mapHistoryDateToRecord } from '@/services/mapHistoryDateToRecord';
 import { getCurrentUser } from '@/services/middleware-hono';
 import { zValidator } from '@hono/zod-validator';
@@ -43,7 +44,6 @@ const app = new Hono()
                     totalOrderPrice: true,
                     totalDiscount: true,
                     totalAmount: true,
-                    paymentMethod: true,
                     updatedAt: true,
                 },
             });
@@ -56,7 +56,6 @@ const app = new Hono()
                 totalOrderPrice: item.totalOrderPrice,
                 totalDiscount: item.totalDiscount,
                 totalAmount: item.totalAmount,
-                paymentMethod: item.paymentMethod,
                 updatedAt: item.updatedAt.toISOString(),
             }));
 
@@ -113,7 +112,6 @@ const app = new Hono()
                         totalOrderPrice: true,
                         totalDiscount: true,
                         totalAmount: true,
-                        paymentMethod: true,
                         updatedAt: true,
                     },
                     with: {
@@ -137,6 +135,16 @@ const app = new Hono()
                                         name: true,
                                     },
                                 },
+                            },
+                        },
+                        checkoutPaymentInfos: {
+                            columns: {
+                                groupType: true,
+                                quantity: true,
+                                pricePerUnit: true,
+                                totalPrice: true,
+                                paymentMethod: true,
+                                createdAt: true,
                             },
                         },
                     },
@@ -163,9 +171,16 @@ const app = new Hono()
 
                 const groupedProductOrders = Array.from(productMap.values());
 
+                const groupedPaymentInfos = groupCheckoutByCreatedAt(
+                    checkoutList?.checkoutPaymentInfos ?? []
+                );
+
+                console.log(groupedPaymentInfos);
+
                 const formattedCheckoutList = {
                     ...checkoutList,
                     checkoutInfos: groupedProductOrders,
+                    checkoutPaymentInfos: groupedPaymentInfos,
                 };
 
                 return c.json(

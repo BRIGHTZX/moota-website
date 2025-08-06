@@ -12,3 +12,10 @@ export type ActiveType = {
         tableNumber: string;
     }[];
 };
+
+export type ActiveDataType = {
+    customerName: string;
+    customerPhone: string;
+    adultNumber: string;
+    childNumber: string;
+};

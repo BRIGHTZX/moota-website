@@ -7,6 +7,7 @@ import TextHeader from '@/components/TextHeader';
 import { Button } from '@/components/ui/button';
 import { useCancelActive } from '@/features/(admin)/actives/api/use-cancel-active';
 import { useGetActives } from '@/features/(admin)/actives/api/use-get-actives';
+import EditTableActiveModal from '@/features/(admin)/actives/components/EditTableActiveModal';
 import TableActiveSection from '@/features/(admin)/actives/components/TableActiveSection';
 import { HistoryIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -16,8 +17,10 @@ import { Fragment, useState } from 'react';
 function ActivePage() {
     const router = useRouter();
     const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false);
+    const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
     const [openCancelDialog, setOpenCancelDialog] = useState<boolean>(false);
     const [activeId, setActiveId] = useState<string | null>(null);
+
     const {
         data: activesData,
         isLoading: isLoadingActives,
@@ -74,11 +77,17 @@ function ActivePage() {
                                     active={active}
                                     setOpenAlertDialog={setOpenAlertDialog}
                                     setOpenCancelDialog={setOpenCancelDialog}
+                                    setOpenEditDialog={setOpenEditDialog}
                                     setActiveId={setActiveId}
                                 />
                             ))
                         )}
                     </div>
+                    <EditTableActiveModal
+                        activeId={activeId}
+                        isOpen={openEditDialog}
+                        setIsOpen={setOpenEditDialog}
+                    />
                     <AlertDialogCustom
                         isLoading={isLoading}
                         open={openAlertDialog}

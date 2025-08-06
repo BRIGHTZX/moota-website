@@ -13,6 +13,7 @@ import {
 import {
     checkoutInfos as CheckoutInfosTable,
     checkout as CheckoutTable,
+    checkoutPaymentInfos as CheckoutPaymentInfosTable,
 } from '@/database/schema/checkout';
 import { diningTable as DiningTable } from '@/database/schema/diningTable';
 import { order as OrderTable } from '@/database/schema/order';
@@ -204,6 +205,8 @@ const app = new Hono()
                 );
             }
 
+            console.log(c.req.valid('json'));
+
             try {
                 const { activeId } = c.req.param();
                 const {
@@ -216,16 +219,16 @@ const app = new Hono()
                     totalDiscount,
                     totalAmount,
                     paymentMethod,
+                    paymentDetail,
                     status,
                     orderList,
                 } = c.req.valid('json');
-
                 if (status !== 'partial' && status !== 'closed') {
                     return c.json({ message: 'Invalid status' }, 400);
                 }
-
-                const result = await db.transaction(async tx => {
-                    let checkoutId = '';
+                let activeSuccess;
+                let checkoutId = '';
+                const result: string = await db.transaction(async tx => {
                     // have checkout, update checkout
                     const isExistCheckout = await tx.query.checkout.findFirst({
                         where: eq(CheckoutTable.activeId, activeId),
@@ -233,10 +236,8 @@ const app = new Hono()
                             id: true,
                         },
                     });
-
                     if (isExistCheckout) {
                         checkoutId = isExistCheckout.id;
-
                         await tx
                             .update(CheckoutTable)
                             .set({
@@ -255,7 +256,6 @@ const app = new Hono()
                                 totalAmount: sql`${
                                     CheckoutTable.totalAmount
                                 } + ${Number(totalAmount)}`,
-                                paymentMethod,
                             })
                             .where(eq(CheckoutTable.id, checkoutId));
                     } else {
@@ -270,13 +270,10 @@ const app = new Hono()
                                 totalOrderPrice: Number(totalOrderPrice),
                                 totalDiscount: Number(totalDiscount),
                                 totalAmount: Number(totalAmount),
-                                paymentMethod,
                             })
                             .returning({ id: CheckoutTable.id });
-
                         checkoutId = newCheckout.id;
                     }
-
                     if (orderList.length !== 0) {
                         await tx.insert(CheckoutInfosTable).values(
                             orderList.map(item => ({
@@ -288,50 +285,57 @@ const app = new Hono()
                             }))
                         );
                     }
+                    if (tableId.length > 0) {
+                        await tx
+                            .update(DiningTable)
+                            .set({
+                                isAvailable: true,
+                            })
+                            .where(inArray(DiningTable.id, tableId));
+                        await tx
+                            .delete(ActiveInfoTable)
+                            .where(inArray(ActiveInfoTable.id, activeInfoId));
+                    }
 
-                    await tx
-                        .update(DiningTable)
-                        .set({
-                            isAvailable: true,
-                        })
-                        .where(inArray(DiningTable.id, tableId));
+                    if (paymentDetail.length > 0) {
+                        await tx.insert(CheckoutPaymentInfosTable).values(
+                            paymentDetail.map(item => ({
+                                checkoutId: checkoutId,
+                                groupType: item.groupType,
+                                quantity: item.quantity,
+                                pricePerUnit: item.pricePerUnit,
+                                totalPrice: item.totalPrice,
+                                paymentMethod: paymentMethod,
+                            }))
+                        );
+                    }
 
-                    await tx
-                        .delete(ActiveInfoTable)
-                        .where(inArray(ActiveInfoTable.id, activeInfoId));
+                    if (status === 'closed') {
+                        await tx
+                            .update(ActiveTable)
+                            .set({
+                                status: 'closed',
+                            })
+                            .where(eq(ActiveTable.id, activeId));
 
-                    await tx
-                        .update(ActiveTable)
-                        .set({
-                            status: status,
-                        })
-                        .where(eq(ActiveTable.id, activeId));
+                        activeSuccess = true;
+                    } else {
+                        await tx
+                            .update(ActiveTable)
+                            .set({
+                                status: status,
+                            })
+                            .where(eq(ActiveTable.id, activeId));
+
+                        activeSuccess = false;
+                    }
 
                     return checkoutId;
                 });
-
-                if (status === 'closed') {
-                    await db
-                        .update(ActiveTable)
-                        .set({
-                            status: 'closed',
-                        })
-                        .where(eq(ActiveTable.id, activeId));
-
-                    return c.json(
-                        {
-                            message: 'Checkout successfully closed',
-                            activeSuccess: true,
-                            checkoutId: result,
-                        },
-                        200
-                    );
-                }
-
                 return c.json(
                     {
                         message: 'Create checkout successfully',
-                        activeSuccess: false,
+                        activeSuccess: activeSuccess,
                         checkoutId: result,
                     },
                     200

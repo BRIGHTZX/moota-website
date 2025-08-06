@@ -2,11 +2,14 @@ import { TextCardInfo } from '@/components/TextCardInfo';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ActiveType } from '../types';
+import { formattedTimeThai } from '@/services/formattedTimeThai';
+import { PencilIcon } from 'lucide-react';
 
 type TableActiveSectionProps = {
     active: ActiveType;
     setOpenAlertDialog: (open: boolean) => void;
     setOpenCancelDialog: (open: boolean) => void;
+    setOpenEditDialog: (open: boolean) => void;
     setActiveId: (activeId: string) => void;
 };
 
@@ -14,6 +17,7 @@ function TableActiveSection({
     active,
     setOpenAlertDialog,
     setOpenCancelDialog,
+    setOpenEditDialog,
     setActiveId,
 }: TableActiveSectionProps) {
     const {
@@ -28,9 +32,22 @@ function TableActiveSection({
     return (
         <div className="relative rounded-lg border border-gray-300 bg-white p-4 shadow-sm">
             {/* Time Info */}
-            <div className="text-right">
+            <div className="flex items-center justify-between">
+                {/* Edit info button */}
+                <div className="">
+                    <Button
+                        size="xs"
+                        variant="outline"
+                        onClick={() => {
+                            setOpenEditDialog(true);
+                            setActiveId(active.activeId);
+                        }}
+                    >
+                        <PencilIcon />
+                    </Button>
+                </div>
                 <p className="text-xs font-bold text-gray-500">
-                    เปิดโต๊ะเวลา {openTime} น.
+                    เปิดโต๊ะเวลา {formattedTimeThai(openTime)}
                 </p>
             </div>
 

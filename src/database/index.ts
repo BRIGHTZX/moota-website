@@ -8,6 +8,8 @@ import {
     checkout,
     checkoutInfos,
     checkoutInfosRelations,
+    checkoutPaymentInfos,
+    checkoutPaymentInfosRelations,
     checkoutRelations,
 } from './schema/checkout';
 import { diningTable } from './schema/diningTable';
@@ -42,6 +44,7 @@ export const schema = {
     product,
     checkout,
     checkoutInfos,
+    checkoutPaymentInfos,
     takeAway,
     //relations
     activeRelations,
@@ -53,4 +56,5 @@ export const schema = {
     preOrderInfoRelations,
     checkoutRelations,
     checkoutInfosRelations,
+    checkoutPaymentInfosRelations,
 };

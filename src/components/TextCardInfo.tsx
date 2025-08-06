@@ -35,7 +35,7 @@ export const TextCardInfo = ({
         <div
             className={cn('flex items-center justify-between gap-2', className)}
         >
-            <p
+            <div
                 className={cn(
                     'sm:text-md text-sm font-semibold text-nowrap md:text-lg',
                     textClassName
@@ -47,7 +47,7 @@ export const TextCardInfo = ({
                         {subText}
                     </span>
                 )}
-            </p>
+            </div>
             {value && (
                 <p
                     className={cn(

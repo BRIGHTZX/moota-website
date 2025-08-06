@@ -1,21 +1,16 @@
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { Badge } from '@/components/ui/badge';
 
 type PaymentBadgeProps = {
     paymentMethod: string;
-    textClassName?: string;
 };
 
-function PaymentBadge({ paymentMethod, textClassName }: PaymentBadgeProps) {
+function PaymentBadge({ paymentMethod }: PaymentBadgeProps) {
     const paymentMethodText = {
-        cash: "เงินสด",
-        promptpay: "พร้อมเพย์",
+        cash: 'เงินสด',
+        promptpay: 'พร้อมเพย์',
     };
     return (
-        <div className="flex items-center gap-2 justify-between">
-            <p className={cn("font-semibold text-xs", textClassName)}>
-                ชำระเงินด้วย
-            </p>
+        <div className="flex items-center justify-between gap-2">
             <Badge variant="outline">
                 {
                     paymentMethodText[

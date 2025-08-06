@@ -9,7 +9,7 @@ import { TextCardInfo } from '@/components/TextCardInfo';
 import TextHeader from '@/components/TextHeader';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { ADULT_PRICE, CHILD_PRICE } from '@/constant';
+import { ADULT_PRICE } from '@/constant';
 import { useCreateCheckout } from '@/features/(admin)/checkout/api/use-create-checkout';
 import { useGetCheckoutOrderLists } from '@/features/(admin)/checkout/api/use-get-checkout-orderLists';
 import { useGetCheckoutInfo } from '@/features/(admin)/checkout/api/use-get-checkoutInfo';
@@ -35,7 +35,12 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
     const { activeId } = use(params);
     const [openAlertDialog, setOpenAlertDialog] = useState<boolean>(false);
     const [adult, setAdult] = useState<number>(0);
-    const [child, setChild] = useState<number>(0);
+    const [child, setChild] = useState<
+        {
+            number: number;
+            price: number;
+        }[]
+    >([]);
     const [selectedTable, setSelectedTable] = useState<SelectedTable[]>([]);
     const [birthDate, setBirthDate] = useState<boolean>(false);
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(
@@ -61,6 +66,10 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
             (checkoutInfo?.checkoutHistory?.paidChildNumber ?? 0)
         );
     }, [checkoutInfo]);
+
+    const totalChildFromSelect = useMemo(() => {
+        return child.reduce((acc, curr) => acc + curr.number, 0);
+    }, [child]);
 
     const activeInfoIds = useMemo(() => {
         return selectedTable?.map(info => info.activeInfoId) ?? [];
@@ -93,7 +102,10 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
 
     const priceAdult = useMemo(() => adult * ADULT_PRICE, [adult]);
 
-    const priceChild = useMemo(() => child * CHILD_PRICE, [child]);
+    const priceChild = useMemo(
+        () => child.reduce((acc, curr) => acc + curr.price * curr.number, 0),
+        [child]
+    );
 
     const discount = useMemo(() => {
         return birthDate
@@ -125,7 +137,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
     useEffect(() => {
         if (isAllTablesSelected) {
             setAdult(calcualteAdultNumber);
-            setChild(calcualteChildNumber);
+            setChild([{ number: 1, price: 0 }]);
         }
     }, [isAllTablesSelected, calcualteAdultNumber, calcualteChildNumber]);
 
@@ -139,12 +151,29 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
     };
 
     const validateCheckout = () => {
+        const totalTables = checkoutInfo?.activeInfos?.length ?? 0;
+        if (child.length > 0) {
+            if (child.some(item => item.number === 0 || item.price === 0)) {
+                toast.error('กรุณาเลือกจำนวนและราคาของเด็ก');
+                return;
+            }
+        }
+        if (selectedTable.length === totalTables) {
+            if (
+                adult !== calcualteAdultNumber ||
+                totalChildFromSelect !== calcualteChildNumber
+            ) {
+                toast.error(
+                    `เมื่อเลือกโต๊ะครบ ต้องเลือกจำนวนคนครบทั้งหมด (ผู้ใหญ่ ${calcualteAdultNumber} คน และ เด็ก ${calcualteChildNumber} คน)`
+                );
+                return;
+            }
+        }
         if (
             checkoutInfo &&
             adult === calcualteAdultNumber &&
-            child === calcualteChildNumber
+            totalChildFromSelect === calcualteChildNumber
         ) {
-            const totalTables = checkoutInfo.activeInfos?.length ?? 0;
             if (selectedTable.length !== totalTables) {
                 toast.error(
                     `เมื่อเลือกจำนวนคนครบ ต้องเลือกโต๊ะครบทั้งหมด (${totalTables} โต๊ะ)`
@@ -152,7 +181,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                 return;
             }
         }
-        if (adult === 0 && child === 0) {
+        if (adult === 0 && totalChildFromSelect === 0) {
             toast.error('กรุณาเลือกจำนวนคน');
             return;
         }
@@ -170,18 +199,51 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
         }
 
         const activeStatus = handleSetActiveStatus() as CheckoutStatusType;
+        const paidChildNumber = child.reduce(
+            (acc, curr) => acc + curr.number,
+            0
+        );
+
+        const childPaymentDetail = child.map(item => ({
+            groupType: 'child' as const,
+            quantity: item.number,
+            pricePerUnit: item.price,
+            totalPrice: item.price * item.number,
+        }));
+
+        let adultPaymentDetail: {
+            groupType: 'adult';
+            quantity: number;
+            pricePerUnit: number;
+            totalPrice: number;
+        } | null = null;
+
+        if (adult > 0) {
+            adultPaymentDetail = {
+                groupType: 'adult' as const,
+                quantity: adult,
+                pricePerUnit: ADULT_PRICE,
+                totalPrice: priceAdult,
+            };
+        }
+
+        const paymentDetail = [
+            adultPaymentDetail,
+            ...childPaymentDetail,
+        ].filter(item => item !== null);
 
         const finalValue = {
             activeInfoId: activeInfoIds,
             tableId: tableIds,
             customerName: checkoutInfo.customerName,
             paidAdultNumber: adult,
-            paidChildNumber: child,
+            paidChildNumber: paidChildNumber,
             totalOrderPrice: orderPrice,
             totalDiscount: discount,
             totalAmount: totalPrice,
-            paymentMethod: paymentMethod,
             status: activeStatus,
+            paymentDetail,
+            paymentMethod,
             orderList: orderList ?? [],
         };
         createCheckout(
@@ -195,7 +257,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                 onSuccess: () => {
                     setSelectedTable([]);
                     setAdult(0);
-                    setChild(0);
+                    setChild([]);
                     setBirthDate(false);
                     setPaymentMethod(null);
                 },
@@ -330,6 +392,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                             setAdult={setAdult}
                             setChild={setChild}
                             disabled={isAllTablesSelected || isLoading}
+                            isAllTablesSelected={isAllTablesSelected}
                         />
                     </div>
                 </div>
@@ -361,20 +424,39 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
                             value={`${priceAdult.toString()} ฿`}
                         />
                     )}
-                    {child > 0 && (
-                        <TextCardInfo
-                            text={
-                                <>
-                                    เด็ก{' '}
-                                    <span className="text-sm font-medium text-gray-500">
-                                        x {child}
-                                    </span>
-                                </>
-                            }
-                            textClassName="text-md font-medium"
-                            valueClassName="text-md font-medium"
-                            value={`${priceChild.toString()} ฿`}
-                        />
+                    {child.length > 0 && (
+                        <>
+                            {[
+                                ...new Map(
+                                    child.map(({ price }) => [price, 0])
+                                ),
+                            ].map(([price]) => {
+                                const count = child
+                                    .filter(item => item.price === price)
+                                    .reduce(
+                                        (sum, item) => sum + item.number,
+                                        0
+                                    );
+                                const totalPrice = count * price;
+
+                                return (
+                                    <TextCardInfo
+                                        key={price}
+                                        text={
+                                            <>
+                                                เด็ก
+                                                <span className="text-sm font-medium text-gray-500">
+                                                    x {count}
+                                                </span>
+                                            </>
+                                        }
+                                        textClassName="text-md font-medium"
+                                        valueClassName="text-md font-medium"
+                                        value={`${totalPrice.toLocaleString()} ฿`}
+                                    />
+                                );
+                            })}
+                        </>
                     )}
                     {birthDate && (
                         <TextCardInfo
@@ -406,6 +488,7 @@ function CheckoutPage({ params }: { params: Promise<{ activeId: string }> }) {
 
                 <div className="mt-4">
                     <SelectedPaymentMethod
+                        value={paymentMethod}
                         disabled={isLoading}
                         placeholder="เลือกช่องทางชำระเงิน"
                         setPaymentMethod={setPaymentMethod}

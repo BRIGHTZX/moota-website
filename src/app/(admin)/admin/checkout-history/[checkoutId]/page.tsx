@@ -6,13 +6,13 @@ import SeperateLine from '@/components/SeperateLine';
 import { TextCardInfo } from '@/components/TextCardInfo';
 import TextHeader from '@/components/TextHeader';
 import { Button } from '@/components/ui/button';
-import { ADULT_PRICE, CHILD_PRICE } from '@/constant';
 import { useGetCheckoutHistory } from '@/features/(admin)/checkout-history/api/use-get-checkout-history';
 import PaymentBadge from '@/features/(admin)/checkout-history/components/PaymentMethodBadge';
+import { formattedDateTimeThai } from '@/services/formattedDateTimeThai';
 import { ArrowLeftIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { use } from 'react';
+import { use, useMemo } from 'react';
 
 function CheckoutHistoryDetailPage({
     params,
@@ -38,11 +38,28 @@ function CheckoutHistoryDetailPage({
         totalOrderPrice,
         totalDiscount,
         totalAmount,
-        paymentMethod,
+        checkoutPaymentInfos,
     } = checkoutHistory ?? {};
 
-    const totalAdultPrice = paidAdultNumber ? paidAdultNumber * ADULT_PRICE : 0;
-    const totalChildPrice = paidChildNumber ? paidChildNumber * CHILD_PRICE : 0;
+    const totalAdultPrice = useMemo(() => {
+        return checkoutPaymentInfos
+            ?.flatMap(round => round.payments)
+            .reduce((acc, item) => {
+                return item.groupType === 'adult' ? acc + item.totalPrice : acc;
+            }, 0);
+    }, [checkoutPaymentInfos]);
+
+    const totalChildPrice = useMemo(() => {
+        return checkoutPaymentInfos
+            ?.flatMap(round => round.payments)
+            .reduce((acc, item) => {
+                return item.groupType === 'child' ? acc + item.totalPrice : acc;
+            }, 0);
+    }, [checkoutPaymentInfos]);
+
+    const totalPayment = useMemo(() => {
+        return (totalAdultPrice ?? 0) + (totalChildPrice ?? 0);
+    }, [totalAdultPrice, totalChildPrice]);
 
     if (isError) return <ErrorPage />;
 
@@ -95,6 +112,7 @@ function CheckoutHistoryDetailPage({
                     </div>
 
                     <div className="mt-4 flex flex-col gap-4">
+                        {/* Overview Payment History */}
                         <div className="overfow-hidden relative rounded-md border border-gray-500">
                             <p className="rounded-t-md border-b bg-gray-100 p-2 text-center text-sm font-semibold">
                                 ข้อมูลการชำระเงิน
@@ -108,14 +126,14 @@ function CheckoutHistoryDetailPage({
                                 {paidAdultNumber !== 0 && (
                                     <TextCardInfo
                                         text="จำนวนผู้ใหญ่"
-                                        subText={`${paidAdultNumber} x ${ADULT_PRICE}`}
+                                        subText={`x ${paidAdultNumber}`}
                                         value={`${totalAdultPrice?.toLocaleString()} บาท`}
                                     />
                                 )}
                                 {paidChildNumber !== 0 && (
                                     <TextCardInfo
                                         text="จำนวนผู้เด็ก"
-                                        subText={`${paidChildNumber} x ${CHILD_PRICE}`}
+                                        subText={`x ${paidChildNumber}`}
                                         value={`${totalChildPrice?.toLocaleString()} บาท`}
                                     />
                                 )}
@@ -133,12 +151,82 @@ function CheckoutHistoryDetailPage({
                                     text="ราคารวมทั้งหมด"
                                     value={`${totalAmount?.toLocaleString()} บาท`}
                                 />
-                                <PaymentBadge
-                                    paymentMethod={paymentMethod ?? ''}
+                            </div>
+                        </div>
+
+                        {/* Payment History List */}
+                        <div className="relative overflow-hidden rounded-md border border-gray-500">
+                            <p className="rounded-t-md border-b bg-gray-100 p-2 text-center text-sm font-semibold">
+                                ประวัติการชำระเงิน
+                            </p>
+
+                            <div className="flex flex-col gap-2 p-4">
+                                {checkoutPaymentInfos?.length === 0 ? (
+                                    <div className="flex h-[100px] items-center justify-center">
+                                        <p className="text-gray-500">
+                                            ไม่มีประวัติการชำระเงิน
+                                        </p>
+                                    </div>
+                                ) : (
+                                    checkoutPaymentInfos?.map(
+                                        (round, index) => (
+                                            <div
+                                                key={index}
+                                                className="flex flex-col gap-1 rounded-md border p-3"
+                                            >
+                                                <p className="text-sm font-semibold text-gray-500">
+                                                    รอบที่ {index + 1} —{' '}
+                                                    {formattedDateTimeThai(
+                                                        round.createdAt
+                                                    )}
+                                                </p>
+                                                <div className="flex flex-col gap-2">
+                                                    {round.payments.map(
+                                                        (item, i) => (
+                                                            <TextCardInfo
+                                                                key={`${item.groupType}-${i}`}
+                                                                text={
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="font-semibold capitalize">
+                                                                            {item.groupType ===
+                                                                            'adult'
+                                                                                ? 'ผู้ใหญ่'
+                                                                                : 'เด็ก'}
+                                                                        </span>
+                                                                        <span className="text-xs font-light text-gray-500">
+                                                                            x{' '}
+                                                                            {
+                                                                                item.quantity
+                                                                            }
+                                                                        </span>
+                                                                        <PaymentBadge
+                                                                            paymentMethod={
+                                                                                item.paymentMethod
+                                                                            }
+                                                                        />
+                                                                    </div>
+                                                                }
+                                                                value={`${item.totalPrice.toLocaleString()} บาท`}
+                                                            />
+                                                        )
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )
+                                    )
+                                )}
+
+                                <SeperateLine className="my-2" />
+
+                                <TextCardInfo
+                                    text="ราคารวมทั้งหมด"
+                                    value={`${totalPayment?.toLocaleString()} บาท`}
+                                    valueClassName="font-semibold"
                                 />
                             </div>
                         </div>
 
+                        {/* Order History List */}
                         <div className="overfow-hidden relative rounded-md border border-gray-500">
                             <p className="rounded-t-md border-b bg-gray-100 p-2 text-center text-sm font-semibold">
                                 รายการเครื่องดื่ม
