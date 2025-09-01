@@ -32,7 +32,7 @@ function StockPage() {
     return (
         <AdminPageWrapper>
             <div className="flex items-center justify-between">
-                <TextHeader text="รายการสต๊อก" />
+                <TextHeader text="รายการสต็อก" />
                 <LimitNotification />
             </div>
 
